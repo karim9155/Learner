@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgZone } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
@@ -15,7 +15,8 @@ export class LoginComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private ngZone: NgZone
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -30,11 +31,11 @@ export class LoginComponent implements OnInit {
     if (this.loginForm.valid) {
       this.authService.login(this.loginForm.value).subscribe(
         (response) => {
-          const role = this.authService.getRoleFromToken(response.jwt); // <--- Change this line
+          const role = this.authService.getRole()?.toLowerCase();
           if (role === 'admin') {
-            this.router.navigate(['/admin/dashboard']);
+            this.ngZone.run(() => this.router.navigate(['/admin/dashboard']));
           } else if (role === 'trainer') {
-            this.router.navigate(['/trainer/dashboard']);
+            this.ngZone.run(() => this.router.navigate(['/trainer/dashboard']));
           }
         },
         (error) => {
