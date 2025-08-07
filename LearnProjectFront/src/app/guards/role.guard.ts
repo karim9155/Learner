@@ -13,13 +13,10 @@ export class RoleGuard implements CanActivate {
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): boolean {
     const requiredRole = next.data['role'];
-    const token = this.authService.getToken();
+    const userRole = this.authService.getRole()?.toLowerCase();
 
-    if (token) {
-      const userRole = this.authService.getRoleFromToken(token);
-      if (userRole === requiredRole) {
-        return true;
-      }
+    if (userRole === requiredRole) {
+      return true;
     }
 
     this.router.navigate(['/login']); // Or a "not authorized" page

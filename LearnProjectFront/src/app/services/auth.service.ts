@@ -10,22 +10,29 @@ import { jwtDecode } from 'jwt-decode';
 export class AuthService {
   private apiUrl = 'http://localhost:8080/auth'; // Adjust the URL to your backend
   private tokenKey = 'auth_token';
+  private roleKey = 'auth_role';
 
   constructor(private http: HttpClient) { }
 
 
   login(credentials: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/login`, credentials).pipe(
-      tap((response: any) => this.saveToken(response.jwt)) // <--- Change this line
+      tap((response: any) => this.saveToken(response.jwt))
     );
   }
 
   saveToken(token: string): void {
     localStorage.setItem(this.tokenKey, token);
+    const decodedToken: any = jwtDecode(token);
+    localStorage.setItem(this.roleKey, decodedToken.role);
   }
 
   getToken(): string | null {
     return localStorage.getItem(this.tokenKey);
+  }
+
+  getRole(): string | null {
+    return localStorage.getItem(this.roleKey);
   }
 
   isLoggedIn(): boolean {
@@ -34,6 +41,7 @@ export class AuthService {
 
   logout(): void {
     localStorage.removeItem(this.tokenKey);
+    localStorage.removeItem(this.roleKey);
   }
 
   getRoleFromToken(token: string): string {
