@@ -22,6 +22,8 @@ public class Video {
     private UUID id;
     @ManyToOne
     private Course course;
+    @ManyToOne
+    private User user;
     private String title;
     private String youtubeUrl;     // or file path
     private int durationSeconds;

@@ -1,9 +1,6 @@
 package com.example.learnprojectback.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,11 +16,18 @@ import java.util.UUID;
 @NoArgsConstructor
 public class Enrollment {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
     @ManyToOne
     private User learner;
-    @ManyToOne
-    private Course course;
+
     private Instant assignedAt = Instant.now();
+
+    @ManyToOne
+    @JoinColumn(name = "user_id") // This column in the 'enrollment' table links to the 'user' table
+    private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "course_id")
+    private Course course;
 }

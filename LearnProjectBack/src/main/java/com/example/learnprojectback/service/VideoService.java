@@ -8,4 +8,6 @@ import java.util.UUID;
 public interface VideoService {
     VideoDTO uploadVideo(VideoDTO dto);
     List<VideoDTO> listVideosByCourse(UUID courseId);
+    List<VideoDTO> listAllVideos();
+    List<VideoDTO> listVideosByUser(UUID userId);
 }
