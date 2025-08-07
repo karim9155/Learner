@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
+  standalone: false,
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
@@ -29,8 +30,7 @@ export class LoginComponent implements OnInit {
     if (this.loginForm.valid) {
       this.authService.login(this.loginForm.value).subscribe(
         (response) => {
-          // The backend should return the role in the response
-          const role = this.authService.getRoleFromToken(response.token);
+          const role = this.authService.getRoleFromToken(response.jwt); // <--- Change this line
           if (role === 'admin') {
             this.router.navigate(['/admin/dashboard']);
           } else if (role === 'trainer') {

@@ -8,14 +8,15 @@ import { jwtDecode } from 'jwt-decode';
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:8080/api/auth'; // Adjust the URL to your backend
+  private apiUrl = 'http://localhost:8080/auth'; // Adjust the URL to your backend
   private tokenKey = 'auth_token';
 
   constructor(private http: HttpClient) { }
 
+
   login(credentials: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/login`, credentials).pipe(
-      tap((response: any) => this.saveToken(response.token))
+      tap((response: any) => this.saveToken(response.jwt)) // <--- Change this line
     );
   }
 
