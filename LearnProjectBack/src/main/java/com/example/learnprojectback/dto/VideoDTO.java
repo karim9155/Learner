@@ -8,6 +8,7 @@ import java.util.UUID;
 public class VideoDTO {
     private UUID id;
     private UUID courseId;
+    private UUID userId;
     private String title;
     private String youtubeUrl;
     private int durationSeconds;

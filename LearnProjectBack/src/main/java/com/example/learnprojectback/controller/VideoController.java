@@ -1,7 +1,9 @@
 package com.example.learnprojectback.controller;
 
 import com.example.learnprojectback.dto.VideoDTO;
+import com.example.learnprojectback.security.JwtUser;
 import com.example.learnprojectback.service.VideoService;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,12 +20,23 @@ public class VideoController {
     }
 
     @PostMapping
-    public VideoDTO upload(@RequestBody VideoDTO dto) {
+    public VideoDTO upload(@RequestBody VideoDTO dto, @AuthenticationPrincipal JwtUser user) {
+        dto.setUserId(user.getId());
         return videoService.uploadVideo(dto);
     }
 
     @GetMapping("/by-course/{courseId}")
     public List<VideoDTO> listByCourse(@PathVariable UUID courseId) {
         return videoService.listVideosByCourse(courseId);
+    }
+
+    @GetMapping("/all")
+    public List<VideoDTO> listAll() {
+        return videoService.listAllVideos();
+    }
+
+    @GetMapping("/by-user/{userId}")
+    public List<VideoDTO> listByUser(@PathVariable UUID userId) {
+        return videoService.listVideosByUser(userId);
     }
 }
