@@ -6,7 +6,7 @@ import {AdminDashboardComponent} from './dashboard/dashboard.component';
 
 @NgModule({
   declarations: [
-    AdminDashboardComponent
+
   ],
   imports: [
     CommonModule
