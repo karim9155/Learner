@@ -8,12 +8,15 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { JwtInterceptor } from './services/jwt.interceptor';
 import {TrainerDashboardComponent} from './trainer/dashboard/dashboard.component';
+import {CommonModule} from '@angular/common';
+import {AdminDashboardComponent} from './admin/dashboard/dashboard.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
-    TrainerDashboardComponent
+    TrainerDashboardComponent,
+    AdminDashboardComponent
   ],
   imports: [
     BrowserModule,
@@ -21,6 +24,7 @@ import {TrainerDashboardComponent} from './trainer/dashboard/dashboard.component
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
+    CommonModule,
 
   ],
   providers: [

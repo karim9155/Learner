@@ -28,6 +28,6 @@ export class CourseService {
   }
 
   getAllCourses(): Observable<any> {
-    return this.http.get(this.apiUrl, { headers: this.getAuthHeaders() });
+    return this.http.get(`${this.apiUrl}/all`, { headers: this.getAuthHeaders() });
   }
 }

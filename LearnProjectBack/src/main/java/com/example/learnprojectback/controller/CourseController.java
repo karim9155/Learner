@@ -32,4 +32,9 @@ public class CourseController {
         UUID orgId = UUID.randomUUID(); // Placeholderl
         return courseService.listCourses(orgId);
     }
+
+    @GetMapping("/all")
+    public List<CourseDTO> getAllCourses() {
+        return courseService.getAllCourses();
+    }
 }

@@ -10,4 +10,6 @@ import java.util.UUID;
 public interface CourseService {
     CourseDTO createCourse(UUID orgId, UUID trainerId, CourseDTO dto);
     List<CourseDTO> listCourses(UUID orgId);
+
+    List<CourseDTO> getAllCourses();
 }
