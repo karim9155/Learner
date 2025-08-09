@@ -23,11 +23,17 @@ export class CourseService {
     return this.http.post(`${this.apiUrl}`, courseData, { headers: this.getAuthHeaders() });
   }
 
-  addVideo(courseId: number, videoData: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${courseId}/videos`, videoData, { headers: this.getAuthHeaders() });
+  addVideo(videoData: any): Observable<any> {
+    const videoApiUrl = 'http://localhost:8080/api/videos';
+    return this.http.post(videoApiUrl, videoData, { headers: this.getAuthHeaders() });
   }
 
   getAllCourses(): Observable<any> {
     return this.http.get(`${this.apiUrl}/all`, { headers: this.getAuthHeaders() });
+  }
+
+  getVideosByCourse(courseId: string): Observable<any> {
+    const videoApiUrl = 'http://localhost:8080/api/videos';
+    return this.http.get(`${videoApiUrl}/by-course/${courseId}`, { headers: this.getAuthHeaders() });
   }
 }

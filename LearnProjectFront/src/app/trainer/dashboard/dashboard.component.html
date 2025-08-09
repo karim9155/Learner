@@ -35,7 +35,7 @@
           <form [formGroup]="videoForm" (ngSubmit)="addVideo()">
             <div class="form-group">
               <label for="courseId">Course ID</label>
-              <input type="number" id="courseId" class="form-control" formControlName="courseId">
+              <input type="text" id="courseId" class="form-control" formControlName="courseId">
             </div>
             <div class="form-group">
               <label for="videoTitle">Video Title</label>
@@ -44,6 +44,14 @@
             <div class="form-group">
               <label for="videoUrl">YouTube URL</label>
               <input type="text" id="videoUrl" class="form-control" formControlName="url">
+            </div>
+            <div class="form-group">
+              <label for="durationSeconds">Duration (seconds)</label>
+              <input type="number" id="durationSeconds" class="form-control" formControlName="durationSeconds">
+            </div>
+            <div class="form-group">
+              <label for="orderIndex">Order Index</label>
+              <input type="number" id="orderIndex" class="form-control" formControlName="orderIndex">
             </div>
             <button type="submit" class="btn btn-primary" [disabled]="videoForm.invalid">Add Video</button>
           </form>

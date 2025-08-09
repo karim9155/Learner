@@ -47,7 +47,11 @@ public class CourseServiceImpl implements CourseService {
         Course savedCourse = courseRepository.save(newCourse);
 
         // 5. Map the saved entity back to a DTO and return it
-        return modelMapper.map(savedCourse, CourseDTO.class);
+        CourseDTO returnDto = modelMapper.map(savedCourse, CourseDTO.class);
+        if (savedCourse.getCreatedBy() != null) {
+            returnDto.setTrainerEmail(savedCourse.getCreatedBy().getEmail());
+        }
+        return returnDto;
     }
 
     @Override
@@ -57,7 +61,13 @@ public class CourseServiceImpl implements CourseService {
 
         // 2. Map the list of entities to a list of DTOs and return
         return courses.stream()
-                .map(course -> modelMapper.map(course, CourseDTO.class))
+                .map(course -> {
+                    CourseDTO dto = modelMapper.map(course, CourseDTO.class);
+                    if (course.getCreatedBy() != null) {
+                        dto.setTrainerEmail(course.getCreatedBy().getEmail());
+                    }
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
 
@@ -65,7 +75,13 @@ public class CourseServiceImpl implements CourseService {
     public List<CourseDTO> getAllCourses() {
         List<Course> courses = courseRepository.findAll();
         return courses.stream()
-                .map(course -> modelMapper.map(course, CourseDTO.class))
+                .map(course -> {
+                    CourseDTO dto = modelMapper.map(course, CourseDTO.class);
+                    if (course.getCreatedBy() != null) {
+                        dto.setTrainerEmail(course.getCreatedBy().getEmail());
+                    }
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
 }
