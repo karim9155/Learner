@@ -6,7 +6,6 @@ import { TrainerDashboardComponent } from './dashboard/dashboard.component';
 
 @NgModule({
   declarations: [
-    TrainerDashboardComponent
   ],
   imports: [
     CommonModule

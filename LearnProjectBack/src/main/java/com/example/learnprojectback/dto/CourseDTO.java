@@ -11,4 +11,5 @@ public class CourseDTO {
     private UUID trainerId;
     private String title;
     private String description;
+    private String trainerEmail;
 }

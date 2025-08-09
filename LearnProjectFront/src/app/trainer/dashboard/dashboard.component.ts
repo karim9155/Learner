@@ -28,7 +28,9 @@ export class TrainerDashboardComponent implements OnInit {
     this.videoForm = this.fb.group({
       courseId: ['', Validators.required],
       title: ['', Validators.required],
-      url: ['', Validators.required]
+      url: ['', Validators.required],
+      durationSeconds: ['', Validators.required],
+      orderIndex: ['', Validators.required]
     });
   }
 
@@ -51,12 +53,14 @@ export class TrainerDashboardComponent implements OnInit {
 
   addVideo(): void {
     if (this.videoForm.valid) {
-      const courseId = this.videoForm.value.courseId;
       const videoData = {
+        courseId: this.videoForm.value.courseId,
         title: this.videoForm.value.title,
-        url: this.videoForm.value.url
+        youtubeUrl: this.videoForm.value.url,
+        durationSeconds: this.videoForm.value.durationSeconds,
+        orderIndex: this.videoForm.value.orderIndex
       };
-      this.courseService.addVideo(courseId, videoData).subscribe(
+      this.courseService.addVideo(videoData).subscribe(
         (response) => {
           console.log('Video added successfully', response);
           this.videoForm.reset();

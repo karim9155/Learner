@@ -20,6 +20,7 @@ public class Course {
     @Id
     @GeneratedValue
     private UUID id;
+
     @ManyToOne
     private Organization org;
     @ManyToOne
