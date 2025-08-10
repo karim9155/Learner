@@ -22,6 +22,9 @@ public class User {
     @GeneratedValue
     private UUID id;
     private String name;
+    private String lastName;
+    private String department;
+    private String badgeNumber;
     @Column(unique = true)
     private String email;
     private String password;
