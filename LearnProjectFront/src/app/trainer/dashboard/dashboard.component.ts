@@ -51,12 +51,12 @@ export class TrainerDashboardComponent implements OnInit {
 
   addVideo(): void {
     if (this.videoForm.valid) {
-      const courseId = this.videoForm.value.courseId;
       const videoData = {
+        courseId: this.videoForm.value.courseId,
         title: this.videoForm.value.title,
-        url: this.videoForm.value.url
+        youtubeUrl: this.videoForm.value.url
       };
-      this.courseService.addVideo(courseId, videoData).subscribe(
+      this.courseService.addVideo(videoData).subscribe(
         (response) => {
           console.log('Video added successfully', response);
           this.videoForm.reset();
