@@ -23,7 +23,7 @@ export class CourseService {
     return this.http.post(`${this.apiUrl}`, courseData, { headers: this.getAuthHeaders() });
   }
 
-  addVideo(videoData: any, videoData1: { title: any; url: any }): Observable<any> {
+  addVideo(videoData: any): Observable<any> {
     const videoApiUrl = 'http://localhost:8080/api/videos';
     return this.http.post(videoApiUrl, videoData, { headers: this.getAuthHeaders() });
   }

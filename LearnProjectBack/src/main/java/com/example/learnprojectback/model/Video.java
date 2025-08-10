@@ -26,8 +26,10 @@ public class Video {
     private User user;
     private String title;
     private String youtubeUrl;     // or file path
-    private int durationSeconds;
-    private int orderIndex;
+    @Column(nullable = true)
+    private Integer durationSeconds;
+    @Column(nullable = true)
+    private Integer orderIndex;
     private Instant createdAt = Instant.now();
 
     @JsonIgnore

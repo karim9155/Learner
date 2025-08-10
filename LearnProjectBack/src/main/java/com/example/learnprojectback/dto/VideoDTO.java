@@ -11,6 +11,6 @@ public class VideoDTO {
     private UUID userId;
     private String title;
     private String youtubeUrl;
-    private int durationSeconds;
-    private int orderIndex;
+    private Integer durationSeconds;
+    private Integer orderIndex;
 }
