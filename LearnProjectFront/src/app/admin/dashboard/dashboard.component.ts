@@ -3,6 +3,8 @@ import { CourseService } from '../../services/course.service';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import * as Papa from 'papaparse';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -12,12 +14,15 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 })
 export class AdminDashboardComponent implements OnInit {
   courses: any[] = [];
+  users: any[] = [];
+  csvFile: File | null = null;
 
   constructor(
     private courseService: CourseService,
     private authService: AuthService,
     private router: Router,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private userService: UserService
   ) { }
 
   ngOnInit(): void {
@@ -82,5 +87,36 @@ export class AdminDashboardComponent implements OnInit {
 
     // Return a blank URL if no valid ID could be extracted
     return this.sanitizer.bypassSecurityTrustResourceUrl('');
+  }
+
+  onFileSelect(event: any): void {
+    this.csvFile = event.target.files[0];
+    if (this.csvFile) {
+      Papa.parse(this.csvFile, {
+        header: true,
+        skipEmptyLines: true,
+        complete: (result) => {
+          this.users = result.data;
+        }
+      });
+    }
+  }
+
+  saveUsers(): void {
+    if (this.csvFile) {
+      this.userService.uploadUsers(this.csvFile).subscribe(
+        (response) => {
+          alert('Users created successfully!');
+          this.users = [];
+          this.csvFile = null;
+        },
+        (error) => {
+          console.error('Failed to create users', error);
+          alert('Failed to create users. Please check the console for more details.');
+        }
+      );
+    } else {
+      alert('Please select a file to upload.');
+    }
   }
 }
