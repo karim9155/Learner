@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@Service // The @Service annotation goes on the implementation class
-@RequiredArgsConstructor // Lombok annotation for constructor injection
+@Service
+@RequiredArgsConstructor
 public class CourseServiceImpl implements CourseService {
 
     private final CourseRepository courseRepository;
@@ -43,7 +43,7 @@ public class CourseServiceImpl implements CourseService {
 
         Course savedCourse = courseRepository.save(newCourse);
 
-        return modelMapper.map(savedCourse, CourseDTO.class);
+        return convertToDto(savedCourse);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class CourseServiceImpl implements CourseService {
 
         // 2. Map the list of entities to a list of DTOs and return
         return courses.stream()
-                .map(course -> modelMapper.map(course, CourseDTO.class))
+                .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
 
@@ -61,7 +61,35 @@ public class CourseServiceImpl implements CourseService {
     public List<CourseDTO> getAllCourses() {
         List<Course> courses = courseRepository.findAll();
         return courses.stream()
-                .map(course -> modelMapper.map(course, CourseDTO.class))
+                .map(course -> {
+                    CourseDTO dto = new CourseDTO();
+                    dto.setId(course.getId());
+                    dto.setTitle(course.getTitle());
+                    dto.setDescription(course.getDescription());
+
+                    if (course.getOrg() != null) {
+                        dto.setOrganizationId(course.getOrg().getId());
+                    }
+
+                    if (course.getCreatedBy() != null) {
+                        dto.setTrainerId(course.getCreatedBy().getId());
+                        dto.setTrainerEmail(course.getCreatedBy().getEmail());
+                    }
+
+                    return dto;
+                })
                 .collect(Collectors.toList());
+    }
+
+    private CourseDTO convertToDto(Course course) {
+        CourseDTO courseDTO = modelMapper.map(course, CourseDTO.class);
+        if (course.getCreatedBy() != null) {
+            courseDTO.setTrainerId(course.getCreatedBy().getId());
+            courseDTO.setTrainerEmail(course.getCreatedBy().getEmail());
+        }
+        if (course.getOrg() != null) {
+            courseDTO.setOrganizationId(course.getOrg().getId());
+        }
+        return courseDTO;
     }
 }
