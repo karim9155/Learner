@@ -1,4 +1,3 @@
-// src/main/java/com/example/learnprojectback/service/impl/CourseServiceImpl.java
 package com.example.learnprojectback.service.impl;
 
 import com.example.learnprojectback.dto.CourseDTO;
@@ -48,10 +47,8 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public List<CourseDTO> listCourses(UUID orgId) {
-        // 1. Find all courses for the given organization
         List<Course> courses = courseRepository.findByOrgId(orgId);
 
-        // 2. Map the list of entities to a list of DTOs and return
         return courses.stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
@@ -61,28 +58,17 @@ public class CourseServiceImpl implements CourseService {
     public List<CourseDTO> getAllCourses() {
         List<Course> courses = courseRepository.findAll();
         return courses.stream()
-                .map(course -> {
-                    CourseDTO dto = new CourseDTO();
-                    dto.setId(course.getId());
-                    dto.setTitle(course.getTitle());
-                    dto.setDescription(course.getDescription());
-
-                    if (course.getOrg() != null) {
-                        dto.setOrganizationId(course.getOrg().getId());
-                    }
-
-                    if (course.getCreatedBy() != null) {
-                        dto.setTrainerId(course.getCreatedBy().getId());
-                        dto.setTrainerEmail(course.getCreatedBy().getEmail());
-                    }
-
-                    return dto;
-                })
+                .map(this::convertToDto) // Use the robust conversion method here as well
                 .collect(Collectors.toList());
     }
 
     private CourseDTO convertToDto(Course course) {
-        CourseDTO courseDTO = modelMapper.map(course, CourseDTO.class);
+        CourseDTO courseDTO = new CourseDTO();
+        courseDTO.setId(course.getId());
+        courseDTO.setTitle(course.getTitle());
+        courseDTO.setDescription(course.getDescription());
+
+        // FIX: Add null checks to prevent any errors
         if (course.getCreatedBy() != null) {
             courseDTO.setTrainerId(course.getCreatedBy().getId());
             courseDTO.setTrainerEmail(course.getCreatedBy().getEmail());

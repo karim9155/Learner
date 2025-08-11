@@ -49,22 +49,19 @@ export class TrainerDashboardComponent implements OnInit {
   activeSection: string = 'dashboard';
   isLoading: boolean = false;
 
-
-  // Logo paths - replace these with your actual logo paths
   lightLogo: string = 'assets/images/learn-logo-light.png';
   darkLogo: string = 'assets/images/learn-logo-dark.png';
 
-
-  trainerUser = { name: '', email: '', role: '' };
+  trainerUser = { id: '', name: '', email: '', role: '' };
   isCreatingCourse = false;
   isAddingVideo = false;
+  private coursesLoaded: boolean | undefined;
 
   get courseFormControls() { return this.courseForm.controls; }
   get videoFormControls() { return this.videoForm.controls; }
   get isCourseFormValid() { return this.courseForm.valid; }
   get isVideoFormValid() { return this.videoForm.valid; }
 
-  // Course creation success message
   courseCreationMessage: string = '';
   videoAdditionMessage: string = '';
 
@@ -88,24 +85,21 @@ export class TrainerDashboardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Check if dark mode is enabled
     const savedDarkMode = localStorage.getItem('trainerDashboardDarkMode');
     if (savedDarkMode === 'true') {
       this.darkMode = true;
       document.documentElement.classList.add('dark');
     }
 
-    // Check sidebar state
     const savedSidebarState = localStorage.getItem('trainerSidebarCollapsed');
     if (savedSidebarState === 'true') {
       this.sidebarCollapsed = true;
     }
 
     this.loadTrainerInfo();
-    this.loadMyCourses();
+
   }
 
-  // Custom validator for YouTube URLs
   youtubeUrlValidator(control: any) {
     if (!control.value) return null;
 
@@ -114,10 +108,10 @@ export class TrainerDashboardComponent implements OnInit {
   }
 
   loadTrainerInfo(): void {
-    // Get trainer user info from auth service
     const userInfo = this.authService.getCurrentUser();
     if (userInfo) {
       this.trainerUser = {
+        id: userInfo.id || '',
         name: userInfo.name || 'Trainer User',
         email: userInfo.email || 'trainer@company.com',
         role: userInfo.role || 'Trainer'
@@ -126,27 +120,37 @@ export class TrainerDashboardComponent implements OnInit {
   }
 
   loadMyCourses(): void {
+    // Prevent multiple API calls if we already have the data
+    if (this.coursesLoaded) {
+      return;
+    }
+
     this.isLoading = true;
-    // Get courses created by this trainer
-    this.courseService.getCoursesByTrainer(this.trainerUser.email).subscribe({
-      next: (courses) => {
-        this.myCourses = courses.map((course: any) => ({
-          ...course,
-          videoCount: 0 // Will be updated when videos are loaded
-        }));
+    console.log("Attempting to load courses for trainer ID:", this.trainerUser.id);
 
-        // Load video counts for each course
-        this.myCourses.forEach(course => {
-          this.loadCourseVideoCount(course);
-        });
-
-        this.isLoading = false;
-      },
-      error: (error) => {
-        console.error('Failed to load courses', error);
-        this.isLoading = false;
-      }
-    });
+    if (this.trainerUser && this.trainerUser.id) {
+      this.courseService.getCoursesByTrainer(this.trainerUser.id).subscribe({
+        next: (courses) => {
+          console.log("SUCCESS: Courses received from API:", courses);
+          this.myCourses = courses.map((course: any) => ({
+            ...course,
+            videoCount: 0
+          }));
+          this.coursesLoaded = true; // Mark as loaded
+          this.myCourses.forEach(course => {
+            this.loadCourseVideoCount(course);
+          });
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('ERROR: Failed to load courses', error);
+          this.isLoading = false;
+        }
+      });
+    } else {
+      console.error('ERROR: Trainer ID was not available when loading courses.');
+      this.isLoading = false;
+    }
   }
 
   loadCourseVideoCount(course: Course): void {
@@ -161,10 +165,6 @@ export class TrainerDashboardComponent implements OnInit {
     });
   }
 
-  // Get form controls for easier access in template
-
-
-  // Get error messages
   getCourseFieldError(fieldName: string): string {
     const field = this.courseForm.get(fieldName);
     if (field?.hasError('required')) {
@@ -207,9 +207,8 @@ export class TrainerDashboardComponent implements OnInit {
           console.log('Course created successfully', response);
           this.courseCreationMessage = 'Course created successfully!';
           this.courseForm.reset();
-          this.loadMyCourses(); // Refresh the courses list
+          this.loadMyCourses();
 
-          // Clear success message after 3 seconds
           setTimeout(() => {
             this.courseCreationMessage = '';
           }, 3000);
@@ -243,9 +242,8 @@ export class TrainerDashboardComponent implements OnInit {
           console.log('Video added successfully', response);
           this.videoAdditionMessage = 'Video added successfully!';
           this.videoForm.reset();
-          this.loadMyCourses(); // Refresh to update video counts
+          this.loadMyCourses();
 
-          // Clear success message after 3 seconds
           setTimeout(() => {
             this.videoAdditionMessage = '';
           }, 3000);
@@ -263,13 +261,11 @@ export class TrainerDashboardComponent implements OnInit {
     }
   }
 
-  // Auto-fill course ID when creating video
   selectCourseForVideo(courseId: string): void {
     this.videoForm.patchValue({ courseId: courseId });
     this.setActiveSection('videos');
   }
 
-  // Get embed URL for YouTube videos
   getEmbedUrl(url: string): SafeResourceUrl {
     if (!url) {
       return this.sanitizer.bypassSecurityTrustResourceUrl('');
@@ -327,7 +323,6 @@ export class TrainerDashboardComponent implements OnInit {
     }
   }
 
-  // Utility methods for dashboard stats
   getTotalCourses(): number {
     return this.myCourses.length;
   }
@@ -339,10 +334,9 @@ export class TrainerDashboardComponent implements OnInit {
   }
 
   getRecentCourses(): Course[] {
-    return this.myCourses.slice(0, 3); // Show last 3 courses
+    return this.myCourses.slice(0, 3);
   }
 
-  // Delete course
   deleteCourse(courseId: string): void {
     if (confirm('Are you sure you want to delete this course? This action cannot be undone.')) {
       this.courseService.deleteCourse(courseId).subscribe({
@@ -358,12 +352,10 @@ export class TrainerDashboardComponent implements OnInit {
     }
   }
 
-  // Delete video
   deleteVideo(videoId: string, courseId: string): void {
     if (confirm('Are you sure you want to delete this video?')) {
       this.courseService.deleteVideo(videoId).subscribe({
         next: () => {
-          // Update the course's video list
           const course = this.myCourses.find(c => c.id === courseId);
           if (course && course.videos) {
             course.videos = course.videos.filter(v => v.id !== videoId);
