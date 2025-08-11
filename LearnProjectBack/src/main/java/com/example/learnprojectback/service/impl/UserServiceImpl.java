@@ -75,7 +75,17 @@ public class UserServiceImpl implements UserService {
     public List<UserDTO> createUsersFromCsv(Reader reader) {
         try {
             CSVParser parser = new CSVParser(reader, CSVFormat.DEFAULT.withHeader("name", "lastname", "departement", "email", "phone number", "badg number").withSkipHeaderRecord());
-            List<User> users = new ArrayList<>();
+            List<User> usersToCreate = new ArrayList<>();
+            List<Membership> membershipsToCreate = new ArrayList<>();
+
+            // Find or create the default organization
+            Organization organization = organizationRepository.findByName("Default Organization")
+                    .orElseGet(() -> {
+                        Organization newOrg = new Organization();
+                        newOrg.setName("Default Organization");
+                        return organizationRepository.save(newOrg);
+                    });
+
             for (CSVRecord record : parser) {
                 UserCreationRequest request = new UserCreationRequest();
                 request.setName(record.get("name"));
@@ -100,12 +110,22 @@ public class UserServiceImpl implements UserService {
                 user.setEmail(request.getEmail());
                 user.setPassword(passwordEncoder.encode(request.getPassword()));
                 user.setPhone(request.getPhone());
-                users.add(user);
+                usersToCreate.add(user);
+
+                Membership membership = new Membership();
+                membership.setUser(user);
+                membership.setOrganization(organization);
+                membership.setRole(Role.EMPLOYEE);
+                membershipsToCreate.add(membership);
             }
-            userRepository.saveAll(users);
-            return users.stream()
+
+            List<User> savedUsers = userRepository.saveAll(usersToCreate);
+            membershipRepository.saveAll(membershipsToCreate);
+
+            return savedUsers.stream()
                     .map(user -> modelMapper.map(user, UserDTO.class))
                     .collect(Collectors.toList());
+
         } catch (IOException e) {
             throw new RuntimeException("Failed to parse CSV file", e);
         }

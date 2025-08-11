@@ -1,54 +1,421 @@
-<div class="container mt-5">
-  <div class="d-flex justify-content-between align-items-center">
-    <h2>Trainer Dashboard</h2>
-    <button class="btn btn-danger" (click)="logout()">Logout</button>
-  </div>
-  <hr>
+<div class="dashboard-container" [ngClass]="{'dark': darkMode, 'sidebar-collapsed': sidebarCollapsed}">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo-container" [ngClass]="{'collapsed': sidebarCollapsed}">
+        <img
+          [src]="darkMode ? darkLogo : lightLogo"
+          alt="Learn Logo"
+          class="logo"
+          onerror="this.style.display='none'">
+        <span *ngIf="!sidebarCollapsed" class="logo-text">Learn Trainer</span>
+      </div>
+      <button
+        class="sidebar-toggle"
+        (click)="toggleSidebar()"
+        [attr.aria-label]="sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'">
+        <svg class="toggle-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path *ngIf="!sidebarCollapsed" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path>
+          <path *ngIf="sidebarCollapsed" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M13 5l7 7-7 7M5 5l7 7-7 7"></path>
+        </svg>
+      </button>
+    </div>
 
-  <div class="row">
-    <div class="col-md-6">
-      <div class="card">
-        <div class="card-header">
-          <h3>Create Course</h3>
+    <nav class="sidebar-nav">
+      <ul class="nav-list">
+        <li class="nav-item">
+          <button
+            class="nav-link"
+            [class.active]="activeSection === 'dashboard'"
+            (click)="setActiveSection('dashboard')">
+            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M8 5a2 2 0 012-2h4a2 2 0 012 2v0a2 2 0 01-2 2H10a2 2 0 01-2-2v0z"></path>
+            </svg>
+            <span *ngIf="!sidebarCollapsed" class="nav-text">Dashboard</span>
+          </button>
+        </li>
+        <li class="nav-item">
+          <button
+            class="nav-link"
+            [class.active]="activeSection === 'courses'"
+            (click)="setActiveSection('courses')">
+            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+            </svg>
+            <span *ngIf="!sidebarCollapsed" class="nav-text">Create Course</span>
+          </button>
+        </li>
+        <li class="nav-item">
+          <button
+            class="nav-link"
+            [class.active]="activeSection === 'videos'"
+            (click)="setActiveSection('videos')">
+            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+            </svg>
+            <span *ngIf="!sidebarCollapsed" class="nav-text">Add Videos</span>
+          </button>
+        </li>
+        <li class="nav-item">
+          <button
+            class="nav-link"
+            [class.active]="activeSection === 'my-courses'"
+            (click)="setActiveSection('my-courses')">
+            <svg class="nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+            </svg>
+            <span *ngIf="!sidebarCollapsed" class="nav-text">My Courses</span>
+          </button>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- User Info -->
+    <div class="sidebar-footer">
+      <div class="user-info" [ngClass]="{'collapsed': sidebarCollapsed}">
+        <div class="user-avatar">
+          <span>{{ trainerUser.name.charAt(0) }}</span>
         </div>
-        <div class="card-body">
-          <form [formGroup]="courseForm" (ngSubmit)="createCourse()">
-            <div class="form-group">
-              <label for="courseName">Course Name</label>
-              <input type="text" id="courseName" class="form-control" formControlName="title">
-            </div>
-            <div class="form-group">
-              <label for="courseDescription">Course Description</label>
-              <textarea id="courseDescription" class="form-control" formControlName="description"></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary" [disabled]="courseForm.invalid">Create Course</button>
-          </form>
+        <div *ngIf="!sidebarCollapsed" class="user-details">
+          <p class="user-name">{{ trainerUser.name }}</p>
+          <p class="user-role">{{ trainerUser.role }}</p>
         </div>
       </div>
     </div>
-    <div class="col-md-6">
-      <div class="card">
-        <div class="card-header">
-          <h3>Add Video</h3>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Header -->
+    <header class="main-header">
+      <div class="header-content">
+        <div class="header-left">
+          <h1>{{ activeSection === 'dashboard' ? 'Trainer Dashboard' : (activeSection === 'courses' ? 'Create Course' : (activeSection === 'videos' ? 'Add Videos' : 'My Courses')) }}</h1>
+          <p class="header-subtitle">{{ activeSection === 'dashboard' ? 'Welcome back, ' + trainerUser.name : (activeSection === 'courses' ? 'Create new courses for your students' : (activeSection === 'videos' ? 'Add videos to your courses' : 'Manage your created courses')) }}</p>
         </div>
-        <div class="card-body">
-          <form [formGroup]="videoForm" (ngSubmit)="addVideo()">
-            <div class="form-group">
-              <label for="courseId">Course ID</label>
-              <input type="text" id="courseId" class="form-control" formControlName="courseId">
+        <div class="header-right">
+          <button
+            class="theme-toggle"
+            (click)="toggleDarkMode()"
+            [attr.aria-label]="darkMode ? 'Switch to light mode' : 'Switch to dark mode'">
+            <svg *ngIf="darkMode" class="theme-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+            </svg>
+            <svg *ngIf="!darkMode" class="theme-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+            </svg>
+          </button>
+          <button class="logout-btn" (click)="logout()">
+            <svg class="logout-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+            </svg>
+            <span>Logout</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Dashboard Content -->
+    <div class="content-area">
+      <!-- Dashboard Overview -->
+      <div *ngIf="activeSection === 'dashboard'" class="dashboard-overview">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-content">
+              <div class="stat-info">
+                <h3>My Courses</h3>
+                <p class="stat-number">{{ getTotalCourses() }}</p>
+              </div>
+              <div class="stat-icon courses">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                </svg>
+              </div>
             </div>
-            <div class="form-group">
-              <label for="videoTitle">Video Title</label>
-              <input type="text" id="videoTitle" class="form-control" formControlName="title">
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-content">
+              <div class="stat-info">
+                <h3>Total Videos</h3>
+                <p class="stat-number">{{ getTotalVideos() }}</p>
+              </div>
+              <div class="stat-icon videos">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                </svg>
+              </div>
             </div>
-            <div class="form-group">
-              <label for="videoUrl">YouTube URL</label>
-              <input type="text" id="videoUrl" class="form-control" formControlName="url">
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-content">
+              <div class="stat-info">
+                <h3>Quick Actions</h3>
+                <p class="stat-description">Create content</p>
+              </div>
+              <div class="stat-icon actions">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+              </div>
             </div>
-            <button type="submit" class="btn btn-primary" [disabled]="videoForm.invalid">Add Video</button>
-          </form>
+          </div>
+        </div>
+
+        <!-- Recent Courses -->
+        <div *ngIf="myCourses.length > 0" class="recent-courses">
+          <h3>Recent Courses</h3>
+          <div class="courses-grid">
+            <div *ngFor="let course of getRecentCourses()" class="course-preview-card">
+              <div class="course-preview-header">
+                <h4>{{ course.title }}</h4>
+                <span class="video-count">{{ course.videoCount || 0 }} videos</span>
+              </div>
+              <p class="course-preview-description">{{ course.description }}</p>
+              <button class="add-video-btn" (click)="selectCourseForVideo(course.id)">
+                Add Video
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Create Course Section -->
+      <div *ngIf="activeSection === 'courses'" class="create-course-section">
+        <div class="management-card">
+          <div class="card-header">
+            <h3>Create New Course</h3>
+            <p>Fill in the details to create a new course for your students</p>
+          </div>
+          <div class="card-content">
+            <!-- Success/Error Messages -->
+            <div *ngIf="courseCreationMessage" class="message"
+                 [ngClass]="{'success': courseCreationMessage.includes('successfully'), 'error': !courseCreationMessage.includes('successfully')}">
+              {{ courseCreationMessage }}
+            </div>
+
+            <form [formGroup]="courseForm" (ngSubmit)="createCourse()" class="course-form">
+              <div class="form-group">
+                <label for="courseName" class="form-label">Course Name</label>
+                <input
+                  type="text"
+                  id="courseName"
+                  class="form-input"
+                  [class.error]="courseFormControls['title'].invalid && courseFormControls['title'].touched"
+                  placeholder="Enter course name"
+                  formControlName="title"
+                  [disabled]="isCreatingCourse">
+                <div
+                  *ngIf="courseFormControls['title'].invalid && courseFormControls['title'].touched"
+                  class="error-message">
+                  {{ getCourseFieldError('title') }}
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="courseDescription" class="form-label">Course Description</label>
+                <textarea
+                  id="courseDescription"
+                  class="form-textarea"
+                  [class.error]="courseFormControls['description'].invalid && courseFormControls['description'].touched"
+                  placeholder="Enter course description"
+                  formControlName="description"
+                  [disabled]="isCreatingCourse"
+                  rows="4">
+                </textarea>
+                <div
+                  *ngIf="courseFormControls['description'].invalid && courseFormControls['description'].touched"
+                  class="error-message">
+                  {{ getCourseFieldError('description') }}
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                class="btn btn-primary"
+                [disabled]="!isCourseFormValid || isCreatingCourse">
+                <svg *ngIf="isCreatingCourse" class="btn-spinner" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v4m0 8v4m8-8h-4m-8 0H4"></path>
+                </svg>
+                {{ isCreatingCourse ? 'Creating Course...' : 'Create Course' }}
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add Video Section -->
+      <div *ngIf="activeSection === 'videos'" class="add-video-section">
+        <div class="management-card">
+          <div class="card-header">
+            <h3>Add Video to Course</h3>
+            <p>Add YouTube videos to enhance your courses</p>
+          </div>
+          <div class="card-content">
+            <!-- Success/Error Messages -->
+            <div *ngIf="videoAdditionMessage" class="message"
+                 [ngClass]="{'success': videoAdditionMessage.includes('successfully'), 'error': !videoAdditionMessage.includes('successfully')}">
+              {{ videoAdditionMessage }}
+            </div>
+
+            <form [formGroup]="videoForm" (ngSubmit)="addVideo()" class="video-form">
+              <div class="form-group">
+                <label for="courseId" class="form-label">Course ID</label>
+                <select
+                  id="courseId"
+                  class="form-select"
+                  [class.error]="videoFormControls['courseId'].invalid && videoFormControls['courseId'].touched"
+                  formControlName="courseId"
+                  [disabled]="isAddingVideo">
+                  <option value="">Select a course</option>
+                  <option *ngFor="let course of myCourses" [value]="course.id">
+                    {{ course.title }}
+                  </option>
+                </select>
+                <div
+                  *ngIf="videoFormControls['courseId'].invalid && videoFormControls['courseId'].touched"
+                  class="error-message">
+                  {{ getVideoFieldError('courseId') }}
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="videoTitle" class="form-label">Video Title</label>
+                <input
+                  type="text"
+                  id="videoTitle"
+                  class="form-input"
+                  [class.error]="videoFormControls['title'].invalid && videoFormControls['title'].touched"
+                  placeholder="Enter video title"
+                  formControlName="title"
+                  [disabled]="isAddingVideo">
+                <div
+                  *ngIf="videoFormControls['title'].invalid && videoFormControls['title'].touched"
+                  class="error-message">
+                  {{ getVideoFieldError('title') }}
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="videoUrl" class="form-label">YouTube URL</label>
+                <input
+                  type="url"
+                  id="videoUrl"
+                  class="form-input"
+                  [class.error]="videoFormControls['url'].invalid && videoFormControls['url'].touched"
+                  placeholder="https://www.youtube.com/watch?v=..."
+                  formControlName="url"
+                  [disabled]="isAddingVideo">
+                <small class="form-hint">Paste the full YouTube URL here</small>
+                <div
+                  *ngIf="videoFormControls['url'].invalid && videoFormControls['url'].touched"
+                  class="error-message">
+                  {{ getVideoFieldError('url') }}
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                class="btn btn-primary"
+                [disabled]="!isVideoFormValid || isAddingVideo">
+                <svg *ngIf="isAddingVideo" class="btn-spinner" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v4m0 8v4m8-8h-4m-8 0H4"></path>
+                </svg>
+                {{ isAddingVideo ? 'Adding Video...' : 'Add Video' }}
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- My Courses Section -->
+      <div *ngIf="activeSection === 'my-courses'" class="my-courses-section">
+        <div *ngIf="isLoading" class="loading-state">
+          <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Loading your courses...</p>
+          </div>
+        </div>
+
+        <div *ngFor="let course of myCourses" class="course-card">
+          <div class="course-header">
+            <div class="course-info">
+              <h3>{{ course.title }}</h3>
+              <p class="course-meta">{{ course.videoCount || 0 }} videos • Created by you</p>
+            </div>
+            <div class="course-actions">
+              <button class="btn btn-secondary" (click)="selectCourseForVideo(course.id)">
+                Add Video
+              </button>
+              <button class="btn btn-danger" (click)="deleteCourse(course.id)">
+                Delete
+              </button>
+            </div>
+          </div>
+
+          <div class="course-content">
+            <p class="course-description">{{ course.description }}</p>
+
+            <div *ngIf="course.videos && course.videos.length > 0" class="videos-section">
+              <h4>Videos</h4>
+              <div class="videos-grid">
+                <div *ngFor="let video of course.videos" class="video-item">
+                  <div class="video-header">
+                    <h5>{{ video.title }}</h5>
+                    <button class="btn-remove" (click)="deleteVideo(video.id, course.id)">
+                      <svg class="remove-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                      </svg>
+                    </button>
+                  </div>
+                  <div class="video-container">
+                    <iframe
+                      [src]="getEmbedUrl(video.youtubeUrl)"
+                      frameborder="0"
+                      allowfullscreen
+                      loading="lazy">
+                    </iframe>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div *ngIf="!course.videos || course.videos.length === 0" class="no-videos">
+              <p>No videos added yet.</p>
+              <button class="btn btn-primary" (click)="selectCourseForVideo(course.id)">
+                Add First Video
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="myCourses.length === 0 && !isLoading" class="empty-state">
+          <svg class="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+          </svg>
+          <h3>No courses created yet</h3>
+          <p>Start by creating your first course.</p>
+          <button class="btn btn-primary" (click)="setActiveSection('courses')">
+            Create First Course
+          </button>
         </div>
       </div>
     </div>
-  </div>
+  </main>
 </div>
