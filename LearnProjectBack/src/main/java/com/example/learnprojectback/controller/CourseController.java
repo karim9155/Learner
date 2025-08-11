@@ -37,4 +37,14 @@ public class CourseController {
     public List<CourseDTO> getAllCourses() {
         return courseService.getAllCourses();
     }
+    @GetMapping("/by-trainer/{trainerId}")
+    public List<CourseDTO> getCoursesByTrainer(@PathVariable UUID trainerId) {
+        return courseService.getCoursesByTrainer(trainerId);
+    }
+
+    @DeleteMapping("/{courseId}")
+    public ResponseEntity<Void> deleteCourse(@PathVariable UUID courseId) {
+        courseService.deleteCourse(courseId);
+        return ResponseEntity.noContent().build();
+    }
 }

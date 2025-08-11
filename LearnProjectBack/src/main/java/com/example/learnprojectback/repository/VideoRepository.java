@@ -8,4 +8,5 @@ import java.util.UUID;
 
 public interface VideoRepository extends JpaRepository<Video, UUID> {
     List<Video> findAllByUserId(UUID userId);
+    List<Video> findAllByCourseId(UUID courseId); // Add this line
 }

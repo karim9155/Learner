@@ -48,19 +48,21 @@ export class TrainerDashboardComponent implements OnInit {
   sidebarCollapsed: boolean = false;
   activeSection: string = 'dashboard';
   isLoading: boolean = false;
-  isCreatingCourse: boolean = false;
-  isAddingVideo: boolean = false;
+
 
   // Logo paths - replace these with your actual logo paths
   lightLogo: string = 'assets/images/learn-logo-light.png';
   darkLogo: string = 'assets/images/learn-logo-dark.png';
 
-  // Trainer user info (would come from auth service)
-  trainerUser = {
-    name: 'Trainer User',
-    email: 'trainer@company.com',
-    role: 'Trainer'
-  };
+
+  trainerUser = { name: '', email: '', role: '' };
+  isCreatingCourse = false;
+  isAddingVideo = false;
+
+  get courseFormControls() { return this.courseForm.controls; }
+  get videoFormControls() { return this.videoForm.controls; }
+  get isCourseFormValid() { return this.courseForm.valid; }
+  get isVideoFormValid() { return this.videoForm.valid; }
 
   // Course creation success message
   courseCreationMessage: string = '';
@@ -128,7 +130,7 @@ export class TrainerDashboardComponent implements OnInit {
     // Get courses created by this trainer
     this.courseService.getCoursesByTrainer(this.trainerUser.email).subscribe({
       next: (courses) => {
-        this.myCourses = courses.map(course => ({
+        this.myCourses = courses.map((course: any) => ({
           ...course,
           videoCount: 0 // Will be updated when videos are loaded
         }));
@@ -160,22 +162,7 @@ export class TrainerDashboardComponent implements OnInit {
   }
 
   // Get form controls for easier access in template
-  get courseFormControls() {
-    return this.courseForm.controls;
-  }
 
-  get videoFormControls() {
-    return this.videoForm.controls;
-  }
-
-  // Check if forms are valid
-  get isCourseFormValid(): boolean {
-    return this.courseForm.valid;
-  }
-
-  get isVideoFormValid(): boolean {
-    return this.videoForm.valid;
-  }
 
   // Get error messages
   getCourseFieldError(fieldName: string): string {

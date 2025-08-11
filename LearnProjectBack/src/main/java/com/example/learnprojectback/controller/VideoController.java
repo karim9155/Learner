@@ -3,6 +3,7 @@ package com.example.learnprojectback.controller;
 import com.example.learnprojectback.dto.VideoDTO;
 import com.example.learnprojectback.security.JwtUser;
 import com.example.learnprojectback.service.VideoService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,5 +39,11 @@ public class VideoController {
     @GetMapping("/by-user/{userId}")
     public List<VideoDTO> listByUser(@PathVariable UUID userId) {
         return videoService.listVideosByUser(userId);
+    }
+
+    @DeleteMapping("/{videoId}")
+    public ResponseEntity<Void> deleteVideo(@PathVariable UUID videoId) {
+        videoService.deleteVideo(videoId);
+        return ResponseEntity.noContent().build();
     }
 }

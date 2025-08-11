@@ -92,4 +92,15 @@ public class CourseServiceImpl implements CourseService {
         }
         return courseDTO;
     }
+    @Override
+    public List<CourseDTO> getCoursesByTrainer(UUID trainerId) {
+        return courseRepository.findByCreatedById(trainerId).stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void deleteCourse(UUID courseId) {
+        courseRepository.deleteById(courseId);
+    }
 }
