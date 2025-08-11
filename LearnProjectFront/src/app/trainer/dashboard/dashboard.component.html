@@ -1,5 +1,4 @@
 <div class="dashboard-container" [ngClass]="{'dark': darkMode, 'sidebar-collapsed': sidebarCollapsed}">
-  <!-- Sidebar -->
   <aside class="sidebar">
     <div class="sidebar-header">
       <div class="logo-container" [ngClass]="{'collapsed': sidebarCollapsed}">
@@ -78,7 +77,6 @@
       </ul>
     </nav>
 
-    <!-- User Info -->
     <div class="sidebar-footer">
       <div class="user-info" [ngClass]="{'collapsed': sidebarCollapsed}">
         <div class="user-avatar">
@@ -92,9 +90,7 @@
     </div>
   </aside>
 
-  <!-- Main Content -->
   <main class="main-content">
-    <!-- Header -->
     <header class="main-header">
       <div class="header-content">
         <div class="header-left">
@@ -126,9 +122,7 @@
       </div>
     </header>
 
-    <!-- Dashboard Content -->
     <div class="content-area">
-      <!-- Dashboard Overview -->
       <div *ngIf="activeSection === 'dashboard'" class="dashboard-overview">
         <div class="stats-grid">
           <div class="stat-card">
@@ -177,7 +171,6 @@
           </div>
         </div>
 
-        <!-- Recent Courses -->
         <div *ngIf="myCourses.length > 0" class="recent-courses">
           <h3>Recent Courses</h3>
           <div class="courses-grid">
@@ -195,7 +188,6 @@
         </div>
       </div>
 
-      <!-- Create Course Section -->
       <div *ngIf="activeSection === 'courses'" class="create-course-section">
         <div class="management-card">
           <div class="card-header">
@@ -203,7 +195,6 @@
             <p>Fill in the details to create a new course for your students</p>
           </div>
           <div class="card-content">
-            <!-- Success/Error Messages -->
             <div *ngIf="courseCreationMessage" class="message"
                  [ngClass]="{'success': courseCreationMessage.includes('successfully'), 'error': !courseCreationMessage.includes('successfully')}">
               {{ courseCreationMessage }}
@@ -259,7 +250,6 @@
         </div>
       </div>
 
-      <!-- Add Video Section -->
       <div *ngIf="activeSection === 'videos'" class="add-video-section">
         <div class="management-card">
           <div class="card-header">
@@ -267,7 +257,6 @@
             <p>Add YouTube videos to enhance your courses</p>
           </div>
           <div class="card-content">
-            <!-- Success/Error Messages -->
             <div *ngIf="videoAdditionMessage" class="message"
                  [ngClass]="{'success': videoAdditionMessage.includes('successfully'), 'error': !videoAdditionMessage.includes('successfully')}">
               {{ videoAdditionMessage }}
@@ -318,7 +307,7 @@
                   id="videoUrl"
                   class="form-input"
                   [class.error]="videoFormControls['url'].invalid && videoFormControls['url'].touched"
-                  placeholder="https://www.youtube.com/watch?v=..."
+                  placeholder="http://googleusercontent.com/youtube.com/3..."
                   formControlName="url"
                   [disabled]="isAddingVideo">
                 <small class="form-hint">Paste the full YouTube URL here</small>
@@ -343,8 +332,8 @@
         </div>
       </div>
 
-      <!-- My Courses Section -->
       <div *ngIf="activeSection === 'my-courses'" class="my-courses-section">
+
         <div *ngIf="isLoading" class="loading-state">
           <div class="loading-spinner">
             <div class="spinner"></div>
@@ -352,59 +341,61 @@
           </div>
         </div>
 
-        <div *ngFor="let course of myCourses" class="course-card">
-          <div class="course-header">
-            <div class="course-info">
-              <h3>{{ course.title }}</h3>
-              <p class="course-meta">{{ course.videoCount || 0 }} videos • Created by you</p>
-            </div>
-            <div class="course-actions">
-              <button class="btn btn-secondary" (click)="selectCourseForVideo(course.id)">
-                Add Video
-              </button>
-              <button class="btn btn-danger" (click)="deleteCourse(course.id)">
-                Delete
-              </button>
-            </div>
-          </div>
-
-          <div class="course-content">
-            <p class="course-description">{{ course.description }}</p>
-
-            <div *ngIf="course.videos && course.videos.length > 0" class="videos-section">
-              <h4>Videos</h4>
-              <div class="videos-grid">
-                <div *ngFor="let video of course.videos" class="video-item">
-                  <div class="video-header">
-                    <h5>{{ video.title }}</h5>
-                    <button class="btn-remove" (click)="deleteVideo(video.id, course.id)">
-                      <svg class="remove-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                      </svg>
-                    </button>
-                  </div>
-                  <div class="video-container">
-                    <iframe
-                      [src]="getEmbedUrl(video.youtubeUrl)"
-                      frameborder="0"
-                      allowfullscreen
-                      loading="lazy">
-                    </iframe>
-                  </div>
-                </div>
+        <div *ngIf="!isLoading && myCourses.length > 0">
+          <div *ngFor="let course of myCourses" class="course-card">
+            <div class="course-header">
+              <div class="course-info">
+                <h3>{{ course.title }}</h3>
+                <p class="course-meta">{{ course.videoCount || 0 }} videos • Created by you</p>
+              </div>
+              <div class="course-actions">
+                <button class="btn btn-secondary" (click)="selectCourseForVideo(course.id)">
+                  Add Video
+                </button>
+                <button class="btn btn-danger" (click)="deleteCourse(course.id)">
+                  Delete
+                </button>
               </div>
             </div>
 
-            <div *ngIf="!course.videos || course.videos.length === 0" class="no-videos">
-              <p>No videos added yet.</p>
-              <button class="btn btn-primary" (click)="selectCourseForVideo(course.id)">
-                Add First Video
-              </button>
+            <div class="course-content">
+              <p class="course-description">{{ course.description }}</p>
+
+              <div *ngIf="course.videos && course.videos.length > 0" class="videos-section">
+                <h4>Videos</h4>
+                <div class="videos-grid">
+                  <div *ngFor="let video of course.videos" class="video-item">
+                    <div class="video-header">
+                      <h5>{{ video.title }}</h5>
+                      <button class="btn-remove" (click)="deleteVideo(video.id, course.id)">
+                        <svg class="remove-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                      </button>
+                    </div>
+                    <div class="video-container">
+                      <iframe
+                        [src]="getEmbedUrl(video.youtubeUrl)"
+                        frameborder="0"
+                        allowfullscreen
+                        loading="lazy">
+                      </iframe>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div *ngIf="!course.videos || course.videos.length === 0" class="no-videos">
+                <p>No videos added yet.</p>
+                <button class="btn btn-primary" (click)="selectCourseForVideo(course.id)">
+                  Add First Video
+                </button>
+              </div>
             </div>
           </div>
         </div>
 
-        <div *ngIf="myCourses.length === 0 && !isLoading" class="empty-state">
+        <div *ngIf="!isLoading && myCourses.length === 0" class="empty-state">
           <svg class="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>

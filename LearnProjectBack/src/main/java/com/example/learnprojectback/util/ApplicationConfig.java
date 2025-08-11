@@ -19,11 +19,11 @@ public class ApplicationConfig {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
-        // Custom mapping for Course to CourseDTO
+        // This safety check is still required to prevent the final mapping error.
         modelMapper.createTypeMap(Course.class, CourseDTO.class)
                 .addMappings(mapper -> {
-                    mapper.map(src -> src.getCreatedBy().getId(), CourseDTO::setTrainerId);
-                    mapper.map(src -> src.getCreatedBy().getEmail(), CourseDTO::setTrainerEmail);
+                    mapper.map(src -> src.getCreatedBy() != null ? src.getCreatedBy().getId() : null, CourseDTO::setTrainerId);
+                    mapper.map(src -> src.getCreatedBy() != null ? src.getCreatedBy().getEmail() : null, CourseDTO::setTrainerEmail);
                     mapper.map(src -> src.getOrg() != null ? src.getOrg().getId() : null, CourseDTO::setOrganizationId);
                 });
 
