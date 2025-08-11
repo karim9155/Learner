@@ -53,4 +53,9 @@ export class AuthService {
       return '';
     }
   }
+  getCurrentUser(): any {
+    const token = this.getToken();
+    if (!token) return null;
+    return jwtDecode(token);
+  }
 }

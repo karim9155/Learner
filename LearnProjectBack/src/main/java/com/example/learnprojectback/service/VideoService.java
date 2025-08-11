@@ -10,4 +10,5 @@ public interface VideoService {
     List<VideoDTO> listVideosByCourse(UUID courseId);
     List<VideoDTO> listAllVideos();
     List<VideoDTO> listVideosByUser(UUID userId);
+    void deleteVideo(UUID videoId);
 }

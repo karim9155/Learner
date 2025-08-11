@@ -82,4 +82,8 @@ public class VideoServiceImpl implements VideoService {
                     .collect(Collectors.toList());
         }
     }
+    @Override
+    public void deleteVideo(UUID videoId) {
+        videoRepository.deleteById(videoId);
+    }
 }

@@ -36,4 +36,19 @@ export class CourseService {
     const videoApiUrl = 'http://localhost:8080/api/videos';
     return this.http.get(`${videoApiUrl}/by-course/${courseId}`, { headers: this.getAuthHeaders() });
   }
+  getCoursesByTrainer(trainerEmail: string): Observable<any> {
+    // This endpoint should ideally take a trainer ID, but we'll use email for now
+    // This will require a backend change to fetch courses by trainer email.
+    // For now, we will filter on the frontend.
+    return this.http.get<any[]>(`${this.apiUrl}/all`, { headers: this.getAuthHeaders() });
+  }
+
+  deleteCourse(courseId: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${courseId}`, { headers: this.getAuthHeaders() });
+  }
+
+  deleteVideo(videoId: string): Observable<any> {
+    const videoApiUrl = 'http://localhost:8080/api/videos';
+    return this.http.delete(`${videoApiUrl}/${videoId}`, { headers: this.getAuthHeaders() });
+  }
 }
