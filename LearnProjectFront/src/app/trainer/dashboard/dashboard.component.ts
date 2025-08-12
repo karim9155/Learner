@@ -55,7 +55,7 @@ export class TrainerDashboardComponent implements OnInit {
   trainerUser = { id: '', name: '', email: '', role: '' };
   isCreatingCourse = false;
   isAddingVideo = false;
-  private coursesLoaded: boolean | undefined;
+  private coursesLoaded: boolean = false;
 
   get courseFormControls() { return this.courseForm.controls; }
   get videoFormControls() { return this.videoForm.controls; }
@@ -97,7 +97,9 @@ export class TrainerDashboardComponent implements OnInit {
     }
 
     this.loadTrainerInfo();
-
+    // Initialize coursesLoaded to false and load courses on component initialization
+    this.coursesLoaded = false;
+    this.loadMyCourses();
   }
 
   youtubeUrlValidator(control: any) {
@@ -109,9 +111,10 @@ export class TrainerDashboardComponent implements OnInit {
 
   loadTrainerInfo(): void {
     const userInfo = this.authService.getCurrentUser();
+    console.log('User info from token:', userInfo); // Debugging message
     if (userInfo) {
       this.trainerUser = {
-        id: userInfo.id || '',
+        id: userInfo.sub || '',
         name: userInfo.name || 'Trainer User',
         email: userInfo.email || 'trainer@company.com',
         role: userInfo.role || 'Trainer'
@@ -314,6 +317,10 @@ export class TrainerDashboardComponent implements OnInit {
 
   setActiveSection(section: string): void {
     this.activeSection = section;
+    console.log(`Switched to section: ${section}`); // Debugging message
+    if (section === 'my-courses') {
+      this.loadMyCourses();
+    }
   }
 
   logout(): void {

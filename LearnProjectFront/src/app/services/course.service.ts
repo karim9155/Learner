@@ -37,9 +37,13 @@ export class CourseService {
     return this.http.get(`${videoApiUrl}/by-course/${courseId}`, { headers: this.getAuthHeaders() });
   }
 
-  // FIX: This now uses the correct endpoint with the trainer's ID
-  getCoursesByTrainer(trainerId: string): Observable<any> {
-    return this.http.get<any[]>(`${this.apiUrl}/by-trainer/${trainerId}`, { headers: this.getAuthHeaders() });
+  // This method accepts either a trainer ID or email
+  getCoursesByTrainer(trainerIdOrEmail: string): Observable<any> {
+    // Check if the parameter is an email (contains @) and encode it
+    if (trainerIdOrEmail.includes('@')) {
+      trainerIdOrEmail = encodeURIComponent(trainerIdOrEmail);
+    }
+    return this.http.get<any[]>(`${this.apiUrl}/by-trainer/${trainerIdOrEmail}`, { headers: this.getAuthHeaders() });
   }
 
   deleteCourse(courseId: string): Observable<any> {
