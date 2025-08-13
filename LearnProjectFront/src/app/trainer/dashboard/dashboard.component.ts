@@ -110,25 +110,27 @@ export class TrainerDashboardComponent implements OnInit {
   }
 
   loadTrainerInfo(): void {
-    const userInfo = this.authService.getCurrentUser();
-    console.log('User info from token:', userInfo); // Debugging message
+    const userInfo = this.authService.getCurrentUser(); // This now gets the full user object
+    const userRole = this.authService.getRole();       // We can still get the role separately
+
+    console.log('User info from storage:', userInfo); // For debugging
+
     if (userInfo) {
       this.trainerUser = {
-        id: userInfo.sub || '',
+        id: userInfo.id || '', // Use the ID directly from the user object
         name: userInfo.name || 'Trainer User',
-        email: userInfo.email || 'trainer@company.com',
-        role: userInfo.role || 'Trainer'
+        email: userInfo.email || 'trainer@example.com',
+        role: userRole || 'Trainer'
       };
     }
   }
 
   loadMyCourses(): void {
-    // Prevent multiple API calls if we already have the data
     if (this.coursesLoaded) {
       return;
     }
 
-    this.isLoading = true;
+    this.isLoading = true; // Start loading
     console.log("Attempting to load courses for trainer ID:", this.trainerUser.id);
 
     if (this.trainerUser && this.trainerUser.id) {
@@ -139,15 +141,17 @@ export class TrainerDashboardComponent implements OnInit {
             ...course,
             videoCount: 0
           }));
-          this.coursesLoaded = true; // Mark as loaded
+          this.coursesLoaded = true;
+
           this.myCourses.forEach(course => {
             this.loadCourseVideoCount(course);
           });
-          this.isLoading = false;
+
+          this.isLoading = false; // Stop loading here
         },
         error: (error) => {
           console.error('ERROR: Failed to load courses', error);
-          this.isLoading = false;
+          this.isLoading = false; // Also stop loading on error
         }
       });
     } else {
@@ -155,19 +159,20 @@ export class TrainerDashboardComponent implements OnInit {
       this.isLoading = false;
     }
   }
-
-  loadCourseVideoCount(course: Course): void {
+  loadCourseVideoCount(course: any): void {
+    // **** THIS NOW CORRECTLY CALLS CourseService ****
     this.courseService.getVideosByCourse(course.id).subscribe({
       next: (videos) => {
-        course.videoCount = videos.length;
-        course.videos = videos;
+        const courseIndex = this.myCourses.findIndex(c => c.id === course.id);
+        if (courseIndex !== -1) {
+          this.myCourses[courseIndex].videoCount = videos.length;
+        }
       },
-      error: (error) => {
-        console.error(`Failed to load videos for course ${course.id}`, error);
+      error: (err) => {
+        console.error(`Failed to load video count for course ${course.id}`, err);
       }
     });
   }
-
   getCourseFieldError(fieldName: string): string {
     const field = this.courseForm.get(fieldName);
     if (field?.hasError('required')) {
