@@ -54,4 +54,5 @@ export class CourseService {
     const videoApiUrl = 'http://localhost:8080/api/videos';
     return this.http.delete(`${videoApiUrl}/${videoId}`, { headers: this.getAuthHeaders() });
   }
+
 }
