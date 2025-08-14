@@ -39,7 +39,8 @@ interface User {
   styleUrls: ['./dashboard.component.css']
 })
 export class AdminDashboardComponent implements OnInit {
-  courses: Course[] = [];
+  shopCourses: Course[] = [];
+  enrolledCourses: Course[] = [];
   users: User[] = [];
   csvFile: File | null = null;
   darkMode: boolean = false;
@@ -58,6 +59,7 @@ export class AdminDashboardComponent implements OnInit {
 
   // Admin user info (would come from auth service)
   adminUser = {
+    id: 'a7d3a8e7-1b3e-4e4a-9b8f-2e2b3a7b3c1d', // Example UUID
     name: 'Admin User',
     email: 'admin@company.com',
     role: 'Administrator'
@@ -87,27 +89,28 @@ export class AdminDashboardComponent implements OnInit {
       this.sidebarCollapsed = true;
     }
 
-    this.loadCourses();
+    this.loadAllCourses();
+    this.loadEnrolledCourses();
     // this.loadAdminInfo();
   }
 
-/*  loadAdminInfo(): void {
-    // Get admin user info from auth service
-    const userInfo = this.authService.getCurrentUser();
-    if (userInfo) {
-      this.adminUser = {
-        name: userInfo.name || 'Admin User',
-        email: userInfo.email || 'admin@company.com',
-        role: userInfo.role || 'Administrator'
-      };
-    }
-  }*/
+  /*  loadAdminInfo(): void {
+      // Get admin user info from auth service
+      const userInfo = this.authService.getCurrentUser();
+      if (userInfo) {
+        this.adminUser = {
+          name: userInfo.name || 'Admin User',
+          email: userInfo.email || 'admin@company.com',
+          role: userInfo.role || 'Administrator'
+        };
+      }
+    }*/
 
-  loadCourses(): void {
+  loadAllCourses(): void {
     this.isLoading = true;
     this.courseService.getAllCourses().subscribe({
       next: (response) => {
-        this.courses = response.map((course: any) => ({
+        this.shopCourses = response.map((course: any) => ({
           ...course,
           showVideos: false
         }));
@@ -116,6 +119,36 @@ export class AdminDashboardComponent implements OnInit {
       error: (error) => {
         console.error('Failed to load courses', error);
         this.isLoading = false;
+      }
+    });
+  }
+
+  loadEnrolledCourses(): void {
+    this.isLoading = true;
+    this.courseService.getEnrolledCourses(this.adminUser.id).subscribe({
+      next: (response) => {
+        this.enrolledCourses = response.map((course: any) => ({
+          ...course,
+          showVideos: false
+        }));
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Failed to load enrolled courses', error);
+        this.isLoading = false;
+      }
+    });
+  }
+
+  enroll(courseId: string): void {
+    this.courseService.enrollInCourse(courseId, this.adminUser.id).subscribe({
+      next: () => {
+        alert('Enrolled successfully!');
+        this.loadEnrolledCourses();
+      },
+      error: (error) => {
+        console.error('Failed to enroll in course', error);
+        alert('Failed to enroll in course. Please try again.');
       }
     });
   }
@@ -269,13 +302,17 @@ export class AdminDashboardComponent implements OnInit {
 
   // Utility methods
   getTotalCourses(): number {
-    return this.courses.length;
+    return this.shopCourses.length;
   }
 
   getTotalVideos(): number {
-    return this.courses.reduce((total, course) => {
+    const shopVideos = this.shopCourses.reduce((total, course) => {
       return total + (course.videos ? course.videos.length : 0);
     }, 0);
+    const enrolledVideos = this.enrolledCourses.reduce((total, course) => {
+      return total + (course.videos ? course.videos.length : 0);
+    }, 0);
+    return shopVideos + enrolledVideos;
   }
 
   getTotalUsers(): number {

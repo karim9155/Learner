@@ -9,6 +9,7 @@ import { AuthService } from './auth.service';
 export class CourseService {
   private apiUrl = 'http://localhost:8080/api/courses';
 
+
   constructor(private http: HttpClient, private authService: AuthService) { }
 
   private getAuthHeaders(): HttpHeaders {
@@ -53,6 +54,14 @@ export class CourseService {
   deleteVideo(videoId: string): Observable<any> {
     const videoApiUrl = 'http://localhost:8080/api/videos';
     return this.http.delete(`${videoApiUrl}/${videoId}`, { headers: this.getAuthHeaders() });
+  }
+  getEnrolledCourses(userId: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/by-user/${userId}`, { headers: this.getAuthHeaders() });
+  }
+
+  enrollInCourse(courseId: string, userId: string): Observable<any> {
+    const enrollmentUrl = 'http://localhost:8080/api/enrollments';
+    return this.http.post(enrollmentUrl, { courseId, learnerId: userId }, { headers: this.getAuthHeaders() });
   }
 
 }

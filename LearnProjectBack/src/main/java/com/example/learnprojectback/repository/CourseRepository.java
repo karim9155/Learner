@@ -13,4 +13,8 @@ public interface CourseRepository extends JpaRepository<Course, UUID> {
 
     @Query(value = "SELECT c.* FROM course c WHERE c.created_by_id = :trainerId", nativeQuery = true)
     List<Course> findByCreatedById(@Param("trainerId") UUID trainerId);
+    @Query(value = "SELECT c.* FROM enrollment e JOIN course c ON e.course_id = c.id WHERE e.user_id = :userId;", nativeQuery = true)
+    List<Course> findEnrolledCoursesByUserId(@Param("userId") UUID userId);
+    @Query(value = "SELECT c.* FROM course c JOIN enrollment e ON c.id = e.course_id WHERE e.user_id = :userId", nativeQuery = true)
+    List<Course> findByUserId(@Param("userId") UUID userId);
 }

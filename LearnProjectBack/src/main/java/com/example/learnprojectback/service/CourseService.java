@@ -13,4 +13,6 @@ public interface CourseService {
     List<CourseDTO> getAllCourses();
     List<CourseDTO> getCoursesByTrainer(UUID trainerId);
     void deleteCourse(UUID courseId);
+    List<CourseDTO> getEnrolledCourses(UUID userId); // New Method
+    List<CourseDTO> getCoursesByUserId(UUID userId);
 }
