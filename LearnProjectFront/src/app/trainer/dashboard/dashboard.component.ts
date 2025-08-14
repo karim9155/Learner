@@ -49,8 +49,8 @@ export class TrainerDashboardComponent implements OnInit {
   activeSection: string = 'dashboard';
   isLoading: boolean = false;
 
-  lightLogo: string = 'assets/images/learn-logo-light.png';
-  darkLogo: string = 'assets/images/learn-logo-dark.png';
+  lightLogo: string = 'assets/logo.png';
+  darkLogo: string = 'assets/logoDark.png';
 
   trainerUser = { id: '', name: '', email: '', role: '' };
   isCreatingCourse = false;

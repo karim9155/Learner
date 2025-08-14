@@ -4,29 +4,32 @@ import com.example.learnprojectback.dto.UserCreationRequest;
 import com.example.learnprojectback.dto.UserDTO;
 import com.example.learnprojectback.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import org.springframework.data.domain.Pageable;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/users")
+    @PostMapping
     public ResponseEntity<UserDTO> createUser(@RequestBody UserCreationRequest userCreationRequest) {
         return ResponseEntity.ok(userService.createUser(userCreationRequest));
     }
 
-    @PostMapping("/users/upload")
+    @PostMapping("/upload")
     public ResponseEntity<List<UserDTO>> uploadUsers(@RequestParam("file") MultipartFile file) {
         if (file.isEmpty()) {
             return ResponseEntity.badRequest().build();
@@ -39,5 +42,20 @@ public class UserController {
             // Handle exception
             return ResponseEntity.status(500).build();
         }
+    }
+    @GetMapping("/employees")
+    public Page<UserDTO> getEmployees(Pageable pageable, @RequestParam(required = false) String search) {
+        return userService.getEmployees(pageable, search);
+    }
+
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<Void> deleteUser(@PathVariable UUID userId) {
+        userService.deleteUser(userId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{userId}")
+    public ResponseEntity<UserDTO> updateUser(@PathVariable UUID userId, @RequestBody UserDTO userDTO) {
+        return ResponseEntity.ok(userService.updateUser(userId, userDTO));
     }
 }

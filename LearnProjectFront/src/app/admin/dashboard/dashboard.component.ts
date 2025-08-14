@@ -5,6 +5,7 @@ import { UserService } from '../../services/user.service';
 import { Router } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import * as Papa from 'papaparse';
+import {PageEvent} from '@angular/material/paginator';
 
 interface Course {
   id: string;
@@ -22,6 +23,7 @@ interface Video {
 }
 
 interface User {
+  id: string;
   name: string;
   lastname: string;
   departement: string;
@@ -45,10 +47,14 @@ export class AdminDashboardComponent implements OnInit {
   activeSection: string = 'dashboard';
   isLoading: boolean = false;
   uploadProgress: number = 0;
-
+  employees: User[] = [];
+  totalEmployees = 0;
+  pageSize = 10;
+  pageIndex = 0;
+  searchTerm = '';
   // Logo paths - replace these with your actual logo paths
-  lightLogo: string = 'assets/images/learn-logo-light.png';
-  darkLogo: string = 'assets/images/learn-logo-dark.png';
+  lightLogo: string = 'assets/logo.png';
+  darkLogo: string = 'assets/logoDark.png';
 
   // Admin user info (would come from auth service)
   adminUser = {
@@ -71,6 +77,8 @@ export class AdminDashboardComponent implements OnInit {
     if (savedDarkMode === 'true') {
       this.darkMode = true;
       document.documentElement.classList.add('dark');
+      this.loadEmployees();
+
     }
 
     // Check sidebar state
@@ -273,5 +281,47 @@ export class AdminDashboardComponent implements OnInit {
   getTotalUsers(): number {
     // This would typically come from a service
     return this.users.length;
+  }
+  loadEmployees(): void {
+    this.isLoading = true;
+    this.userService.getEmployees(this.pageIndex, this.pageSize, this.searchTerm).subscribe({
+      next: (response) => {
+        this.employees = response.content;
+        this.totalEmployees = response.totalElements;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Failed to load employees', error);
+        this.isLoading = false;
+      }
+    });
+  }
+
+  onPageChange(event: PageEvent): void {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.loadEmployees();
+  }
+
+  onSearch(): void {
+    this.pageIndex = 0;
+    this.loadEmployees();
+  }
+
+  deleteUser(userId: string): void {
+    if (confirm('Are you sure you want to delete this user?')) {
+      this.userService.deleteUser(userId).subscribe({
+        next: () => {
+          this.loadEmployees();
+        },
+        error: (error) => console.error('Failed to delete user', error)
+      });
+    }
+  }
+
+  updateUser(user: User): void {
+    // Here you would typically open a modal or navigate to an edit page
+    // For simplicity, we'll just log it.
+    console.log('Update user:', user);
   }
 }

@@ -22,8 +22,8 @@ export class LoginComponent implements OnInit {
   rememberMe: boolean = false;
 
   // Logo paths - replace these with your actual logo paths
-  lightLogo: string = '';
-  darkLogo: string = '';
+  lightLogo: string = 'assets/logo.png';
+  darkLogo: string = 'assets/logoDark.png';
 
   constructor(
     private fb: FormBuilder,
