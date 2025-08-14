@@ -10,6 +10,9 @@ import { JwtInterceptor } from './services/jwt.interceptor';
 import {TrainerDashboardComponent} from './trainer/dashboard/dashboard.component';
 import {CommonModule} from '@angular/common';
 import {AdminDashboardComponent} from './admin/dashboard/dashboard.component';
+import {MatPaginator} from '@angular/material/paginator';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -18,15 +21,21 @@ import {AdminDashboardComponent} from './admin/dashboard/dashboard.component';
     TrainerDashboardComponent,
     AdminDashboardComponent
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    FormsModule,
-    ReactiveFormsModule,
-    HttpClientModule,
-    CommonModule,
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        FormsModule,
+        HttpClientModule,
+        CommonModule,
+        MatPaginator,
+        AppRoutingModule, // Provides <router-outlet>
+        CommonModule,     // Provides *ngIf, *ngFor, [ngClass], etc.
+        FormsModule,      // Provides [(ngModel)]
+        ReactiveFormsModule,
+        MatPaginatorModule, // Provides <mat-paginator>
+        BrowserAnimationsModule
 
-  ],
+    ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }
   ],

@@ -60,7 +60,7 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
             </svg>
-            <span *ngIf="!sidebarCollapsed" class="nav-text">Courses</span>
+            <span *ngIf="!sidebarCollapsed" class="nav-text">My Courses</span>
           </button>
         </li>
       </ul>
@@ -166,33 +166,25 @@
         </div>
       </div>
 
-      <!-- User Management Section -->
       <div *ngIf="activeSection === 'users'" class="user-management">
+
         <div class="management-card">
           <div class="card-header">
             <h3>CSV File Upload</h3>
-            <p>Upload a CSV file with user data to bulk create user accounts</p>
+            <p>Upload a CSV file to bulk create user accounts</p>
           </div>
           <div class="card-content">
             <div class="file-upload-area">
-              <input
-                type="file"
-                id="csv-upload"
-                class="file-input"
-                (change)="onFileSelect($event)"
-                accept=".csv"
-                [disabled]="isLoading">
+              <input type="file" id="csv-upload" class="file-input" (change)="onFileSelect($event)" accept=".csv" [disabled]="isLoading">
               <label for="csv-upload" class="file-upload-label">
-                <svg class="upload-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-                </svg>
-                <span>{{ csvFile ? csvFile.name : 'Choose CSV file or drag and drop' }}</span>
-                <small>CSV files only</small>
+                <span>{{ csvFile ? csvFile.name : 'Choose CSV file' }}</span>
               </label>
             </div>
-
-            <!-- Upload Progress -->
+            <div *ngIf="csvFile">
+              <button class="btn btn-primary" (click)="saveUsers()" [disabled]="isLoading">
+                {{ isLoading ? 'Uploading...' : 'Upload File' }}
+              </button>
+            </div>
             <div *ngIf="isLoading && uploadProgress > 0" class="upload-progress">
               <div class="progress-bar">
                 <div class="progress-fill" [style.width.%]="uploadProgress"></div>
@@ -202,20 +194,15 @@
           </div>
         </div>
 
-        <!-- Users Preview Table -->
-        <div *ngIf="users.length > 0" class="management-card">
+        <div class="management-card">
           <div class="card-header">
-            <h3>Users to be added ({{ users.length }})</h3>
+            <div>
+              <h3>Employee List</h3>
+              <p>Manage all users with the employee role</p>
+            </div>
             <div class="header-actions">
-              <button class="btn btn-secondary" (click)="clearUsers()" [disabled]="isLoading">
-                Clear All
-              </button>
-              <button class="btn btn-primary" (click)="saveUsers()" [disabled]="isLoading">
-                <svg *ngIf="isLoading" class="btn-spinner" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v4m0 8v4m8-8h-4m-8 0H4"></path>
-                </svg>
-                {{ isLoading ? 'Saving...' : 'Save Users' }}
-              </button>
+              <input type="text" [(ngModel)]="searchTerm" (keyup.enter)="onSearch()" placeholder="Search by name or email" class="form-input">
+              <button class="btn btn-primary" (click)="onSearch()">Search</button>
             </div>
           </div>
           <div class="card-content">
@@ -224,37 +211,92 @@
                 <thead>
                 <tr>
                   <th>Name</th>
-                  <th>Last Name</th>
-                  <th>Department</th>
                   <th>Email</th>
-                  <th>Phone Number</th>
-                  <th>Badge Number</th>
+                  <th>Department</th>
                   <th>Actions</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr *ngFor="let user of users; index as i">
-                  <td>{{ user.name }}</td>
-                  <td>{{ user.lastname }}</td>
-                  <td>{{ user.departement }}</td>
+                <tr *ngFor="let user of employees">
+                  <td>{{ user.name }} {{ user.lastname }}</td>
                   <td>{{ user.email }}</td>
-                  <td>{{ user['phone number'] }}</td>
-                  <td>{{ user['badg number'] }}</td>
+                  <td>{{ user.departement }}</td>
                   <td>
-                    <button class="btn-remove" (click)="removeUser(i)" [disabled]="isLoading">
-                      <svg class="remove-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                      </svg>
+                    <button class="btn btn-secondary" (click)="updateUser(user)">
+                      {{ 'Uodate' }}
                     </button>
+                    <button class="btn btn-danger" (click)="deleteUser(user.id)">Delete</button>
                   </td>
                 </tr>
                 </tbody>
               </table>
             </div>
+            <mat-paginator [length]="totalEmployees"
+                           [pageSize]="pageSize"
+                           [pageSizeOptions]="[5, 10, 25, 100]"
+                           (page)="onPageChange($event)">
+            </mat-paginator>
           </div>
         </div>
       </div>
+      <!-- Course Management Section -->
+      <div *ngIf="activeSection === 'courses'" class="course-management">
+        <div *ngIf="isLoading" class="loading-state">
+          <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Loading courses...</p>
+          </div>
+        </div>
 
+        <div *ngFor="let course of courses" class="course-card">
+          <div class="course-header" (click)="toggleVideos(course)">
+            <div class="course-info">
+              <h3>{{ course.name }}</h3>
+              <p class="course-trainer">Created by: {{ course.trainerEmail }}</p>
+            </div>
+            <button class="course-toggle-btn" [class.expanded]="course.showVideos">
+              <svg class="toggle-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+              <span>{{ course.showVideos ? 'Hide' : 'Show' }} Videos</span>
+            </button>
+          </div>
+
+          <div class="course-content" *ngIf="course.showVideos">
+            <p class="course-description">{{ course.description }}</p>
+
+            <div *ngIf="course.videos && course.videos.length > 0" class="videos-section">
+              <h4>Videos ({{ course.videos.length }})</h4>
+              <div class="videos-grid">
+                <div *ngFor="let video of course.videos" class="video-item">
+                  <h5>{{ video.title }}</h5>
+                  <div class="video-container">
+                    <iframe
+                      [src]="getEmbedUrl(video.youtubeUrl)"
+                      frameborder="0"
+                      allowfullscreen
+                      loading="lazy">
+                    </iframe>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div *ngIf="course.showVideos && (!course.videos || course.videos.length === 0)" class="no-videos">
+              <p>No videos found for this course.</p>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="courses.length === 0 && !isLoading" class="empty-state">
+          <svg class="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+          </svg>
+          <h3>No courses found</h3>
+          <p>There are no courses available at the moment.</p>
+        </div>
+      </div>
       <!-- Course Management Section -->
       <div *ngIf="activeSection === 'courses'" class="course-management">
         <div *ngIf="isLoading" class="loading-state">

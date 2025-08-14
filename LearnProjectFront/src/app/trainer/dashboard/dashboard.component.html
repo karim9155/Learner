@@ -268,7 +268,7 @@
                 <select
                   id="courseId"
                   class="form-select"
-                  [class.error]="videoFormControls['courseId'].invalid && videoFormControls['courseId'].touched"
+                  [class.error]="videoFormControls['courseId'].invalid && videoFormControls['courseId']"
                   formControlName="courseId"
                   [disabled]="isAddingVideo">
                   <option value="">Select a course</option>
