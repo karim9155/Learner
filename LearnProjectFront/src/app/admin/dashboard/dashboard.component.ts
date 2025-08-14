@@ -26,7 +26,7 @@ interface User {
   id: string;
   name: string;
   lastname: string;
-  departement: string;
+  department: string;
   email: string;
   'phone number': string;
   'badg number': string;

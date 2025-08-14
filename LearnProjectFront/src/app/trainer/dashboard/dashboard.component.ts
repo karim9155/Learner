@@ -13,6 +13,7 @@ interface Course {
   createdAt?: string;
   videoCount?: number;
   videos?: Video[];
+  showVideos?: boolean; // Add this line
 }
 
 interface Video {
@@ -378,6 +379,22 @@ export class TrainerDashboardComponent implements OnInit {
         error: (error) => {
           console.error('Failed to delete video', error);
           alert('Failed to delete video. Please try again.');
+        }
+      });
+    }
+  }
+  toggleVideos(course: Course): void {
+    course.showVideos = !course.showVideos;
+    if (course.showVideos && !course.videos) {
+      this.courseService.getVideosByCourse(course.id).subscribe({
+        next: (videos) => {
+          const courseIndex = this.myCourses.findIndex(c => c.id === course.id);
+          if (courseIndex !== -1) {
+            this.myCourses[courseIndex].videos = videos;
+          }
+        },
+        error: (err) => {
+          console.error(`Failed to load videos for course ${course.id}`, err);
         }
       });
     }
