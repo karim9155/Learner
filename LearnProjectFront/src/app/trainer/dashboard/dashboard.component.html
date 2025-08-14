@@ -343,22 +343,18 @@
 
         <div *ngIf="!isLoading && myCourses.length > 0">
           <div *ngFor="let course of myCourses" class="course-card">
-            <div class="course-header">
+            <div class="course-header" (click)="toggleVideos(course)">
               <div class="course-info">
                 <h3>{{ course.title }}</h3>
                 <p class="course-meta">{{ course.videoCount || 0 }} videos • Created by you</p>
               </div>
               <div class="course-actions">
-                <button class="btn btn-secondary" (click)="selectCourseForVideo(course.id)">
-                  Add Video
-                </button>
-                <button class="btn btn-danger" (click)="deleteCourse(course.id)">
-                  Delete
-                </button>
+                <button class="btn btn-secondary" (click)="selectCourseForVideo(course.id)">Add Video</button>
+                <button class="btn btn-danger" (click)="deleteCourse(course.id)">Delete</button>
               </div>
             </div>
 
-            <div class="course-content">
+            <div *ngIf="course.showVideos" class="course-content">
               <p class="course-description">{{ course.description }}</p>
 
               <div *ngIf="course.videos && course.videos.length > 0" class="videos-section">
@@ -385,7 +381,7 @@
                 </div>
               </div>
 
-              <div *ngIf="!course.videos || course.videos.length === 0" class="no-videos">
+              <div *ngIf="course.showVideos && (!course.videos || course.videos.length === 0)" class="no-videos">
                 <p>No videos added yet.</p>
                 <button class="btn btn-primary" (click)="selectCourseForVideo(course.id)">
                   Add First Video

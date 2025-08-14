@@ -212,7 +212,7 @@
                 <tr>
                   <th>Name</th>
                   <th>Email</th>
-                  <th>Department</th>
+                  <th>department</th>
                   <th>Actions</th>
                 </tr>
                 </thead>
@@ -220,7 +220,7 @@
                 <tr *ngFor="let user of employees">
                   <td>{{ user.name }} {{ user.lastname }}</td>
                   <td>{{ user.email }}</td>
-                  <td>{{ user.departement }}</td>
+                  <td>{{ user.department }}</td>
                   <td>
                     <button class="btn btn-secondary" (click)="updateUser(user)">
                       {{ 'Uodate' }}
