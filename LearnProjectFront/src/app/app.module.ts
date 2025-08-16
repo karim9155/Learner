@@ -33,7 +33,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
         FormsModule,      // Provides [(ngModel)]
         ReactiveFormsModule,
         MatPaginatorModule, // Provides <mat-paginator>
-        BrowserAnimationsModule
+        BrowserAnimationsModule,
 
     ],
   providers: [
