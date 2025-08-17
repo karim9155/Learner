@@ -1,3 +1,5 @@
+// karim9155/learner/Learner-6bb22e8d279db03baeab60b29e20ac5e0c7c258b/LearnProjectBack/src/main/java/com/example/learnprojectback/model/Enrollment.java
+
 package com.example.learnprojectback.model;
 
 import jakarta.persistence.*;
@@ -18,16 +20,18 @@ public class Enrollment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
+
     @ManyToOne
+    @JoinColumn(name = "learner_id") // The user being enrolled (employee)
     private User learner;
 
-    private Instant assignedAt = Instant.now();
-
     @ManyToOne
-    @JoinColumn(name = "user_id") // This column in the 'enrollment' table links to the 'user' table
+    @JoinColumn(name = "user_id") // The user performing the enrollment (admin)
     private User user;
 
     @ManyToOne
     @JoinColumn(name = "course_id")
     private Course course;
+
+    private Instant assignedAt = Instant.now();
 }
