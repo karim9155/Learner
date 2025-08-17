@@ -92,6 +92,7 @@ export class AdminDashboardComponent implements OnInit {
 
     this.loadAllCourses();
     this.loadEnrolledCourses();
+
     // this.loadAdminInfo();
   }
 
@@ -124,9 +125,11 @@ export class AdminDashboardComponent implements OnInit {
     });
   }
 
+  // CORRECTED METHOD
   loadEnrolledCourses(): void {
     this.isLoading = true;
-    this.courseService.getEnrolledCourses(this.adminUser.id).subscribe({
+    // This now calls the correct service method for the admin
+    this.courseService.getAdminEnrolledCourses(this.adminUser.id).subscribe({
       next: (response) => {
         this.enrolledCourses = response.map((course: any) => ({
           ...course,
@@ -135,7 +138,7 @@ export class AdminDashboardComponent implements OnInit {
         this.isLoading = false;
       },
       error: (error) => {
-        console.error('Failed to load enrolled courses', error);
+        console.error('Failed to load admin enrolled courses', error);
         this.isLoading = false;
       }
     });
@@ -372,4 +375,5 @@ export class AdminDashboardComponent implements OnInit {
     // For simplicity, we'll just log it.
     console.log('Update user:', user);
   }
+
 }

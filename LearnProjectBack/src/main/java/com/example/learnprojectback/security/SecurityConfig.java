@@ -35,6 +35,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/organizations/**", "/api/memberships/**").permitAll()
                         .requestMatchers("/api/courses/all").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/enrollments").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/enrollments/admin/**").hasAuthority("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

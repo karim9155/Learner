@@ -12,4 +12,7 @@ public class CourseDTO {
     private String title;
     private String description;
     private String trainerEmail;
+    // RENAMED and ADDED these fields for clarity
+    private UUID createdById;
+    private String createdByName;
 }
