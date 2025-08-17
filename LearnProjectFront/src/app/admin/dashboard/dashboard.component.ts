@@ -9,6 +9,7 @@ import { PageEvent } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
 import { EnrollModalComponent } from '../components/enroll-modal/enroll-modal.component';
 
+// ... (interfaces remain the same) ...
 interface Course {
   id: string;
   name: string;
@@ -34,6 +35,7 @@ interface User {
   'badg number': string;
 }
 
+
 @Component({
   selector: 'app-dashboard',
   standalone: false,
@@ -41,6 +43,7 @@ interface User {
   styleUrls: ['./dashboard.component.css']
 })
 export class AdminDashboardComponent implements OnInit {
+  // ... (most properties remain the same) ...
   shopCourses: Course[] = [];
   enrolledCourses: Course[] = [];
   users: User[] = [];
@@ -55,58 +58,63 @@ export class AdminDashboardComponent implements OnInit {
   pageSize = 10;
   pageIndex = 0;
   searchTerm = '';
-  // Logo paths - replace these with your actual logo paths
   lightLogo: string = 'assets/logo.png';
   darkLogo: string = 'assets/logoDark.png';
 
-  // Admin user info (would come from auth service)
-  adminUser = {
-    id: 'a7d3a8e7-1b3e-4e4a-9b8f-2e2b3a7b3c1d', // Example UUID
-    name: 'Admin User',
-    email: 'admin@company.com',
-    role: 'Administrator'
-  };
+
+  // Admin user info will now be populated dynamically
+  adminUser: any = {}; // <-- CHANGED: Initialize as an empty object
 
   constructor(
     private courseService: CourseService,
-    private authService: AuthService,
+    private authService: AuthService, // Already injected, which is great!
     private userService: UserService,
     private router: Router,
     private sanitizer: DomSanitizer,
-    public dialog: MatDialog // Injected MatDialog
+    public dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
-    // Check if dark mode is enabled
+    // Check dark mode
     const savedDarkMode = localStorage.getItem('dashboardDarkMode');
     if (savedDarkMode === 'true') {
       this.darkMode = true;
       document.documentElement.classList.add('dark');
     }
-    this.loadEmployees();
+
     // Check sidebar state
     const savedSidebarState = localStorage.getItem('sidebarCollapsed');
     if (savedSidebarState === 'true') {
       this.sidebarCollapsed = true;
     }
 
-    this.loadAllCourses();
-    this.loadEnrolledCourses();
+    // Get the current user's info from the AuthService
+    this.loadAdminInfo(); // <-- CHANGED: Call the method to load user info
 
-    // this.loadAdminInfo();
+    // Load other data
+    this.loadEmployees();
+    this.loadAllCourses();
+    this.loadEnrolledCourses(); // This will now use the correct ID
   }
 
-  /* loadAdminInfo(): void {
-      // Get admin user info from auth service
-      const userInfo = this.authService.getCurrentUser();
-      if (userInfo) {
-        this.adminUser = {
-          name: userInfo.name || 'Admin User',
-          email: userInfo.email || 'admin@company.com',
-          role: userInfo.role || 'Administrator'
-        };
-      }
-    }*/
+  // Utility method to get current user info
+  loadAdminInfo(): void {
+    // Get admin user info from auth service
+    const userInfo = this.authService.getCurrentUser(); // Assuming this method exists and decodes the token
+    if (userInfo) {
+      this.adminUser = {
+        id: userInfo.id, // <-- CHANGED: Use the ID from the service
+        name: userInfo.name || 'Admin User',
+        email: userInfo.email || 'admin@company.com',
+        role: userInfo.role || 'Administrator'
+      };
+    } else {
+      // Handle case where user info is not available (e.g., logout)
+      this.authService.logout();
+      this.router.navigate(['/login']);
+    }
+  }
+
 
   loadAllCourses(): void {
     this.isLoading = true;
@@ -125,10 +133,13 @@ export class AdminDashboardComponent implements OnInit {
     });
   }
 
-  // CORRECTED METHOD
+  // This method now works correctly
   loadEnrolledCourses(): void {
+    if (!this.adminUser.id) { // <-- CHANGED: Add a check to ensure ID exists before calling
+      console.error("Admin user ID not found. Cannot load enrolled courses.");
+      return;
+    }
     this.isLoading = true;
-    // This now calls the correct service method for the admin
     this.courseService.getAdminEnrolledCourses(this.adminUser.id).subscribe({
       next: (response) => {
         this.enrolledCourses = response.map((course: any) => ({
@@ -144,7 +155,7 @@ export class AdminDashboardComponent implements OnInit {
     });
   }
 
-  // MODIFIED THIS METHOD
+  // ... (The rest of your component code remains the same)
   enroll(courseId: string): void {
     const course = this.shopCourses.find(c => c.id === courseId);
     if (course) {
@@ -152,7 +163,6 @@ export class AdminDashboardComponent implements OnInit {
     }
   }
 
-  // ADDED THIS NEW METHOD
   openEnrollDialog(course: Course): void {
     const dialogRef = this.dialog.open(EnrollModalComponent, {
       width: '500px',
@@ -161,7 +171,6 @@ export class AdminDashboardComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        // Optionally, you can refresh the enrolled courses list
         this.loadEnrolledCourses();
       }
     });
@@ -314,7 +323,6 @@ export class AdminDashboardComponent implements OnInit {
     }
   }
 
-  // Utility methods
   getTotalCourses(): number {
     return this.shopCourses.length;
   }
@@ -330,7 +338,6 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   getTotalUsers(): number {
-    // This would typically come from a service
     return this.users.length;
   }
   loadEmployees(): void {
@@ -371,9 +378,6 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   updateUser(user: User): void {
-    // Here you would typically open a modal or navigate to an edit page
-    // For simplicity, we'll just log it.
     console.log('Update user:', user);
   }
-
 }
