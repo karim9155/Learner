@@ -2,6 +2,7 @@ package com.example.learnprojectback.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -33,6 +34,7 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/auth/register", "/api/users/**").permitAll()
                         .requestMatchers("/api/organizations/**", "/api/memberships/**").permitAll()
                         .requestMatchers("/api/courses/all").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/enrollments").hasAuthority("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
