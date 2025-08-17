@@ -1,0 +1,26 @@
+<h1 mat-dialog-title>Enroll Employees in "{{ data.courseName }}"</h1>
+
+<div mat-dialog-content [formGroup]="form">
+  <mat-list>
+    <mat-list-item>
+      <mat-checkbox formControlName="selectAll" (change)="onSelectAllChange($event)">
+        <strong>Select All</strong>
+      </mat-checkbox>
+    </mat-list-item>
+
+    <div formArrayName="learnerIds">
+      <mat-list-item *ngFor="let employee of employees; let i = index">
+        <mat-checkbox [formControlName]="i">
+          {{ employee.firstName }} {{ employee.lastName }} ({{ employee.email }})
+        </mat-checkbox>
+      </mat-list-item>
+    </div>
+  </mat-list>
+</div>
+
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-raised-button color="primary" (click)="onEnroll()" [disabled]="isSubmitting">
+    Enroll Selected
+  </button>
+</div>
