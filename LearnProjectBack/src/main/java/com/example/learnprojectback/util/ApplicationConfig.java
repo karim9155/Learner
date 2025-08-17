@@ -27,6 +27,7 @@ public class ApplicationConfig {
                     mapper.map(src -> src.getOrg() != null ? src.getOrg().getId() : null, CourseDTO::setOrganizationId);
                 });
 
+
         return modelMapper;
     }
 

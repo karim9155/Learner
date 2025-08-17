@@ -3,15 +3,13 @@
 package com.example.learnprojectback.controller;
 
 import com.example.learnprojectback.dto.BatchEnrollmentRequest;
+import com.example.learnprojectback.dto.CourseDTO;
 import com.example.learnprojectback.dto.EnrollmentDTO;
 import com.example.learnprojectback.security.JwtUser;
 import com.example.learnprojectback.service.EnrollmentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -37,5 +35,10 @@ public class EnrollmentController {
         UUID adminId = currentUser.getId();
         List<EnrollmentDTO> enrollments = enrollmentService.assignLearnersToCourse(request, adminId);
         return ResponseEntity.ok(enrollments);
+    }
+    @GetMapping("/admin/{adminId}")
+    public ResponseEntity<List<CourseDTO>> getCoursesByAdmin(@PathVariable UUID adminId) {
+        List<CourseDTO> courses = enrollmentService.getCoursesEnrolledByAdmin(adminId);
+        return ResponseEntity.ok(courses);
     }
 }

@@ -3,6 +3,7 @@
 package com.example.learnprojectback.service;
 
 import com.example.learnprojectback.dto.BatchEnrollmentRequest;
+import com.example.learnprojectback.dto.CourseDTO;
 import com.example.learnprojectback.dto.EnrollmentDTO;
 
 import java.util.List;
@@ -12,4 +13,6 @@ public interface EnrollmentService {
     EnrollmentDTO assignLearner(EnrollmentDTO dto, UUID adminId);
 
     List<EnrollmentDTO> assignLearnersToCourse(BatchEnrollmentRequest request, UUID adminId);
+    List<CourseDTO> getCoursesEnrolledByAdmin(UUID adminId);
+
 }

@@ -8,6 +8,8 @@ import { AuthService } from './auth.service';
 })
 export class CourseService {
   private apiUrl = 'http://localhost:8080/api/courses';
+  private enrollmentApiUrl = 'http://localhost:8080/api/enrollments';
+
 
 
   constructor(private http: HttpClient, private authService: AuthService) { }
@@ -63,5 +65,10 @@ export class CourseService {
     const enrollmentUrl = 'http://localhost:8080/api/enrollments';
     return this.http.post(enrollmentUrl, { courseId, learnerId: userId }, { headers: this.getAuthHeaders() });
   }
+  // THIS IS THE NEW METHOD FOR THE ADMIN DASHBOARD
+  getAdminEnrolledCourses(adminId: string): Observable<any> {
+    return this.http.get(`${this.enrollmentApiUrl}/admin/${adminId}`, { headers: this.getAuthHeaders() });
+  }
+
 
 }
