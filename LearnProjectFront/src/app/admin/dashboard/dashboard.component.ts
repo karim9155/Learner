@@ -5,7 +5,9 @@ import { UserService } from '../../services/user.service';
 import { Router } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import * as Papa from 'papaparse';
-import {PageEvent} from '@angular/material/paginator';
+import { PageEvent } from '@angular/material/paginator';
+import { MatDialog } from '@angular/material/dialog';
+import { EnrollModalComponent } from '../components/enroll-modal/enroll-modal.component';
 
 interface Course {
   id: string;
@@ -70,7 +72,8 @@ export class AdminDashboardComponent implements OnInit {
     private authService: AuthService,
     private userService: UserService,
     private router: Router,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    public dialog: MatDialog // Injected MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -79,10 +82,8 @@ export class AdminDashboardComponent implements OnInit {
     if (savedDarkMode === 'true') {
       this.darkMode = true;
       document.documentElement.classList.add('dark');
-      this.loadEmployees();
-
     }
-
+    this.loadEmployees();
     // Check sidebar state
     const savedSidebarState = localStorage.getItem('sidebarCollapsed');
     if (savedSidebarState === 'true') {
@@ -94,7 +95,7 @@ export class AdminDashboardComponent implements OnInit {
     // this.loadAdminInfo();
   }
 
-  /*  loadAdminInfo(): void {
+  /* loadAdminInfo(): void {
       // Get admin user info from auth service
       const userInfo = this.authService.getCurrentUser();
       if (userInfo) {
@@ -140,15 +141,25 @@ export class AdminDashboardComponent implements OnInit {
     });
   }
 
+  // MODIFIED THIS METHOD
   enroll(courseId: string): void {
-    this.courseService.enrollInCourse(courseId, this.adminUser.id).subscribe({
-      next: () => {
-        alert('Enrolled successfully!');
+    const course = this.shopCourses.find(c => c.id === courseId);
+    if (course) {
+      this.openEnrollDialog(course);
+    }
+  }
+
+  // ADDED THIS NEW METHOD
+  openEnrollDialog(course: Course): void {
+    const dialogRef = this.dialog.open(EnrollModalComponent, {
+      width: '500px',
+      data: { courseId: course.id, courseName: course.name }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // Optionally, you can refresh the enrolled courses list
         this.loadEnrolledCourses();
-      },
-      error: (error) => {
-        console.error('Failed to enroll in course', error);
-        alert('Failed to enroll in course. Please try again.');
       }
     });
   }

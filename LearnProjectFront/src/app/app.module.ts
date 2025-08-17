@@ -13,13 +13,20 @@ import {AdminDashboardComponent} from './admin/dashboard/dashboard.component';
 import {MatPaginator} from '@angular/material/paginator';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {MatCheckbox} from '@angular/material/checkbox';
+import {MatList, MatListItem} from '@angular/material/list';
+import {MatDialogActions, MatDialogContent, MatDialogTitle} from '@angular/material/dialog';
+import {MatButton} from '@angular/material/button';
+import {EnrollModalComponent} from './admin/components/enroll-modal/enroll-modal.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
     TrainerDashboardComponent,
-    AdminDashboardComponent
+    AdminDashboardComponent,
+    EnrollModalComponent
+
   ],
     imports: [
         BrowserModule,
@@ -34,6 +41,15 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
         ReactiveFormsModule,
         MatPaginatorModule, // Provides <mat-paginator>
         BrowserAnimationsModule,
+        CommonModule,
+        MatCheckbox,
+        ReactiveFormsModule,
+        MatListItem,
+        MatList,
+        MatDialogContent,
+        MatDialogTitle,
+        MatDialogActions,
+        MatButton
 
     ],
   providers: [

@@ -2,6 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+export interface User {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  memberships: { role: string }[];
+}
 @Injectable({
   providedIn: 'root'
 })
@@ -16,16 +23,14 @@ export class UserService {
     return this.http.post(`${this.apiUrl}/upload`, formData);
   }
 
-  getEmployees(page: number, size: number, search: string = ''): Observable<any> {
-    let params = new HttpParams()
-      .set('page', page.toString())
-      .set('size', size.toString());
+  getEmployees(page: number, size: number, searchTerm: string): Observable<any> {
+    // This assumes your backend endpoint for employees is structured this way
+    return this.http.get(`${this.apiUrl}/employees?page=${page}&size=${size}&search=${searchTerm}`);
+  }
 
-    if (search) {
-      params = params.set('search', search);
-    }
-
-    return this.http.get(`${this.apiUrl}/employees`, { params });
+  // ADD THIS METHOD FOR THE MODAL
+  getAllUsers(): Observable<User[]> {
+    return this.http.get<User[]>(this.apiUrl);
   }
 
   deleteUser(userId: string): Observable<any> {
@@ -35,4 +40,5 @@ export class UserService {
   updateUser(userId: string, userData: any): Observable<any> {
     return this.http.put(`${this.apiUrl}/${userId}`, userData);
   }
+
 }
