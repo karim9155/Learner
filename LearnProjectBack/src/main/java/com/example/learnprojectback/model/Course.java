@@ -27,6 +27,7 @@ public class Course {
     private User createdBy;    // the trainer
     private String title;
     private String description;
+    private String coverImage;
     private Instant createdAt = Instant.now();
 
     @JsonIgnore

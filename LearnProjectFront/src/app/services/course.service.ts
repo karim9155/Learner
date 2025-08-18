@@ -14,16 +14,21 @@ export class CourseService {
 
   constructor(private http: HttpClient, private authService: AuthService) { }
 
-  private getAuthHeaders(): HttpHeaders {
+  private getAuthHeaders(includeContentType: boolean = true): HttpHeaders {
     const token = this.authService.getToken();
-    return new HttpHeaders({
-      'Content-Type': 'application/json',
+    let headersConfig: { [key: string]: string } = {
       'Authorization': `Bearer ${token}`
-    });
+    };
+
+    if (includeContentType) {
+      headersConfig['Content-Type'] = 'application/json';
+    }
+
+    return new HttpHeaders(headersConfig);
   }
 
-  createCourse(courseData: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}`, courseData, { headers: this.getAuthHeaders() });
+  createCourse(formData: FormData): Observable<any> {
+    return this.http.post(`${this.apiUrl}`, formData, { headers: this.getAuthHeaders(false) });
   }
 
   addVideo(videoData: any): Observable<any> {
