@@ -123,6 +123,7 @@
     </header>
 
     <div class="content-area">
+      <!-- Dashboard Section -->
       <div *ngIf="activeSection === 'dashboard'" class="dashboard-overview">
         <div class="stats-grid">
           <div class="stat-card">
@@ -158,19 +159,57 @@
           <div class="stat-card">
             <div class="stat-content">
               <div class="stat-info">
-                <h3>Quick Actions</h3>
-                <p class="stat-description">Create content</p>
+                <h3>Active Students</h3>
+                <p class="stat-number">247</p>
               </div>
-              <div class="stat-icon actions">
+              <div class="stat-icon students">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-content">
+              <div class="stat-info">
+                <h3>Completion Rate</h3>
+                <p class="stat-number">89%</p>
+              </div>
+              <div class="stat-icon completion">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
                 </svg>
               </div>
             </div>
           </div>
         </div>
 
+        <!-- Recent Progress Section -->
+        <div class="recent-progress">
+          <h3>Recent Progress</h3>
+          <div class="progress-list">
+            <div *ngFor="let course of getRecentCourses(); let i = index" class="progress-item">
+              <div class="progress-info">
+                <div class="progress-status">
+                  <span class="status-indicator" [class]="i % 2 === 0 ? 'active' : 'warning'"></span>
+                  <span class="progress-title">{{ course.title }}</span>
+                </div>
+                <span class="progress-meta">{{ course.videoCount || 0 }} videos</span>
+              </div>
+              <div class="progress-bar-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" [style.width.%]="Math.min(100, (course.videoCount || 0) * 8)"></div>
+                </div>
+                <span class="progress-percentage">{{ Math.min(100, (course.videoCount || 0) * 8) }}%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Courses -->
         <div *ngIf="myCourses.length > 0" class="recent-courses">
           <h3>Recent Courses</h3>
           <div class="courses-grid">
@@ -188,6 +227,7 @@
         </div>
       </div>
 
+      <!-- Create Course Section -->
       <div *ngIf="activeSection === 'courses'" class="create-course-section">
         <div class="management-card">
           <div class="card-header">
@@ -236,6 +276,15 @@
                 </div>
               </div>
 
+              <div class="form-group">
+                <label for="coverImage" class="form-label">Cover Image</label>
+                <input
+                  type="file"
+                  id="coverImage"
+                  class="form-input"
+                  (change)="onFileChange($event)">
+              </div>
+
               <button
                 type="submit"
                 class="btn btn-primary"
@@ -250,6 +299,7 @@
         </div>
       </div>
 
+      <!-- Add Videos Section -->
       <div *ngIf="activeSection === 'videos'" class="add-video-section">
         <div class="management-card">
           <div class="card-header">
@@ -264,11 +314,11 @@
 
             <form [formGroup]="videoForm" (ngSubmit)="addVideo()" class="video-form">
               <div class="form-group">
-                <label for="courseId" class="form-label">Course ID</label>
+                <label for="courseId" class="form-label">Course</label>
                 <select
                   id="courseId"
                   class="form-select"
-                  [class.error]="videoFormControls['courseId'].invalid && videoFormControls['courseId']"
+                  [class.error]="videoFormControls['courseId'].invalid && videoFormControls['courseId'].touched"
                   formControlName="courseId"
                   [disabled]="isAddingVideo">
                   <option value="">Select a course</option>
@@ -307,7 +357,7 @@
                   id="videoUrl"
                   class="form-input"
                   [class.error]="videoFormControls['url'].invalid && videoFormControls['url'].touched"
-                  placeholder="http://googleusercontent.com/youtube.com/3..."
+                  placeholder="https://www.youtube.com/watch?v=..."
                   formControlName="url"
                   [disabled]="isAddingVideo">
                 <small class="form-hint">Paste the full YouTube URL here</small>
@@ -332,8 +382,8 @@
         </div>
       </div>
 
+      <!-- My Courses Section -->
       <div *ngIf="activeSection === 'my-courses'" class="my-courses-section">
-
         <div *ngIf="isLoading" class="loading-state">
           <div class="loading-spinner">
             <div class="spinner"></div>
@@ -341,21 +391,51 @@
           </div>
         </div>
 
-        <div *ngIf="!isLoading && myCourses.length > 0">
+        <div *ngIf="!isLoading && myCourses.length > 0" class="courses-container">
           <div *ngFor="let course of myCourses" class="course-card">
-            <div class="course-header" (click)="toggleVideos(course)">
-              <div class="course-info">
-                <h3>{{ course.title }}</h3>
-                <p class="course-meta">{{ course.videoCount || 0 }} videos • Created by you</p>
-              </div>
-              <div class="course-actions">
-                <button class="btn btn-secondary" (click)="selectCourseForVideo(course.id)">Add Video</button>
-                <button class="btn btn-danger" (click)="deleteCourse(course.id)">Delete</button>
-              </div>
+            <div class="course-image-container">
+              <img
+                [src]="getImageUrl(course.coverImage)"
+                [alt]="course.title + ' cover image'"
+                class="course-cover-image"
+                (error)="onImageError($event)">
+              <svg class="course-placeholder-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+              </svg>
             </div>
 
-            <div *ngIf="course.showVideos" class="course-content">
+            <div class="course-details">
+              <h3 class="course-title">{{ course.title }}</h3>
               <p class="course-description">{{ course.description }}</p>
+              <div class="course-meta">
+                <span class="video-count">{{ course.videoCount || 0 }} videos</span>
+                <span class="course-author">Created by you</span>
+              </div>
+            </div>
+            <div class="course-actions">
+              <button class="btn btn-secondary" (click)="selectCourseForVideo(course.id)">
+                Add Video
+              </button>
+              <button class="btn btn-show-videos" (click)="toggleVideos(course)">
+                <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path *ngIf="!course.showVideos" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  <path *ngIf="!course.showVideos" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                  <path *ngIf="course.showVideos" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"></path>
+                </svg>
+                {{ course.showVideos ? 'Hide Videos' : 'Show Videos (' + (course.videos?.length || 0) + ')' }}
+              </button>
+              <button class="btn btn-danger" (click)="deleteCourse(course.id)">
+                <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                </svg>
+                Delete
+              </button>
+            </div>
+
+            <!-- Videos Section -->
+            <div *ngIf="course.showVideos" class="course-content">
+              <p class="course-full-description">{{ course.description }}</p>
 
               <div *ngIf="course.videos && course.videos.length > 0" class="videos-section">
                 <h4>Videos</h4>
@@ -382,6 +462,10 @@
               </div>
 
               <div *ngIf="course.showVideos && (!course.videos || course.videos.length === 0)" class="no-videos">
+                <svg class="no-videos-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                </svg>
                 <p>No videos added yet.</p>
                 <button class="btn btn-primary" (click)="selectCourseForVideo(course.id)">
                   Add First Video

@@ -8,10 +8,12 @@ import com.example.learnprojectback.repository.CourseRepository;
 import com.example.learnprojectback.repository.OrganizationRepository;
 import com.example.learnprojectback.repository.UserRepository;
 import com.example.learnprojectback.service.CourseService;
+import com.example.learnprojectback.service.FileStorageService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -25,9 +27,10 @@ public class CourseServiceImpl implements CourseService {
     private final OrganizationRepository organizationRepository;
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
+    private final FileStorageService fileStorageService;
 
     @Override
-    public CourseDTO createCourse(UUID orgId, UUID trainerId, CourseDTO dto) {
+    public CourseDTO createCourse(UUID orgId, UUID trainerId, CourseDTO dto, MultipartFile coverImage) {
         User trainer = userRepository.findById(trainerId)
                 .orElseThrow(() -> new EntityNotFoundException("Trainer (User) not found with id: " + trainerId));
 
@@ -38,6 +41,11 @@ public class CourseServiceImpl implements CourseService {
             Organization org = organizationRepository.findById(orgId)
                     .orElseThrow(() -> new EntityNotFoundException("Organization not found with id: " + orgId));
             newCourse.setOrg(org);
+        }
+
+        if (coverImage != null && !coverImage.isEmpty()) {
+            String coverImageName = fileStorageService.store(coverImage);
+            newCourse.setCoverImage(coverImageName);
         }
 
         Course savedCourse = courseRepository.save(newCourse);
@@ -67,6 +75,7 @@ public class CourseServiceImpl implements CourseService {
         courseDTO.setId(course.getId());
         courseDTO.setTitle(course.getTitle());
         courseDTO.setDescription(course.getDescription());
+        courseDTO.setCoverImage(course.getCoverImage());
 
         // FIX: Add null checks to prevent any errors
         if (course.getCreatedBy() != null) {

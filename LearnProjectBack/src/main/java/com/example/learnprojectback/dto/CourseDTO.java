@@ -15,4 +15,5 @@ public class CourseDTO {
     // RENAMED and ADDED these fields for clarity
     private UUID createdById;
     private String createdByName;
+    private String coverImage;
 }

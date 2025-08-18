@@ -9,6 +9,7 @@ interface Course {
   id: string;
   title: string;
   description: string;
+  coverImage: string;
   trainerEmail: string;
   createdAt?: string;
   videoCount?: number;
@@ -75,7 +76,8 @@ export class TrainerDashboardComponent implements OnInit {
   ) {
     this.courseForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(3)]],
-      description: ['', [Validators.required, Validators.minLength(10)]]
+      description: ['', [Validators.required, Validators.minLength(10)]],
+      coverImage: [null]
     });
 
     this.videoForm = this.fb.group({
@@ -201,17 +203,28 @@ export class TrainerDashboardComponent implements OnInit {
     return '';
   }
 
+  onFileChange(event: any) {
+    if (event.target.files.length > 0) {
+      const file = event.target.files[0];
+      this.courseForm.patchValue({
+        coverImage: file
+      });
+    }
+  }
+
   createCourse(): void {
     if (this.courseForm.valid) {
       this.isCreatingCourse = true;
       this.courseCreationMessage = '';
 
-      const courseData: CreateCourseData = {
+      const formData = new FormData();
+      formData.append('course', new Blob([JSON.stringify({
         title: this.courseFormControls['title'].value,
-        description: this.courseFormControls['description'].value
-      };
+        description: this.courseFormControls['description'].value,
+      })], { type: 'application/json' }));
+      formData.append('coverImage', this.courseForm.get('coverImage')?.value);
 
-      this.courseService.createCourse(courseData).subscribe({
+      this.courseService.createCourse(formData).subscribe({
         next: (response) => {
           console.log('Course created successfully', response);
           this.courseCreationMessage = 'Course created successfully!';
@@ -350,6 +363,14 @@ export class TrainerDashboardComponent implements OnInit {
     return this.myCourses.slice(0, 3);
   }
 
+  getImageUrl(coverImage: string): string {
+    return `http://localhost:8080/uploads/${coverImage}`;
+  }
+  onImageError(e: Event) {
+    const img = e.target as HTMLImageElement;
+    img.classList.add('error');
+  }
+
   deleteCourse(courseId: string): void {
     if (confirm('Are you sure you want to delete this course? This action cannot be undone.')) {
       this.courseService.deleteCourse(courseId).subscribe({
@@ -399,4 +420,6 @@ export class TrainerDashboardComponent implements OnInit {
       });
     }
   }
+
+  protected readonly Math = Math;
 }

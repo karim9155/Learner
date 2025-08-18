@@ -6,6 +6,7 @@ import com.example.learnprojectback.service.CourseService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -21,8 +22,10 @@ public class CourseController {
     }
 
     @PostMapping
-    public ResponseEntity<CourseDTO> create(@RequestBody CourseDTO dto, @AuthenticationPrincipal JwtUser auth) {
-        CourseDTO createdCourse = courseService.createCourse(dto.getOrganizationId(), auth.getId(), dto);
+    public ResponseEntity<CourseDTO> create(@RequestPart("course") CourseDTO dto,
+                                            @RequestPart(value = "coverImage", required = false) MultipartFile coverImage,
+                                            @AuthenticationPrincipal JwtUser auth) {
+        CourseDTO createdCourse = courseService.createCourse(dto.getOrganizationId(), auth.getId(), dto, coverImage);
         return ResponseEntity.ok(createdCourse);
     }
 
