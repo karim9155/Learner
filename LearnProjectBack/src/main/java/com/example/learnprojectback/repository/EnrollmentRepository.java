@@ -18,4 +18,7 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, UUID> {
             "LEFT JOIN FETCH e.course.org " + // Use LEFT JOIN in case org is optional
             "WHERE e.user.id = :userId")
     List<Course> findCoursesByAdminEnrollments(UUID userId);
+
+    List<Enrollment> findAllByLearner_Id(UUID learnerId);
+
 }

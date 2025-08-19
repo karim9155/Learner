@@ -1,5 +1,6 @@
 package com.example.learnprojectback.service;
 
+import com.example.learnprojectback.dto.LearnerCourseInfoDTO;
 import com.example.learnprojectback.dto.UserCreationRequest;
 import com.example.learnprojectback.dto.UserDTO;
 import org.springframework.data.domain.Page;
@@ -15,4 +16,6 @@ public interface UserService {
     Page<UserDTO> getEmployees(Pageable pageable, String search);
     void deleteUser(UUID userId);
     UserDTO updateUser(UUID userId, UserDTO userDTO);
+    LearnerCourseInfoDTO findLearnerByPhone(String phone); // Add this line
+
 }

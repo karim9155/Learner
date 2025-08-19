@@ -1,15 +1,18 @@
 package com.example.learnprojectback.service.impl;
 
+import com.example.learnprojectback.dto.CourseDTO;
+import com.example.learnprojectback.dto.LearnerCourseInfoDTO;
 import com.example.learnprojectback.dto.UserCreationRequest;
 import com.example.learnprojectback.dto.UserDTO;
-import com.example.learnprojectback.model.Membership;
-import com.example.learnprojectback.model.Organization;
-import com.example.learnprojectback.model.Role;
-import com.example.learnprojectback.model.User;
+import com.example.learnprojectback.model.*;
+import com.example.learnprojectback.repository.EnrollmentRepository;
 import com.example.learnprojectback.repository.MembershipRepository;
 import com.example.learnprojectback.repository.OrganizationRepository;
 import com.example.learnprojectback.repository.UserRepository;
 import com.example.learnprojectback.service.UserService;
+import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.Phonenumber;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -42,6 +45,7 @@ public class UserServiceImpl implements UserService {
     private final MembershipRepository membershipRepository;
     private final PasswordEncoder passwordEncoder;
     private final ModelMapper modelMapper;
+    private final EnrollmentRepository enrollmentRepository;
 
     @Transactional
     @Override
@@ -191,5 +195,46 @@ public class UserServiceImpl implements UserService {
 
         User updatedUser = userRepository.save(user);
         return modelMapper.map(updatedUser, UserDTO.class);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public LearnerCourseInfoDTO findLearnerByPhone(String phone) {
+        // ... (phone number parsing logic remains the same)
+        PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
+        String formattedPhone;
+
+        try {
+            Phonenumber.PhoneNumber numberProto = phoneUtil.parse(phone, "TN");
+            if (!phoneUtil.isValidNumber(numberProto)) {
+                throw new RuntimeException("Invalid phone number format: " + phone);
+            }
+            formattedPhone = phoneUtil.format(numberProto, PhoneNumberUtil.PhoneNumberFormat.E164);
+        } catch (NumberParseException e) {
+            throw new RuntimeException("Could not parse phone number: " + phone, e);
+        }
+
+        User user = userRepository.findByPhone(formattedPhone)
+                .orElseThrow(() -> new RuntimeException("User not found with phone number: " + formattedPhone));
+
+        boolean isEmployee = membershipRepository.findByUser(user).stream()
+                .anyMatch(membership -> membership.getRole() == Role.EMPLOYEE);
+
+        if (!isEmployee) {
+            throw new RuntimeException("User is not an employee.");
+        }
+
+        LearnerCourseInfoDTO learnerInfo = modelMapper.map(user, LearnerCourseInfoDTO.class);
+
+        // --- THIS IS THE CORRECTED PART ---
+        // We now explicitly query by the 'learner' field in the Enrollment entity.
+        List<CourseDTO> enrolledCourses = enrollmentRepository.findAllByLearner_Id(user.getId()).stream()
+                .map(Enrollment::getCourse)
+                .map(course -> modelMapper.map(course, CourseDTO.class))
+                .collect(Collectors.toList());
+
+        learnerInfo.setEnrolledCourses(enrolledCourses);
+
+        return learnerInfo;
     }
 }

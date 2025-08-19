@@ -25,6 +25,11 @@ public class ApplicationConfig {
                     mapper.map(src -> src.getCreatedBy() != null ? src.getCreatedBy().getId() : null, CourseDTO::setTrainerId);
                     mapper.map(src -> src.getCreatedBy() != null ? src.getCreatedBy().getEmail() : null, CourseDTO::setTrainerEmail);
                     mapper.map(src -> src.getOrg() != null ? src.getOrg().getId() : null, CourseDTO::setOrganizationId);
+                    mapper.map(src -> src.getCreatedBy().getId(), CourseDTO::setTrainerId);
+                    // Map the email from the nested 'createdBy' User object to 'trainerEmail' in the DTO
+                    mapper.map(src -> src.getCreatedBy().getEmail(), CourseDTO::setTrainerEmail);
+                    // Map the ID from the nested 'org' Organization object to 'organizationId' in the DTO
+                    mapper.map(src -> src.getOrg().getId(), CourseDTO::setOrganizationId);
                 });
 
 
