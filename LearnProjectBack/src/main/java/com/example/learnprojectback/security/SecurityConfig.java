@@ -32,7 +32,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/auth/register", "/api/users/**").permitAll()
-                        .requestMatchers("/api/organizations/**", "/api/memberships/**","/uploads/**").permitAll()
+                        .requestMatchers("/api/organizations/**", "/api/memberships/**","/uploads/**", "/api/users/learner/**" ).permitAll()
                         .requestMatchers("/api/courses/all").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/enrollments").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/enrollments/admin/**").hasAuthority("ADMIN")

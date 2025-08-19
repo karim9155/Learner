@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import {Learner} from './learner-data.service';
 
 export interface User {
   id: string;
@@ -39,6 +40,12 @@ export class UserService {
 
   updateUser(userId: string, userData: any): Observable<any> {
     return this.http.put(`${this.apiUrl}/${userId}`, userData);
+  }
+
+  findLearnerByPhone(phone: string): Observable<Learner> {
+    // Make sure the phone number is URL-encoded
+    const encodedPhone = encodeURIComponent(phone);
+    return this.http.get<Learner>(`${this.apiUrl}/learner/${encodedPhone}`);
   }
 
 }

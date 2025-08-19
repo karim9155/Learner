@@ -1,0 +1,23 @@
+<div class="scroller-container">
+  <div *ngIf="isLoading" class="spinner-container">
+    <mat-spinner></mat-spinner>
+  </div>
+  <div *ngFor="let video of videos" class="video-slide">
+    <div class="video-wrapper">
+      <iframe
+        width="100%"
+        height="100%"
+        [src]="getSafeUrl(video.youtubeUrl)"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen>
+      </iframe>
+    </div>
+    <div class="video-info">
+      <h3>{{ video.title }}</h3>
+    </div>
+  </div>
+  <a routerLink="/learner/courses" class="back-button">
+    <mat-icon>arrow_back</mat-icon>
+  </a>
+</div>
