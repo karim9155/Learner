@@ -1,5 +1,6 @@
 package com.example.learnprojectback.controller;
 
+import com.example.learnprojectback.dto.LearnerCourseInfoDTO;
 import com.example.learnprojectback.dto.UserCreationRequest;
 import com.example.learnprojectback.dto.UserDTO;
 import com.example.learnprojectback.service.UserService;
@@ -57,5 +58,9 @@ public class UserController {
     @PutMapping("/{userId}")
     public ResponseEntity<UserDTO> updateUser(@PathVariable UUID userId, @RequestBody UserDTO userDTO) {
         return ResponseEntity.ok(userService.updateUser(userId, userDTO));
+    }
+    @GetMapping("/learner/{phone}")
+    public ResponseEntity<LearnerCourseInfoDTO> getLearnerByPhone(@PathVariable String phone) {
+        return ResponseEntity.ok(userService.findLearnerByPhone(phone));
     }
 }
