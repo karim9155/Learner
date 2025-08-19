@@ -12,11 +12,14 @@ import { EnrollModalComponent } from '../components/enroll-modal/enroll-modal.co
 // ... (interfaces remain the same) ...
 interface Course {
   id: string;
-  name: string;
+  title: string;
   description: string;
+  coverImage: string;
   trainerEmail: string;
-  showVideos: boolean;
+  createdAt?: string;
+  videoCount?: number;
   videos?: Video[];
+  showVideos?: boolean; // Add this line
 }
 
 interface Video {
@@ -166,7 +169,7 @@ export class AdminDashboardComponent implements OnInit {
   openEnrollDialog(course: Course): void {
     const dialogRef = this.dialog.open(EnrollModalComponent, {
       width: '500px',
-      data: { courseId: course.id, courseName: course.name }
+      data: { courseId: course.id, courseName: course.title }
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -379,5 +382,32 @@ export class AdminDashboardComponent implements OnInit {
 
   updateUser(user: User): void {
     console.log('Update user:', user);
+  }
+  getImageUrl(coverImage: string): string {
+    return `http://localhost:8080/uploads/${coverImage}`;
+  }
+  onImageError(e: Event) {
+    const img = e.target as HTMLImageElement;
+    img.classList.add('error');
+  }
+
+  getRecentActivity() {
+    return undefined;
+  }
+
+  getActivityStatus(activity: any) {
+
+  }
+
+  getActiveEnrollments() {
+    return "";
+  }
+
+  getPageTitle() {
+    return "";
+  }
+
+  getPageSubtitle() {
+    return "";
   }
 }
