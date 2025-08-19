@@ -1,0 +1,21 @@
+<div class="mobile-container" *ngIf="learner">
+  <mat-toolbar color="primary">
+    <span>Welcome, {{ learner.name }}</span>
+  </mat-toolbar>
+  <div class="content">
+    <h3>My Courses</h3>
+    <div *ngIf="learner.enrolledCourses.length > 0; else noCourses">
+      <mat-card *ngFor="let course of learner.enrolledCourses" (click)="playCourse(course.id)" class="course-card">
+        <mat-card-header>
+          <mat-card-title>{{ course.title }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <p>{{ course.description }}</p>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    <ng-template #noCourses>
+      <p>You are not enrolled in any courses yet.</p>
+    </ng-template>
+  </div>
+</div>

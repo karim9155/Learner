@@ -7,6 +7,7 @@ import { AuthGuard } from './guards/auth.guard';
 import { RoleGuard } from './guards/role.guard';
 
 const routes: Routes = [
+  // 1. Specific routes first
   { path: 'login', component: LoginComponent },
   {
     path: 'admin/dashboard',
@@ -20,8 +21,17 @@ const routes: Routes = [
     canActivate: [AuthGuard, RoleGuard],
     data: { role: 'trainer' }
   },
+  // 2. Lazy-loaded module route
+  {
+    path: 'learner',
+    loadChildren: () => import('./learner/learner.module').then(m => m.LearnerModule)
+  },
+
+  // 3. Default route for the root path
   { path: '', redirectTo: '/login', pathMatch: 'full' },
-  { path: '**', redirectTo: '/login' } // Wildcard route for a 404 page
+
+  // 4. Wildcard route MUST be last
+  { path: '**', redirectTo: '/login' }
 ];
 
 @NgModule({

@@ -1,0 +1,58 @@
+.scroller-container {
+  height: 100vh;
+  width: 100vw;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory; /* This is the magic! */
+  background-color: #000;
+}
+
+.video-slide {
+  height: 100vh;
+  width: 100vw;
+  scroll-snap-align: start; /* Each slide snaps to the top */
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.video-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.video-info {
+  position: absolute;
+  bottom: 20px;
+  left: 10px;
+  color: white;
+  z-index: 1;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+}
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.back-button {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 10;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.4);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}

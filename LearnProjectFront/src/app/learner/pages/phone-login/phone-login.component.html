@@ -1,0 +1,23 @@
+<div class="mobile-container">
+  <div class="login-card">
+    <h2>Learner Access</h2>
+    <p>Enter your phone number to begin.</p>
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <mat-form-field appearance="outline">
+        <mat-label>Phone Number</mat-label>
+        <input matInput formControlName="phone" placeholder="+21620000100" required>
+        <mat-error *ngIf="loginForm.get('phone')?.hasError('required')">Phone number is required</mat-error>
+        <mat-error *ngIf="loginForm.get('phone')?.hasError('pattern')">Invalid phone number format</mat-error>
+      </mat-form-field>
+
+      <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
+
+      <button mat-flat-button color="primary" type="submit" [disabled]="isLoading || loginForm.invalid">
+        <span *ngIf="!isLoading">Continue</span>
+        <mat-spinner *ngIf="isLoading" diameter="24"></mat-spinner>
+      </button>
+    </form>
+  </div>
+</div>
