@@ -108,11 +108,13 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     }
 
     // ADD THIS HELPER METHOD to perform the manual mapping.
+    // ADD THIS HELPER METHOD to perform the manual mapping.
     private CourseDTO convertToCourseDTO(Course course) {
         CourseDTO dto = new CourseDTO();
         dto.setId(course.getId());
-        dto.setTitle(course.getTitle()); // Assuming 'name' is the title field
+        dto.setTitle(course.getTitle());
         dto.setDescription(course.getDescription());
+        dto.setCoverImage(course.getCoverImage()); // <-- THIS IS THE FIX
 
         // Safely handle the createdBy user
         User createdBy = course.getCreatedBy();
