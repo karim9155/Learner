@@ -34,16 +34,27 @@ export class VideoScrollerComponent implements OnInit {
   }
 
   getSafeUrl(youtubeUrl: string): SafeResourceUrl {
-    // Basic extraction of YouTube video ID
-    let videoId = youtubeUrl.split('v=')[1];
+    let videoId = '';
+
+    // Check for standard, short, and shorts URL formats
+    if (youtubeUrl.includes('watch?v=')) {
+      videoId = youtubeUrl.split('v=')[1];
+    } else if (youtubeUrl.includes('youtu.be/')) {
+      videoId = youtubeUrl.split('youtu.be/')[1];
+    } else if (youtubeUrl.includes('/shorts/')) {
+      videoId = youtubeUrl.split('/shorts/')[1];
+    }
+
+    // Clean up any extra parameters in the URL
     if (videoId) {
       const ampersandPosition = videoId.indexOf('&');
       if (ampersandPosition !== -1) {
         videoId = videoId.substring(0, ampersandPosition);
       }
-      const embedUrl = `https://www.youtube.com/embed/${videoId}`;
-      return this.sanitizer.bypassSecurityTrustResourceUrl(embedUrl);
     }
-    return ''; // Return a safe, empty value if URL is invalid
+
+    // Construct the embed URL and trust it
+    const embedUrl = `https://www.youtube.com/embed/${videoId}`;
+    return this.sanitizer.bypassSecurityTrustResourceUrl(embedUrl);
   }
 }
