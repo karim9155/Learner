@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AuthService } from './auth.service';
 
@@ -36,8 +36,12 @@ export class CourseService {
     return this.http.post(videoApiUrl, videoData, { headers: this.getAuthHeaders() });
   }
 
-  getAllCourses(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/all`, { headers: this.getAuthHeaders() });
+  getAllCourses(search: string = ''): Observable<any> {
+    let params = new HttpParams();
+    if (search) {
+      params = params.set('search', search);
+    }
+    return this.http.get(`${this.apiUrl}/all`, { headers: this.getAuthHeaders(), params });
   }
 
   getVideosByCourse(courseId: string): Observable<any> {
@@ -46,12 +50,16 @@ export class CourseService {
   }
 
   // This method accepts either a trainer ID or email
-  getCoursesByTrainer(trainerIdOrEmail: string): Observable<any> {
+  getCoursesByTrainer(trainerIdOrEmail: string, search: string = ''): Observable<any> {
     // Check if the parameter is an email (contains @) and encode it
     if (trainerIdOrEmail.includes('@')) {
       trainerIdOrEmail = encodeURIComponent(trainerIdOrEmail);
     }
-    return this.http.get<any[]>(`${this.apiUrl}/by-trainer/${trainerIdOrEmail}`, { headers: this.getAuthHeaders() });
+    let params = new HttpParams();
+    if (search) {
+      params = params.set('search', search);
+    }
+    return this.http.get<any[]>(`${this.apiUrl}/by-trainer/${trainerIdOrEmail}`, { headers: this.getAuthHeaders(), params });
   }
 
   deleteCourse(courseId: string): Observable<any> {
@@ -71,8 +79,12 @@ export class CourseService {
     return this.http.post(enrollmentUrl, { courseId, learnerId: userId }, { headers: this.getAuthHeaders() });
   }
   // THIS IS THE NEW METHOD FOR THE ADMIN DASHBOARD
-  getAdminEnrolledCourses(adminId: string): Observable<any> {
-    return this.http.get(`${this.enrollmentApiUrl}/admin/${adminId}`, { headers: this.getAuthHeaders() });
+  getAdminEnrolledCourses(adminId: string, search: string = ''): Observable<any> {
+    let params = new HttpParams();
+    if (search) {
+      params = params.set('search', search);
+    }
+    return this.http.get(`${this.enrollmentApiUrl}/admin/${adminId}`, { headers: this.getAuthHeaders(), params });
   }
 
 

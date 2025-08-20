@@ -97,11 +97,20 @@ public class EnrollmentServiceImpl implements EnrollmentService {
         }).collect(Collectors.toList());
     }
     @Override
-    public List<CourseDTO> getCoursesEnrolledByAdmin(UUID adminId) {
+    public List<CourseDTO> getCoursesEnrolledByAdmin(UUID adminId, String search) {
         // STEP 1: Fetch the fully loaded Course entities.
         List<Course> courses = enrollmentRepository.findCoursesByAdminEnrollments(adminId);
 
-        // STEP 2: Manually map the results to DTOs. This is now safe from errors.
+        // STEP 2: Filter if a search term is provided.
+        if (search != null && !search.isEmpty()) {
+            String lowerCaseSearch = search.toLowerCase();
+            courses = courses.stream()
+                    .filter(c -> c.getTitle().toLowerCase().contains(lowerCaseSearch) ||
+                            c.getDescription().toLowerCase().contains(lowerCaseSearch))
+                    .collect(Collectors.toList());
+        }
+
+        // STEP 3: Manually map the results to DTOs. This is now safe from errors.
         return courses.stream()
                 .map(this::convertToCourseDTO)
                 .collect(Collectors.toList());

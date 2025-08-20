@@ -8,6 +8,8 @@ import * as Papa from 'papaparse';
 import { PageEvent } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
 import { EnrollModalComponent } from '../components/enroll-modal/enroll-modal.component';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 
 // ... (interfaces remain the same) ...
 interface Course {
@@ -61,6 +63,10 @@ export class AdminDashboardComponent implements OnInit {
   pageSize = 10;
   pageIndex = 0;
   searchTerm = '';
+  shopCoursesSearchTerm = '';
+  enrolledCoursesSearchTerm = '';
+  private shopCoursesSearchSubject = new Subject<string>();
+  private enrolledCoursesSearchSubject = new Subject<string>();
   lightLogo: string = 'assets/logo.png';
   darkLogo: string = 'assets/logoDark.png';
 
@@ -98,6 +104,48 @@ export class AdminDashboardComponent implements OnInit {
     this.loadEmployees();
     this.loadAllCourses();
     this.loadEnrolledCourses(); // This will now use the correct ID
+
+    this.shopCoursesSearchSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      switchMap((term: string) => {
+        this.isLoading = true;
+        return this.courseService.getAllCourses(term);
+      })
+    ).subscribe({
+      next: (response) => {
+        this.shopCourses = response.map((course: any) => ({
+          ...course,
+          showVideos: false
+        }));
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Failed to search courses', error);
+        this.isLoading = false;
+      }
+    });
+
+    this.enrolledCoursesSearchSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      switchMap((term: string) => {
+        this.isLoading = true;
+        return this.courseService.getAdminEnrolledCourses(this.adminUser.id, term);
+      })
+    ).subscribe({
+      next: (response) => {
+        this.enrolledCourses = response.map((course: any) => ({
+          ...course,
+          showVideos: false
+        }));
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Failed to search enrolled courses', error);
+        this.isLoading = false;
+      }
+    });
   }
 
   // Utility method to get current user info
@@ -119,9 +167,9 @@ export class AdminDashboardComponent implements OnInit {
   }
 
 
-  loadAllCourses(): void {
+  loadAllCourses(searchTerm: string = ''): void {
     this.isLoading = true;
-    this.courseService.getAllCourses().subscribe({
+    this.courseService.getAllCourses(searchTerm).subscribe({
       next: (response) => {
         this.shopCourses = response.map((course: any) => ({
           ...course,
@@ -137,13 +185,13 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   // This method now works correctly
-  loadEnrolledCourses(): void {
+  loadEnrolledCourses(searchTerm: string = ''): void {
     if (!this.adminUser.id) { // <-- CHANGED: Add a check to ensure ID exists before calling
       console.error("Admin user ID not found. Cannot load enrolled courses.");
       return;
     }
     this.isLoading = true;
-    this.courseService.getAdminEnrolledCourses(this.adminUser.id).subscribe({
+    this.courseService.getAdminEnrolledCourses(this.adminUser.id, searchTerm).subscribe({
       next: (response) => {
         this.enrolledCourses = response.map((course: any) => ({
           ...course,
@@ -156,6 +204,16 @@ export class AdminDashboardComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  onShopCoursesSearch(event: any): void {
+    this.shopCoursesSearchTerm = event.target.value;
+    this.shopCoursesSearchSubject.next(this.shopCoursesSearchTerm);
+  }
+
+  onEnrolledCoursesSearch(event: any): void {
+    this.enrolledCoursesSearchTerm = event.target.value;
+    this.enrolledCoursesSearchSubject.next(this.enrolledCoursesSearchTerm);
   }
 
   // ... (The rest of your component code remains the same)
