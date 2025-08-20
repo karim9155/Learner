@@ -37,8 +37,8 @@ public class EnrollmentController {
         return ResponseEntity.ok(enrollments);
     }
     @GetMapping("/admin/{adminId}")
-    public ResponseEntity<List<CourseDTO>> getCoursesByAdmin(@PathVariable UUID adminId) {
-        List<CourseDTO> courses = enrollmentService.getCoursesEnrolledByAdmin(adminId);
+    public ResponseEntity<List<CourseDTO>> getCoursesByAdmin(@PathVariable UUID adminId, @RequestParam(required = false) String search) {
+        List<CourseDTO> courses = enrollmentService.getCoursesEnrolledByAdmin(adminId, search);
         return ResponseEntity.ok(courses);
     }
 }

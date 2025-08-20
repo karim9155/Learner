@@ -4,6 +4,8 @@ import { CourseService } from '../../services/course.service';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 
 interface Course {
   id: string;
@@ -58,6 +60,8 @@ export class TrainerDashboardComponent implements OnInit {
   isCreatingCourse = false;
   isAddingVideo = false;
   private coursesLoaded: boolean = false;
+  myCoursesSearchTerm = '';
+  private myCoursesSearchSubject = new Subject<string>();
 
   get courseFormControls() { return this.courseForm.controls; }
   get videoFormControls() { return this.videoForm.controls; }
@@ -103,6 +107,31 @@ export class TrainerDashboardComponent implements OnInit {
     // Initialize coursesLoaded to false and load courses on component initialization
     this.coursesLoaded = false;
     this.loadMyCourses();
+
+    this.myCoursesSearchSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      switchMap((term: string) => {
+        this.isLoading = true;
+        return this.courseService.getCoursesByTrainer(this.trainerUser.id, term);
+      })
+    ).subscribe({
+      next: (courses) => {
+        this.myCourses = courses.map((course: any) => ({
+          ...course,
+          videoCount: 0,
+          showVideos: false
+        }));
+        this.myCourses.forEach(course => {
+          this.loadCourseVideoCount(course);
+        });
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.error('Failed to search courses', error);
+        this.isLoading = false;
+      }
+    });
   }
 
   youtubeUrlValidator(control: any) {
@@ -128,16 +157,12 @@ export class TrainerDashboardComponent implements OnInit {
     }
   }
 
-  loadMyCourses(): void {
-    if (this.coursesLoaded) {
-      return;
-    }
-
+  loadMyCourses(searchTerm: string = ''): void {
     this.isLoading = true; // Start loading
     console.log("Attempting to load courses for trainer ID:", this.trainerUser.id);
 
     if (this.trainerUser && this.trainerUser.id) {
-      this.courseService.getCoursesByTrainer(this.trainerUser.id).subscribe({
+      this.courseService.getCoursesByTrainer(this.trainerUser.id, searchTerm).subscribe({
         next: (courses) => {
           console.log("SUCCESS: Courses received from API:", courses);
           this.myCourses = courses.map((course: any) => ({
@@ -161,6 +186,11 @@ export class TrainerDashboardComponent implements OnInit {
       console.error('ERROR: Trainer ID was not available when loading courses.');
       this.isLoading = false;
     }
+  }
+
+  onMyCoursesSearch(event: any): void {
+    this.myCoursesSearchTerm = event.target.value;
+    this.myCoursesSearchSubject.next(this.myCoursesSearchTerm);
   }
   loadCourseVideoCount(course: any): void {
     // **** THIS NOW CORRECTLY CALLS CourseService ****

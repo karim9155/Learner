@@ -13,6 +13,6 @@ public interface EnrollmentService {
     EnrollmentDTO assignLearner(EnrollmentDTO dto, UUID adminId);
 
     List<EnrollmentDTO> assignLearnersToCourse(BatchEnrollmentRequest request, UUID adminId);
-    List<CourseDTO> getCoursesEnrolledByAdmin(UUID adminId);
+    List<CourseDTO> getCoursesEnrolledByAdmin(UUID adminId, String search);
 
 }

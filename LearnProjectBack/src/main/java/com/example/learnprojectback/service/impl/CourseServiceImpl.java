@@ -63,8 +63,13 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public List<CourseDTO> getAllCourses() {
-        List<Course> courses = courseRepository.findAll();
+    public List<CourseDTO> getAllCourses(String search) {
+        List<Course> courses;
+        if (search != null && !search.isEmpty()) {
+            courses = courseRepository.findAllByTitleContainingIgnoreCaseOrDescriptionContainingIgnoreCase(search, search);
+        } else {
+            courses = courseRepository.findAll();
+        }
         return courses.stream()
                 .map(this::convertToDto) // Use the robust conversion method here as well
                 .collect(Collectors.toList());
@@ -88,8 +93,14 @@ public class CourseServiceImpl implements CourseService {
         return courseDTO;
     }
     @Override
-    public List<CourseDTO> getCoursesByTrainer(UUID trainerId) {
-        return courseRepository.findByCreatedById(trainerId).stream()
+    public List<CourseDTO> getCoursesByTrainer(UUID trainerId, String search) {
+        List<Course> courses;
+        if (search != null && !search.isEmpty()) {
+            courses = courseRepository.findByCreatedByIdAndSearchTerm(trainerId, search);
+        } else {
+            courses = courseRepository.findByCreatedById(trainerId);
+        }
+        return courses.stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }

@@ -37,12 +37,12 @@ public class CourseController {
     }
 
     @GetMapping("/all")
-    public List<CourseDTO> getAllCourses() {
-        return courseService.getAllCourses();
+    public List<CourseDTO> getAllCourses(@RequestParam(required = false) String search) {
+        return courseService.getAllCourses(search);
     }
     @GetMapping("/by-trainer/{trainerId}")
-    public List<CourseDTO> getCoursesByTrainer(@PathVariable UUID trainerId) {
-        return courseService.getCoursesByTrainer(trainerId);
+    public List<CourseDTO> getCoursesByTrainer(@PathVariable UUID trainerId, @RequestParam(required = false) String search) {
+        return courseService.getCoursesByTrainer(trainerId, search);
     }
 
     @GetMapping("/by-user/{userId}")

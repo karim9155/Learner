@@ -11,8 +11,8 @@ import java.util.UUID;
 public interface CourseService {
     CourseDTO createCourse(UUID orgId, UUID trainerId, CourseDTO dto, MultipartFile coverImage);
     List<CourseDTO> listCourses(UUID orgId);
-    List<CourseDTO> getAllCourses();
-    List<CourseDTO> getCoursesByTrainer(UUID trainerId);
+    List<CourseDTO> getAllCourses(String search);
+    List<CourseDTO> getCoursesByTrainer(UUID trainerId, String search);
     void deleteCourse(UUID courseId);
     List<CourseDTO> getEnrolledCourses(UUID userId); // New Method
     List<CourseDTO> getCoursesByUserId(UUID userId);
