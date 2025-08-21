@@ -1,58 +1,497 @@
-.scroller-container {
-  height: 100vh;
-  width: 100vw;
-  overflow-y: scroll;
-  scroll-snap-type: y mandatory; /* This is the magic! */
-  background-color: #000;
-}
-
-.video-slide {
-  height: 100vh;
-  width: 100vw;
-  scroll-snap-align: start; /* Each slide snaps to the top */
+/* Phone Login Component Styles */
+.mobile-container {
+  min-height: 100vh;
+  background: var(--color-background, #f8f9fa);
   position: relative;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  padding: 1rem;
 }
 
-.video-wrapper {
+.mobile-container::before {
+  content: '';
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  right: 0;
+  bottom: 0;
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
+  background-size: 20px 20px;
+  pointer-events: none;
 }
 
-.video-info {
+:host-context(.dark) .mobile-container {
+  background: var(--color-background, #0f172a);
+}
+
+:host-context(.dark) .mobile-container::before {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/* Back Button (Optional) */
+.back-button-container {
   position: absolute;
-  bottom: 20px;
-  left: 10px;
-  color: white;
-  z-index: 1;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
-}
-
-.spinner-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+  top: 1rem;
+  left: 1rem;
+  z-index: 10;
 }
 
 .back-button {
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  z-index: 10;
-  color: white;
-  background-color: rgba(0, 0, 0, 0.4);
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid var(--color-border, #e2e8f0);
+  color: var(--color-foreground, #1a1a1a);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(8px);
+}
+
+:host-context(.dark) .back-button {
+  background: rgba(30, 41, 59, 0.9);
+  border-color: var(--color-border, #334155);
+  color: var(--color-foreground, #f8fafc);
+}
+
+.back-button:hover:not(:disabled) {
+  background: rgba(248, 250, 252, 0.95);
+  transform: translateY(-1px);
+}
+
+:host-context(.dark) .back-button:hover:not(:disabled) {
+  background: rgba(51, 65, 85, 0.95);
+}
+
+.back-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.back-icon {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+}
+
+/* Login Card Container */
+.login-card-container {
+  width: 100%;
+  max-width: 24rem;
+  z-index: 1;
+}
+
+.login-card {
+  background: var(--color-card, #ffffff);
+  border: 1px solid var(--color-border, #e2e8f0);
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+}
+
+:host-context(.dark) .login-card {
+  background: var(--color-card, #1e293b);
+  border-color: var(--color-border, #334155);
+}
+
+/* Card Header */
+.card-header {
+  text-align: center;
+  padding: 1.5rem 1.5rem 1rem;
+}
+
+.icon-container {
+  width: 4rem;
+  height: 4rem;
+  background: #eff6ff;
+  margin: 0 auto 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  text-decoration: none;
+}
+
+:host-context(.dark) .icon-container {
+  background: #1e40af;
+}
+
+.phone-icon {
+  width: 2rem;
+  height: 2rem;
+  color: #2563eb;
+}
+
+:host-context(.dark) .phone-icon {
+  color: #60a5fa;
+}
+
+.card-header h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-foreground, #1a1a1a);
+}
+
+:host-context(.dark) .card-header h2 {
+  color: var(--color-foreground, #f8fafc);
+}
+
+.subtitle {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--color-muted-foreground, #6b7280);
+  line-height: 1.4;
+}
+
+:host-context(.dark) .subtitle {
+  color: var(--color-muted-foreground, #94a3b8);
+}
+
+/* Card Content */
+.card-content {
+  padding: 1.5rem;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Form Field */
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.field-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-foreground, #1a1a1a);
+}
+
+:host-context(.dark) .field-label {
+  color: var(--color-foreground, #f8fafc);
+}
+
+.phone-input {
+  width: 100%;
+  padding: 0.75rem;
+  background: var(--color-card, #ffffff);
+  border: 1px solid var(--color-border, #e2e8f0);
+  color: var(--color-foreground, #1a1a1a);
+  font-size: 1rem;
+  font-family: monospace;
+  letter-spacing: 0.5px;
+  transition: all 0.2s ease;
+}
+
+:host-context(.dark) .phone-input {
+  background: var(--color-input, #334155);
+  border-color: var(--color-border, #475569);
+  color: var(--color-foreground, #f8fafc);
+}
+
+.phone-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-ring, #2563eb);
+  border-color: var(--color-ring, #2563eb);
+}
+
+:host-context(.dark) .phone-input:focus {
+  box-shadow: 0 0 0 2px var(--color-ring, #3b82f6);
+  border-color: var(--color-ring, #3b82f6);
+}
+
+.phone-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.phone-input.error {
+  border-color: #ef4444;
+}
+
+.phone-input.error:focus {
+  box-shadow: 0 0 0 2px #ef4444;
+  border-color: #ef4444;
+}
+
+.phone-input::placeholder {
+  color: var(--color-muted-foreground, #6b7280);
+  font-family: monospace;
+}
+
+:host-context(.dark) .phone-input::placeholder {
+  color: var(--color-muted-foreground, #94a3b8);
+}
+
+/* Error Messages */
+.field-error,
+.general-error {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: #ef4444;
+  font-size: 0.75rem;
+}
+
+:host-context(.dark) .field-error,
+:host-context(.dark) .general-error {
+  color: #f87171;
+}
+
+.general-error {
+  padding: 0.75rem;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  font-size: 0.875rem;
+  animation: slideIn 0.3s ease-out;
+}
+
+:host-context(.dark) .general-error {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #f87171;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.error-icon {
+  width: 0.75rem;
+  height: 0.75rem;
+  flex-shrink: 0;
+}
+
+.general-error .error-icon {
+  width: 1rem;
+  height: 1rem;
+  margin-top: 0.125rem;
+}
+
+/* Submit Button */
+.submit-button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  border: 1px solid transparent;
+  color: #ffffff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 2.75rem;
+}
+
+.submit-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(37, 99, 235, 0.3);
+}
+
+.submit-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+  background: #d1d5db;
+}
+
+:host-context(.dark) .submit-button:disabled {
+  background: #4b5563;
+}
+
+.submit-button.loading {
+  pointer-events: none;
+}
+
+.loading-spinner {
+  width: 1rem;
+  height: 1rem;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Additional Info */
+.additional-info {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border, #e2e8f0);
+}
+
+:host-context(.dark) .additional-info {
+  border-top-color: var(--color-border, #334155);
+}
+
+.additional-info p {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--color-muted-foreground, #6b7280);
+  text-align: center;
+  line-height: 1.4;
+}
+
+:host-context(.dark) .additional-info p {
+  color: var(--color-muted-foreground, #94a3b8);
+}
+
+/* Footer */
+.footer-text {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.footer-text p {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--color-muted-foreground, #6b7280);
+}
+
+:host-context(.dark) .footer-text p {
+  color: var(--color-muted-foreground, #94a3b8);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 640px) {
+  .mobile-container {
+    padding: 0.5rem;
+  }
+
+  .back-button-container {
+    top: 0.5rem;
+    left: 0.5rem;
+  }
+
+  .login-card {
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  }
+
+  .phone-input {
+    font-size: 1rem; /* Prevent zoom on iOS */
+    padding: 0.75rem;
+  }
+
+  .submit-button {
+    min-height: 2.75rem; /* Touch target size */
+  }
+
+  .card-header,
+  .card-content {
+    padding: 1rem;
+  }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .phone-input,
+  .submit-button,
+  .back-button,
+  .login-card {
+    border-width: 2px;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .loading-spinner {
+    animation: none;
+  }
+
+  .general-error {
+    animation: none;
+  }
+
+  * {
+    transition: none !important;
+  }
+}
+
+/* Focus Visible Support */
+.back-button:focus-visible,
+.submit-button:focus-visible {
+  outline: 2px solid var(--color-ring, #2563eb);
+  outline-offset: 2px;
+}
+
+.phone-input:focus-visible {
+  outline: 2px solid var(--color-ring, #2563eb);
+  outline-offset: 2px;
+}
+
+:host-context(.dark) .back-button:focus-visible,
+:host-context(.dark) .submit-button:focus-visible,
+:host-context(.dark) .phone-input:focus-visible {
+  outline-color: var(--color-ring, #3b82f6);
+}
+
+/* Print Styles */
+@media print {
+  .mobile-container::before {
+    display: none;
+  }
+
+  .back-button-container {
+    display: none;
+  }
+}
+
+/* Custom validation states */
+.form-field.ng-touched .phone-input.ng-invalid {
+  border-color: #ef4444;
+}
+
+.form-field.ng-touched .phone-input.ng-invalid:focus {
+  box-shadow: 0 0 0 2px #ef4444;
+}
+
+/* Loading state enhancements */
+.submit-button:disabled .loading-spinner {
+  opacity: 1;
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: no-preference) {
+  .submit-button:hover:not(:disabled) {
+    transition: all 0.2s ease;
+  }
+}
+
+/* Error shake animation for invalid submission */
+.login-form.ng-submitted .phone-input.ng-invalid {
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
 }
