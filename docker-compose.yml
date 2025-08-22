@@ -1,0 +1,49 @@
+services:
+  db:
+    image: postgres:13
+    container_name: postgres_db
+    environment:
+      POSTGRES_DB: Learner
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 9155
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - app-network
+
+  backend:
+    image: karimkli/learn-project-back:latest
+    container_name: backend_app
+    depends_on:
+      - db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/Learner
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=9155
+      - FILE_UPLOAD_DIR=/app/uploads
+    volumes:
+      - uploads-data:/app/uploads
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+
+  frontend:
+    image: karimkli/learn-project-front:latest
+    container_name: frontend_app
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
+  uploads-data:
