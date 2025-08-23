@@ -8,7 +8,7 @@ import { jwtDecode } from 'jwt-decode';
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:8080/auth';
+  private apiUrl = 'http://54.37.78.55:8080/auth';
   private tokenKey = 'auth_token';
   private roleKey = 'auth_role';
   private userKey = 'auth_user'; // Key for storing the user object
