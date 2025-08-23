@@ -7,8 +7,8 @@ import { AuthService } from './auth.service';
   providedIn: 'root'
 })
 export class CourseService {
-  private apiUrl = 'http://54.37.78.55:8080/api/courses';
-  private enrollmentApiUrl = 'http://54.37.78.55:8080/api/enrollments';
+  private apiUrl = 'http://localhost:8080/api/courses';
+  private enrollmentApiUrl = 'http://localhost:8080/api/enrollments';
 
 
 
@@ -32,7 +32,7 @@ export class CourseService {
   }
 
   addVideo(videoData: any): Observable<any> {
-    const videoApiUrl = 'http://54.37.78.55:8080/api/videos';
+    const videoApiUrl = 'http://localhost:8080/api/videos';
     return this.http.post(videoApiUrl, videoData, { headers: this.getAuthHeaders() });
   }
 
@@ -45,7 +45,7 @@ export class CourseService {
   }
 
   getVideosByCourse(courseId: string): Observable<any> {
-    const videoApiUrl = 'http://54.37.78.55:8080/api/videos';
+    const videoApiUrl = 'http://localhost:8080/api/videos';
     return this.http.get(`${videoApiUrl}/by-course/${courseId}`, { headers: this.getAuthHeaders() });
   }
 
@@ -67,7 +67,7 @@ export class CourseService {
   }
 
   deleteVideo(videoId: string): Observable<any> {
-    const videoApiUrl = 'http://54.37.78.55:8080/api/videos';
+    const videoApiUrl = 'http://localhost:8080/api/videos';
     return this.http.delete(`${videoApiUrl}/${videoId}`, { headers: this.getAuthHeaders() });
   }
   getEnrolledCourses(userId: string): Observable<any> {
@@ -75,7 +75,7 @@ export class CourseService {
   }
 
   enrollInCourse(courseId: string, userId: string): Observable<any> {
-    const enrollmentUrl = 'http://54.37.78.55:8080/api/enrollments';
+    const enrollmentUrl = 'http://localhost:8080/api/enrollments';
     return this.http.post(enrollmentUrl, { courseId, learnerId: userId }, { headers: this.getAuthHeaders() });
   }
   // THIS IS THE NEW METHOD FOR THE ADMIN DASHBOARD
