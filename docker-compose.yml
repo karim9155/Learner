@@ -1,49 +1,44 @@
+version: '3.8'
+
 services:
   db:
-    image: postgres:13
-    container_name: postgres_db
+    image: mysql:8.0
+    container_name: learner-db
     environment:
-      POSTGRES_DB: Learner
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 9155
+      MYSQL_ROOT_PASSWORD: 9155 # CHANGE THIS
+      MYSQL_DATABASE: Learner
+      MYSQL_USER: postgres
+      MYSQL_PASSWORD: 9155 # CHANGE THIS
     volumes:
-      - postgres-data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
-    networks:
-      - app-network
+      - mysql_data:/var/lib/mysql
+    restart: unless-stopped
 
   backend:
-    image: karimkli/learn-project-back:latest
-    container_name: backend_app
+    build: ./LearnProjectBack
+    container_name: learner-backend
     depends_on:
       - db
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/Learner
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/Learner
       - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=9155
-      - FILE_UPLOAD_DIR=/app/uploads
+      - SPRING_DATASOURCE_PASSWORD=9155 # CHANGE THIS
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update # Consider 'validate' for production
+      - JWT_SECRET=4f5j2h4g5j2h4g5j2h4g5j2h4g5j2h4g5j2h4g5j2h4g5j2h4g5j2h4g5j2h4g # CHANGE THIS
     volumes:
-      - uploads-data:/app/uploads
-    ports:
-      - "8080:8080"
-    networks:
-      - app-network
+      - uploads:/app/uploads
+    restart: unless-stopped
+    expose:
+      - "8080"
 
   frontend:
-    image: karimkli/learn-project-front:latest
-    container_name: frontend_app
+    build: ./LearnProjectFront
+    container_name: learner-frontend
     depends_on:
       - backend
     ports:
       - "80:80"
-    networks:
-      - app-network
-
-networks:
-  app-network:
-    driver: bridge
+    restart: unless-stopped
 
 volumes:
-  postgres-data:
-  uploads-data:
+  mysql_data:
+  uploads:
