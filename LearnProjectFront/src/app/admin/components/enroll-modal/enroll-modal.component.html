@@ -1,6 +1,16 @@
 <h1 mat-dialog-title>Enroll Employees in "{{ data.courseName }}"</h1>
 
 <div mat-dialog-content>
+  <mat-form-field appearance="fill" class="department-filter">
+    <mat-label>Filter by Department</mat-label>
+    <mat-select (selectionChange)="onDepartmentChange($event.value)">
+      <mat-option [value]="''">All Departments</mat-option>
+      <mat-option *ngFor="let department of departments" [value]="department">
+        {{ department }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
   <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
 
     <ng-container matColumnDef="select">

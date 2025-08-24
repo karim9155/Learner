@@ -20,6 +20,8 @@ export class EnrollModalComponent implements OnInit {
   displayedColumns: string[] = ['select', 'name', 'email', 'department', 'badgeNumber', 'phone'];
   dataSource = new MatTableDataSource<User>();
   selection = new SelectionModel<User>(true, []);
+  departments: string[] = [];
+  filteredUsers: User[] = [];
 
   constructor(
     public dialogRef: MatDialogRef<EnrollModalComponent>,
@@ -35,8 +37,15 @@ export class EnrollModalComponent implements OnInit {
 
   loadEmployees(): void {
     this.userService.getEmployees(0, 1000, '').subscribe({
-      next: (response) => {
+      next: (response: { content: User[] }) => {
         this.dataSource.data = response.content;
+        const departmentSet = new Set(response.content.map(user => user.department));
+        this.departments = Array.from(departmentSet);
+
+        // Initialize the filter predicate
+        this.dataSource.filterPredicate = (data: User, filter: string) => {
+          return !filter || data.department === filter;
+        };
       },
       error: (err) => {
         console.error('Failed to load employees for modal', err);
@@ -45,16 +54,25 @@ export class EnrollModalComponent implements OnInit {
     });
   }
 
+  onDepartmentChange(department: string): void {
+    if (department) {
+      this.dataSource.filter = department.trim().toLowerCase();
+    } else {
+      this.dataSource.filter = '';
+    }
+    this.selection.clear();
+  }
+
   isAllSelected() {
     const numSelected = this.selection.selected.length;
-    const numRows = this.dataSource.data.length;
+    const numRows = this.dataSource.filteredData.length;
     return numSelected === numRows;
   }
 
   masterToggle() {
     this.isAllSelected() ?
       this.selection.clear() :
-      this.dataSource.data.forEach(row => this.selection.select(row));
+      this.dataSource.filteredData.forEach(row => this.selection.select(row));
   }
 
   onEnroll(): void {
