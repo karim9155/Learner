@@ -84,4 +84,5 @@ export class EnrollModalComponent implements OnInit {
   onCancel(): void {
     this.dialogRef.close();
   }
+
 }

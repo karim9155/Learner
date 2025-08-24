@@ -1472,4 +1472,11 @@
   .users-table td {
     padding: 8px;
   }
+  .sidebar {
+    width: 80px;
+  }
+
+  .sidebar:hover {
+    width: 256px;
+  }
 }
