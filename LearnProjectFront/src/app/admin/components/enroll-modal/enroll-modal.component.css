@@ -1,4 +1,4 @@
-::ng-deep .mat-dialog-container {
-  width: 95vw !important;
-  max-width: 95vw !important;
+.department-filter {
+  width: 100%;
+  margin-bottom: 16px;
 }
