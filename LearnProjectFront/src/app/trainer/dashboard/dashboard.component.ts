@@ -49,7 +49,6 @@ export class TrainerDashboardComponent implements OnInit {
   videoForm: FormGroup;
   myCourses: Course[] = [];
   darkMode: boolean = false;
-  sidebarCollapsed: boolean = false;
   activeSection: string = 'dashboard';
   isLoading: boolean = false;
 
@@ -98,10 +97,6 @@ export class TrainerDashboardComponent implements OnInit {
       document.documentElement.classList.add('dark');
     }
 
-    const savedSidebarState = localStorage.getItem('trainerSidebarCollapsed');
-    if (savedSidebarState === 'true') {
-      this.sidebarCollapsed = true;
-    }
 
     this.loadTrainerInfo();
     // Initialize coursesLoaded to false and load courses on component initialization
@@ -357,11 +352,6 @@ export class TrainerDashboardComponent implements OnInit {
       document.documentElement.classList.remove('dark');
       localStorage.setItem('trainerDashboardDarkMode', 'false');
     }
-  }
-
-  toggleSidebar(): void {
-    this.sidebarCollapsed = !this.sidebarCollapsed;
-    localStorage.setItem('trainerSidebarCollapsed', this.sidebarCollapsed.toString());
   }
 
   setActiveSection(section: string): void {

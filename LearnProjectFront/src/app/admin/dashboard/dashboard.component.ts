@@ -54,7 +54,6 @@ export class AdminDashboardComponent implements OnInit {
   users: User[] = [];
   csvFile: File | null = null;
   darkMode: boolean = false;
-  sidebarCollapsed: boolean = false;
   activeSection: string = 'dashboard';
   isLoading: boolean = false;
   uploadProgress: number = 0;
@@ -91,11 +90,6 @@ export class AdminDashboardComponent implements OnInit {
       document.documentElement.classList.add('dark');
     }
 
-    // Check sidebar state
-    const savedSidebarState = localStorage.getItem('sidebarCollapsed');
-    if (savedSidebarState === 'true') {
-      this.sidebarCollapsed = true;
-    }
 
     // Get the current user's info from the AuthService
     this.loadAdminInfo(); // <-- CHANGED: Call the method to load user info
@@ -366,11 +360,6 @@ export class AdminDashboardComponent implements OnInit {
       document.documentElement.classList.remove('dark');
       localStorage.setItem('dashboardDarkMode', 'false');
     }
-  }
-
-  toggleSidebar(): void {
-    this.sidebarCollapsed = !this.sidebarCollapsed;
-    localStorage.setItem('sidebarCollapsed', this.sidebarCollapsed.toString());
   }
 
   setActiveSection(section: string): void {
