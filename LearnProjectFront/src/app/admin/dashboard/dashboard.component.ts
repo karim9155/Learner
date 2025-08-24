@@ -220,7 +220,7 @@ export class AdminDashboardComponent implements OnInit {
 
   openEnrollDialog(course: Course): void {
     const dialogRef = this.dialog.open(EnrollModalComponent, {
-      width: '500px',
+      width: '1700px',
       data: { courseId: course.id, courseName: course.title }
     });
 
@@ -457,4 +457,5 @@ export class AdminDashboardComponent implements OnInit {
   getPageSubtitle() {
     return "";
   }
+
 }
