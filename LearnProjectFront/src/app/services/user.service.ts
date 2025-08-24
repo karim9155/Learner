@@ -7,7 +7,11 @@ export interface User {
   id: string;
   firstName: string;
   lastName: string;
+  department: string;
+  badgeNumber: string;
   email: string;
+  phone: string;
+  active: boolean;
   memberships: { role: string }[];
 }
 @Injectable({
