@@ -5,8 +5,8 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UserService, User } from '../../../services/user.service';
 import { EnrollmentService } from '../../../services/enrollment.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { FormBuilder, FormGroup, FormArray, FormControl } from '@angular/forms';
-import { map } from 'rxjs/operators';
+import { MatTableDataSource } from '@angular/material/table';
+import { SelectionModel } from '@angular/cdk/collections';
 
 @Component({
   selector: 'app-enroll-modal',
@@ -16,43 +16,27 @@ import { map } from 'rxjs/operators';
 })
 export class EnrollModalComponent implements OnInit {
 
-  employees: User[] = [];
-  form: FormGroup;
   isSubmitting = false;
+  displayedColumns: string[] = ['select', 'name', 'email', 'department', 'badgeNumber', 'phone'];
+  dataSource = new MatTableDataSource<User>();
+  selection = new SelectionModel<User>(true, []);
 
   constructor(
     public dialogRef: MatDialogRef<EnrollModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { courseId: string,   courseName: string },
+    @Inject(MAT_DIALOG_DATA) public data: { courseId: string, courseName: string },
     private userService: UserService,
     private enrollmentService: EnrollmentService,
-    private snackBar: MatSnackBar,
-    private fb: FormBuilder
-  ) {
-    this.form = this.fb.group({
-      selectAll: [false],
-      learnerIds: this.fb.array([])
-    });
-  }
+    private snackBar: MatSnackBar
+  ) { }
 
   ngOnInit(): void {
     this.loadEmployees();
   }
 
   loadEmployees(): void {
-    // Call the same service method as the user management tab.
-    // We request a large page size to get all employees.
     this.userService.getEmployees(0, 1000, '').subscribe({
       next: (response) => {
-        // The user list is inside the 'content' property of the response.
-        this.employees = response.content;
-
-        // Clear any existing form controls before adding new ones
-        this.learnerIds.clear();
-
-        // Create a checkbox for each employee
-        this.employees.forEach(() => {
-          (this.form.get('learnerIds') as FormArray).push(new FormControl(false));
-        });
+        this.dataSource.data = response.content;
       },
       error: (err) => {
         console.error('Failed to load employees for modal', err);
@@ -61,22 +45,21 @@ export class EnrollModalComponent implements OnInit {
     });
   }
 
-  onSelectAllChange(event: any): void {
-    const isChecked = event.checked;
-    this.learnerIds.controls.forEach(control => control.setValue(isChecked));
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.dataSource.data.length;
+    return numSelected === numRows;
   }
 
-  get learnerIds(): FormArray {
-    return this.form.get('learnerIds') as FormArray;
+  masterToggle() {
+    this.isAllSelected() ?
+      this.selection.clear() :
+      this.dataSource.data.forEach(row => this.selection.select(row));
   }
 
   onEnroll(): void {
-    if (this.form.invalid) return;
-
     this.isSubmitting = true;
-    const selectedLearnerIds = this.form.value.learnerIds
-      .map((checked: boolean, i: number) => checked ? this.employees[i].id : null)
-      .filter((id: string | null) => id !== null);
+    const selectedLearnerIds = this.selection.selected.map(user => user.id);
 
     if (selectedLearnerIds.length === 0) {
       this.snackBar.open('Please select at least one employee.', 'Close', { duration: 3000 });

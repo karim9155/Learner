@@ -1,21 +1,57 @@
 <h1 mat-dialog-title>Enroll Employees in "{{ data.courseName }}"</h1>
 
-<div mat-dialog-content [formGroup]="form">
-  <mat-list>
-    <mat-list-item>
-      <mat-checkbox formControlName="selectAll" (change)="onSelectAllChange($event)">
-        <strong>Select All</strong>
-      </mat-checkbox>
-    </mat-list-item>
+<div mat-dialog-content>
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
 
-    <div formArrayName="learnerIds">
-      <mat-list-item *ngFor="let employee of employees; let i = index">
-        <mat-checkbox [formControlName]="i">
-          {{ employee.firstName }} {{ employee.lastName }} ({{ employee.email }})
+    <!-- Checkbox Column -->
+    <ng-container matColumnDef="select">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-checkbox (change)="$event ? masterToggle() : null"
+                      [checked]="selection.hasValue() && isAllSelected()"
+                      [indeterminate]="selection.hasValue() && !isAllSelected()">
         </mat-checkbox>
-      </mat-list-item>
-    </div>
-  </mat-list>
+      </th>
+      <td mat-cell *matCellDef="let row">
+        <mat-checkbox (click)="$event.stopPropagation()"
+                      (change)="$event ? selection.toggle(row) : null"
+                      [checked]="selection.isSelected(row)">
+        </mat-checkbox>
+      </td>
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef> Name </th>
+      <td mat-cell *matCellDef="let element"> {{element.name}} {{element.lastName}} </td>
+    </ng-container>
+
+    <!-- Email Column -->
+    <ng-container matColumnDef="email">
+      <th mat-header-cell *matHeaderCellDef> Email </th>
+      <td mat-cell *matCellDef="let element"> {{element.email}} </td>
+    </ng-container>
+
+    <!-- Department Column -->
+    <ng-container matColumnDef="department">
+      <th mat-header-cell *matHeaderCellDef> Department </th>
+      <td mat-cell *matCellDef="let element"> {{element.department}} </td>
+    </ng-container>
+
+    <!-- Badge Number Column -->
+    <ng-container matColumnDef="badgeNumber">
+      <th mat-header-cell *matHeaderCellDef> Badge Number </th>
+      <td mat-cell *matCellDef="let element"> {{element.badgeNumber}} </td>
+    </ng-container>
+
+    <!-- Phone Column -->
+    <ng-container matColumnDef="phone">
+      <th mat-header-cell *matHeaderCellDef> Phone </th>
+      <td mat-cell *matCellDef="let element"> {{element.phone}} </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;" (click)="selection.toggle(row)"></tr>
+  </table>
 </div>
 
 <div mat-dialog-actions align="end">
