@@ -16,6 +16,7 @@ public interface UserService {
     Page<UserDTO> getEmployees(Pageable pageable, String search);
     void deleteUser(UUID userId);
     UserDTO updateUser(UUID userId, UserDTO userDTO);
-    LearnerCourseInfoDTO findLearnerByPhone(String phone); // Add this line
-
+    LearnerCourseInfoDTO findLearnerByPhone(String phone);
+    void sendVerificationCode(String phone);
+    LearnerCourseInfoDTO verifyCode(String phone, String code);
 }

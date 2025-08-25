@@ -1,8 +1,6 @@
 package com.example.learnprojectback.controller;
 
-import com.example.learnprojectback.dto.LearnerCourseInfoDTO;
-import com.example.learnprojectback.dto.UserCreationRequest;
-import com.example.learnprojectback.dto.UserDTO;
+import com.example.learnprojectback.dto.*;
 import com.example.learnprojectback.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -59,8 +57,14 @@ public class UserController {
     public ResponseEntity<UserDTO> updateUser(@PathVariable UUID userId, @RequestBody UserDTO userDTO) {
         return ResponseEntity.ok(userService.updateUser(userId, userDTO));
     }
-    @GetMapping("/learner/{phone}")
-    public ResponseEntity<LearnerCourseInfoDTO> getLearnerByPhone(@PathVariable String phone) {
-        return ResponseEntity.ok(userService.findLearnerByPhone(phone));
+    @PostMapping("/learner/send-code")
+    public ResponseEntity<Void> sendCode(@RequestBody SendCodeRequest request) {
+        userService.sendVerificationCode(request.getPhone());
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/learner/verify-code")
+    public ResponseEntity<LearnerCourseInfoDTO> verifyCode(@RequestBody VerifyCodeRequest request) {
+        return ResponseEntity.ok(userService.verifyCode(request.getPhone(), request.getCode()));
     }
 }
