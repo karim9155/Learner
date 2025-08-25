@@ -1,23 +1,187 @@
-<div class="scroller-container">
-  <div *ngIf="isLoading" class="spinner-container">
-    <mat-spinner></mat-spinner>
-  </div>
-  <div *ngFor="let video of videos" class="video-slide">
-    <div class="video-wrapper">
+<div class="tiktok-scroller"
+     *ngIf="!isLoading"
+     (touchstart)="onTouchStart($event)"
+     (touchmove)="onTouchMove($event)"
+     (touchend)="onTouchEnd()"
+     #scrollContainer>
+
+  <!-- Header -->
+  <header class="scroller-header">
+    <div class="header-content">
+      <button mat-icon-button (click)="goBack()" class="header-button">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+
+      <div class="header-info">
+        <h1>{{ courseName }}</h1>
+        <div class="progress-container">
+          <mat-progress-bar
+            [value]="getProgressPercentage()"
+            class="progress-bar">
+          </mat-progress-bar>
+          <span class="progress-text">
+            {{ currentIndex + 1 }} / {{ contentItems.length }}
+          </span>
+        </div>
+      </div>
+
+      <button mat-icon-button (click)="goHome()" class="header-button">
+        <mat-icon>home</mat-icon>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="scroller-content">
+    <!-- Video Content -->
+    <div *ngIf="isCurrentItemVideo()" class="video-container">
       <iframe
-        width="100%"
-        height="100%"
-        [src]="getSafeUrl(video.youtubeUrl)"
+        [src]="getSafeUrl(getCurrentVideo().youtubeUrl)"
+        class="video-iframe"
         frameborder="0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowfullscreen>
       </iframe>
+
+      <!-- Video Info Overlay -->
+      <div class="video-info-overlay">
+        <div class="video-info">
+          <h2>{{ getCurrentVideo().title }}</h2>
+          <p *ngIf="getCurrentVideo().description" class="video-description">
+            {{ getCurrentVideo().description }}
+          </p>
+          <div class="video-meta">
+            <div class="meta-item">
+              <mat-icon class="meta-icon">play_circle</mat-icon>
+              <span>Video {{ getVideoIndex() }}</span>
+            </div>
+            <div *ngIf="getCurrentVideo().duration" class="meta-item">
+              <mat-icon class="meta-icon">schedule</mat-icon>
+              <span>{{ getCurrentVideo().duration }}</span>
+            </div>
+            <div *ngIf="isVideoCompleted()" class="meta-item completed">
+              <mat-icon class="meta-icon">check_circle</mat-icon>
+              <span>Completed</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="video-info">
-      <h3>{{ video.title }}</h3>
+
+    <!-- Quiz Content -->
+    <div *ngIf="isCurrentItemQuiz() && currentQuiz" class="quiz-container">
+      <mat-card class="quiz-card">
+        <mat-card-content>
+          <div class="quiz-header">
+            <div class="quiz-icon">
+              <mat-icon>emoji_events</mat-icon>
+            </div>
+            <h2>Quick Quiz</h2>
+            <p>Test your knowledge!</p>
+          </div>
+
+          <div class="quiz-content">
+            <h3 class="quiz-question">{{ currentQuiz.question }}</h3>
+
+            <div class="quiz-options">
+              <button
+                *ngFor="let option of currentQuiz.options; let i = index"
+                (click)="selectQuizAnswer(i)"
+                [disabled]="showQuizResult"
+                [class]="getAnswerButtonClass(i)"
+                class="quiz-option">
+
+                <div class="option-content">
+                  <div [class]="getAnswerIconClass(i)">
+                    <mat-icon *ngIf="showQuizResult && i === currentQuiz.correctAnswer">check_circle</mat-icon>
+                    <mat-icon *ngIf="showQuizResult && selectedAnswer === i && i !== currentQuiz.correctAnswer">cancel</mat-icon>
+                    <span *ngIf="!showQuizResult">{{ getOptionLetter(i) }}</span>
+                  </div>
+                  <span class="option-text">{{ option }}</span>
+                </div>
+              </button>
+            </div>
+
+            <div *ngIf="showQuizResult" [class]="'quiz-result ' + (quizCorrect ? 'correct' : 'incorrect')">
+              <div class="result-header">
+                <mat-icon>{{ quizCorrect ? 'check_circle' : 'cancel' }}</mat-icon>
+                <span>{{ quizCorrect ? 'Correct!' : 'Incorrect' }}</span>
+              </div>
+              <p *ngIf="currentQuiz.explanation" class="result-explanation">
+                {{ currentQuiz.explanation }}
+              </p>
+            </div>
+
+            <p *ngIf="!showQuizResult" class="quiz-instruction">
+              Select your answer above
+            </p>
+          </div>
+        </mat-card-content>
+      </mat-card>
     </div>
   </div>
-  <a routerLink="/learner/courses" class="back-button">
-    <mat-icon>arrow_back</mat-icon>
-  </a>
+
+  <!-- Side Controls -->
+  <div class="side-controls">
+    <!-- Navigation -->
+    <div class="control-group">
+      <button
+        mat-mini-fab
+        (click)="goToPrevious()"
+        [disabled]="!canGoPrevious()"
+        class="control-button">
+        <mat-icon>keyboard_arrow_up</mat-icon>
+      </button>
+      <button
+        mat-mini-fab
+        (click)="goToNext()"
+        [disabled]="!canGoNext()"
+        class="control-button">
+        <mat-icon>keyboard_arrow_down</mat-icon>
+      </button>
+    </div>
+
+    <!-- Video Controls (only show for videos) -->
+    <div *ngIf="isCurrentItemVideo()" class="control-group">
+      <button
+        mat-mini-fab
+        (click)="togglePlayPause()"
+        class="control-button">
+        <mat-icon>{{ isPlaying ? 'pause' : 'play_arrow' }}</mat-icon>
+      </button>
+      <button
+        mat-mini-fab
+        (click)="toggleMute()"
+        class="control-button">
+        <mat-icon>{{ isMuted ? 'volume_off' : 'volume_up' }}</mat-icon>
+      </button>
+    </div>
+
+    <!-- Progress Indicator -->
+    <div class="control-group">
+      <div class="progress-text-small">Progress</div>
+      <div class="progress-dots">
+        <div
+          *ngFor="let item of contentItems; let i = index"
+          [class]="'progress-dot ' + (i === currentIndex ? 'current' : i < currentIndex ? 'completed' : 'upcoming')">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Instructions -->
+  <div class="instructions">
+    <div class="instructions-content">
+      <p>• Swipe up/down or use arrow keys to navigate</p>
+      <p>• Press Space to play/pause videos</p>
+      <p>• Press M to mute/unmute</p>
+      <p>• Press Escape to go back</p>
+    </div>
+  </div>
+</div>
+
+<!-- Loading State -->
+<div *ngIf="isLoading" class="loading-container">
+  <mat-spinner></mat-spinner>
+  <p>Loading course videos...</p>
 </div>

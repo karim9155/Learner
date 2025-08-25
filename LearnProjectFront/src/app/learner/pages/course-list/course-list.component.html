@@ -1,21 +1,179 @@
-<div class="mobile-container" *ngIf="learner">
-  <mat-toolbar color="primary">
-    <span>Welcome, {{ learner.name }}</span>
+<div class="mobile-container" *ngIf="learner; else noLearnerTemplate">
+  <!-- Header/Toolbar -->
+  <mat-toolbar class="mobile-header" color="primary">
+    <button mat-icon-button (click)="onBackClick()" class="back-button">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <div class="user-avatar">{{ getUserInitial() }}</div>
+    <div class="header-content">
+      <span class="welcome-text">Welcome, {{ getFirstName() }}</span>
+      <div class="header-subtitle">My Learning Dashboard</div>
+    </div>
+    <span class="spacer"></span>
+    <button mat-icon-button class="menu-button">
+      <mat-icon>menu</mat-icon>
+    </button>
   </mat-toolbar>
+
+  <!-- Content -->
   <div class="content">
-    <h3>My Courses</h3>
-    <div *ngIf="learner.enrolledCourses.length > 0; else noCourses">
-      <mat-card *ngFor="let course of learner.enrolledCourses" (click)="playCourse(course.id)" class="course-card">
-        <mat-card-header>
-          <mat-card-title>{{ course.title }}</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <p>{{ course.description }}</p>
+    <!-- Stats Section -->
+    <div class="stats-grid">
+      <mat-card class="stat-card">
+        <mat-card-content class="stat-content">
+          <div class="stat-icon courses-icon">
+            <mat-icon>book</mat-icon>
+          </div>
+          <div class="stat-info">
+            <div class="stat-number">{{ courseCount }}</div>
+            <div class="stat-label">Enrolled Courses</div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <mat-card class="stat-card">
+        <mat-card-content class="stat-content">
+          <div class="stat-icon videos-icon">
+            <mat-icon>play_circle</mat-icon>
+          </div>
+          <div class="stat-info">
+            <div class="stat-number">{{ getTotalVideos() }}</div>
+            <div class="stat-label">Total Videos</div>
+          </div>
         </mat-card-content>
       </mat-card>
     </div>
-    <ng-template #noCourses>
-      <p>You are not enrolled in any courses yet.</p>
-    </ng-template>
+
+    <!-- Courses Section Header -->
+    <div class="section-header">
+      <h2>My Courses</h2>
+      <p class="section-subtitle">
+        <span *ngIf="hasCourses">{{ courseCount }} course<span *ngIf="courseCount !== 1">s</span> available</span>
+        <span *ngIf="!hasCourses && !isLoading">No courses available</span>
+      </p>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-container">
+      <mat-card *ngFor="let item of [1,2,3]" class="course-card loading-card">
+        <mat-card-content class="loading-content">
+          <div class="loading-image"></div>
+          <div class="loading-text">
+            <div class="loading-line loading-title"></div>
+            <div class="loading-line loading-description"></div>
+            <div class="loading-line loading-meta"></div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Course List -->
+    <div *ngIf="!isLoading">
+      <!-- Courses Available -->
+      <div *ngIf="hasCourses" class="course-list">
+        <mat-card
+          *ngFor="let course of learner.enrolledCourses; trackBy: trackByCourseId"
+          (click)="playCourse(course.id)"
+          class="course-card clickable">
+          <mat-card-content class="course-content">
+            <!-- Course Image -->
+            <div class="course-image-container">
+              <img
+                [src]="course.coverImage || getCourseImage(learner.enrolledCourses.indexOf(course))"
+                [alt]="course.title"
+                class="course-image"
+                >
+              <div class="course-image-fallback" style="display: none;">
+                <mat-icon>book</mat-icon>
+              </div>
+              <!-- Progress indicator on image -->
+              <div *ngIf="course.progress !== undefined" class="image-progress">
+                <div
+                  class="image-progress-bar"
+                  [ngClass]="getProgressColor(course.progress)"
+                  [style.width.%]="course.progress">
+                </div>
+              </div>
+            </div>
+
+            <!-- Course Content -->
+            <div class="course-info">
+              <div class="course-header">
+                <h3 class="course-title">{{ course.title }}</h3>
+                <mat-icon class="play-icon">play_circle</mat-icon>
+              </div>
+
+              <p class="course-description">{{ course.description }}</p>
+
+              <!-- Course Meta -->
+              <div class="course-meta">
+                <span *ngIf="course.videoCount" class="meta-item">
+                  <mat-icon class="meta-icon">play_circle</mat-icon>
+                  {{ course.videoCount }} videos
+                </span>
+                <span *ngIf="course.duration" class="meta-item">
+                  <mat-icon class="meta-icon">schedule</mat-icon>
+                  {{ course.duration }}
+                </span>
+                <span *ngIf="course.enrolledCount" class="meta-item">
+                  <mat-icon class="meta-icon">group</mat-icon>
+                  {{ course.enrolledCount }} enrolled
+                </span>
+              </div>
+
+              <!-- Progress Bar -->
+              <div *ngIf="course.progress !== undefined" class="progress-section">
+                <div class="progress-header">
+                  <span class="progress-label">Progress</span>
+                  <span class="progress-percentage">{{ course.progress }}%</span>
+                </div>
+                <mat-progress-bar
+                  [value]="course.progress"
+                  class="course-progress"
+                  [ngClass]="getProgressColor(course.progress)">
+                </mat-progress-bar>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="!hasCourses" class="empty-state">
+        <div class="empty-icon">
+          <mat-icon>book</mat-icon>
+        </div>
+        <h3 class="empty-title">No Courses Yet</h3>
+        <p class="empty-description">
+          You are not enrolled in any courses yet. Contact your administrator to get started with your learning journey.
+        </p>
+        <div class="empty-actions">
+          <button mat-stroked-button (click)="onContactAdmin()" class="contact-button">
+            Contact Administrator
+          </button>
+          <button mat-flat-button color="primary" (click)="onBackClick()" class="back-to-login-button">
+            <mat-icon>arrow_back</mat-icon>
+            Back to Login
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
+
+<!-- No Learner Template -->
+<ng-template #noLearnerTemplate>
+  <div class="mobile-container no-learner">
+    <div class="no-learner-content">
+      <div class="no-learner-icon">
+        <mat-icon>person</mat-icon>
+      </div>
+      <h2>No Learner Data</h2>
+      <p>Please log in to view your courses.</p>
+      <button mat-flat-button color="primary" (click)="onBackClick()">
+        <mat-icon>arrow_back</mat-icon>
+        Back to Login
+      </button>
+    </div>
+  </div>
+</ng-template>
