@@ -16,12 +16,9 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // The URL path the browser will request (e.g., /uploads/image.png)
+        Path uploadPath = Paths.get(uploadDir);
+        String resourceLocation = "file:" + uploadPath.toAbsolutePath().toString() + "/";
         String resourceHandlerPath = "/uploads/**";
-
-        // The absolute file system path INSIDE the Docker container where files are stored.
-        // The WORKDIR in your Dockerfile is /app, so the full path is /app/uploads/.
-        String resourceLocation = "file:/app/uploads/";
 
         registry.addResourceHandler(resourceHandlerPath)
                 .addResourceLocations(resourceLocation);

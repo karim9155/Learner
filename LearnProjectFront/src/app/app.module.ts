@@ -33,6 +33,7 @@ import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatTableModule} from '@angular/material/table';
 import {MatTooltipModule} from '@angular/material/tooltip';
+import {MatProgressBar} from '@angular/material/progress-bar';
 
 @NgModule({
   declarations: [
@@ -46,57 +47,58 @@ import {MatTooltipModule} from '@angular/material/tooltip';
     VideoScrollerComponent
 
   ],
-    imports: [
-        BrowserModule,
-        AppRoutingModule,
-        FormsModule,
-        HttpClientModule,
-        CommonModule,
-        MatPaginator,
-        AppRoutingModule, // Provides <router-outlet>
-        CommonModule,     // Provides *ngIf, *ngFor, [ngClass], etc.
-        FormsModule,      // Provides [(ngModel)]
-        ReactiveFormsModule,
-        MatPaginatorModule, // Provides <mat-paginator>
-        BrowserAnimationsModule,
-        CommonModule,
-        MatCheckbox,
-        ReactiveFormsModule,
-        MatListItem,
-        MatList,
-        MatDialogContent,
-        MatDialogTitle,
-        MatDialogActions,
-        MatButton,
-      CommonModule,
-      LearnerRoutingModule,
-      ReactiveFormsModule,
-      MatFormFieldModule,
-      MatInputModule,
-      MatButtonModule,
-      MatCardModule,
-      MatProgressSpinnerModule,
-      MatIconModule,
-      MatToolbarModule,
-      MatButtonModule,
-      MatCardModule,
-      MatCheckboxModule,
-      MatDialogModule,
-      MatFormFieldModule,
-      MatIconModule,
-      MatInputModule,
-      MatListModule,
-      MatPaginatorModule,
-      MatProgressSpinnerModule,
-      MatSelectModule,
-      MatSidenavModule,
-      MatSnackBarModule,
-      MatTableModule,
-      MatToolbarModule,
-      MatTooltipModule
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    FormsModule,
+    HttpClientModule,
+    CommonModule,
+    MatPaginator,
+    AppRoutingModule, // Provides <router-outlet>
+    CommonModule,     // Provides *ngIf, *ngFor, [ngClass], etc.
+    FormsModule,      // Provides [(ngModel)]
+    ReactiveFormsModule,
+    MatPaginatorModule, // Provides <mat-paginator>
+    BrowserAnimationsModule,
+    CommonModule,
+    MatCheckbox,
+    ReactiveFormsModule,
+    MatListItem,
+    MatList,
+    MatDialogContent,
+    MatDialogTitle,
+    MatDialogActions,
+    MatButton,
+    CommonModule,
+    LearnerRoutingModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatCardModule,
+    MatProgressSpinnerModule,
+    MatIconModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatCardModule,
+    MatCheckboxModule,
+    MatDialogModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    MatListModule,
+    MatPaginatorModule,
+    MatProgressSpinnerModule,
+    MatSelectModule,
+    MatSidenavModule,
+    MatSnackBarModule,
+    MatTableModule,
+    MatToolbarModule,
+    MatTooltipModule,
+    MatProgressBar
 
 
-    ],
+  ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }
   ],
