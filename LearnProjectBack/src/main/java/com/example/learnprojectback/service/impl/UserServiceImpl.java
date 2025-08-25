@@ -10,6 +10,9 @@ import com.example.learnprojectback.repository.MembershipRepository;
 import com.example.learnprojectback.repository.OrganizationRepository;
 import com.example.learnprojectback.repository.UserRepository;
 import com.example.learnprojectback.service.UserService;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.example.learnprojectback.service.SmsService;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
@@ -24,20 +27,19 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import org.springframework.data.domain.Pageable;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
-@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -46,6 +48,21 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final ModelMapper modelMapper;
     private final EnrollmentRepository enrollmentRepository;
+    private final SmsService smsService;
+    private final Cache<String, String> otpCache;
+
+    public UserServiceImpl(UserRepository userRepository, OrganizationRepository organizationRepository, MembershipRepository membershipRepository, PasswordEncoder passwordEncoder, ModelMapper modelMapper, EnrollmentRepository enrollmentRepository, SmsService smsService) {
+        this.userRepository = userRepository;
+        this.organizationRepository = organizationRepository;
+        this.membershipRepository = membershipRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.modelMapper = modelMapper;
+        this.enrollmentRepository = enrollmentRepository;
+        this.smsService = smsService;
+        this.otpCache = Caffeine.newBuilder()
+                .expireAfterWrite(5, java.util.concurrent.TimeUnit.MINUTES)
+                .build();
+    }
 
     @Transactional
     @Override
@@ -236,5 +253,56 @@ public class UserServiceImpl implements UserService {
         learnerInfo.setEnrolledCourses(enrolledCourses);
 
         return learnerInfo;
+    }
+
+    @Override
+    public void sendVerificationCode(String phone) {
+        PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
+        String formattedPhone;
+        try {
+            Phonenumber.PhoneNumber numberProto = phoneUtil.parse(phone, "TN");
+            if (!phoneUtil.isValidNumber(numberProto)) {
+                throw new RuntimeException("Invalid phone number format: " + phone);
+            }
+            formattedPhone = phoneUtil.format(numberProto, PhoneNumberUtil.PhoneNumberFormat.E164);
+        } catch (NumberParseException e) {
+            throw new RuntimeException("Could not parse phone number: " + phone, e);
+        }
+
+        // Check if user exists
+        userRepository.findByPhone(formattedPhone)
+                .orElseThrow(() -> new RuntimeException("User not found with phone number: " + formattedPhone));
+
+        String otp = new Random().ints(6, 0, 10)
+                .mapToObj(String::valueOf)
+                .collect(Collectors.joining());
+
+        otpCache.put(formattedPhone, otp);
+
+        smsService.sendSms(formattedPhone, "Your verification code is: " + otp);
+    }
+
+    @Override
+    public LearnerCourseInfoDTO verifyCode(String phone, String code) {
+        PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
+        String formattedPhone;
+        try {
+            Phonenumber.PhoneNumber numberProto = phoneUtil.parse(phone, "TN");
+            if (!phoneUtil.isValidNumber(numberProto)) {
+                throw new RuntimeException("Invalid phone number format: " + phone);
+            }
+            formattedPhone = phoneUtil.format(numberProto, PhoneNumberUtil.PhoneNumberFormat.E164);
+        } catch (NumberParseException e) {
+            throw new RuntimeException("Could not parse phone number: " + phone, e);
+        }
+
+        String cachedOtp = otpCache.getIfPresent(formattedPhone);
+
+        if (cachedOtp != null && cachedOtp.equals(code)) {
+            otpCache.invalidate(formattedPhone);
+            return findLearnerByPhone(phone);
+        } else {
+            throw new RuntimeException("Invalid or expired verification code.");
+        }
     }
 }

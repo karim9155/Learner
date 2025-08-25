@@ -51,5 +51,11 @@ export class UserService {
     const encodedPhone = encodeURIComponent(phone);
     return this.http.get<Learner>(`${this.apiUrl}/learner/${encodedPhone}`);
   }
+  sendCode(phone: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/learner/send-code`, { phone });
+  }
 
+  verifyCode(phone: string, code: string): Observable<Learner> {
+    return this.http.post<Learner>(`${this.apiUrl}/learner/verify-code`, { phone, code });
+  }
 }
