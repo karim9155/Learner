@@ -350,6 +350,17 @@
                 {{ course.showVideos ? 'Hide Videos' : 'Show Videos' }}
                 <span *ngIf="course.videos?.length" class="video-count">({{ course.videos?.length }})</span>
               </button>
+              <button class="btn btn-secondary" (click)="generateQrCode(course)">
+                <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+                Generate QR Code
+              </button>
+            </div>
+
+            <div *ngIf="course.showQrCode" class="qr-code-container">
+              <qrcode [qrdata]="qrCodeData" [width]="256" [errorCorrectionLevel]="'M'"></qrcode>
+              <button class="btn btn-primary" (click)="downloadQrCode()">Download QR Code</button>
             </div>
 
             <!-- Videos Section -->

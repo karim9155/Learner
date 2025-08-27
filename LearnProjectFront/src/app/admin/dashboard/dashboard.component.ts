@@ -21,7 +21,8 @@ interface Course {
   createdAt?: string;
   videoCount?: number;
   videos?: Video[];
-  showVideos?: boolean; // Add this line
+  showVideos?: boolean;
+  showQrCode?: boolean;
 }
 
 interface Video {
@@ -68,6 +69,7 @@ export class AdminDashboardComponent implements OnInit {
   private enrolledCoursesSearchSubject = new Subject<string>();
   lightLogo: string = 'assets/logo.png';
   darkLogo: string = 'assets/logoDark.png';
+  qrCodeData: string = 'http://localhost:4200/learner/login';
 
 
   // Admin user info will now be populated dynamically
@@ -458,4 +460,18 @@ export class AdminDashboardComponent implements OnInit {
     return "";
   }
 
+  generateQrCode(course: Course): void {
+    this.enrolledCourses.forEach(c => c.showQrCode = false);
+    course.showQrCode = true;
+  }
+
+  downloadQrCode(): void {
+    const qrCodeElement = document.querySelector('qrcode canvas') as HTMLCanvasElement;
+    if (qrCodeElement) {
+      const link = document.createElement('a');
+      link.download = 'qr-code.png';
+      link.href = qrCodeElement.toDataURL('image/png');
+      link.click();
+    }
+  }
 }
