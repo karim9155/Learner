@@ -384,7 +384,7 @@ export class TrainerDashboardComponent implements OnInit {
   }
 
   getImageUrl(coverImage: string): string {
-    return `http://localhost:8080/uploads/${coverImage}`;
+    return `http://snaplabs.online/uploads/${coverImage}`;
   }
   onImageError(e: Event) {
     const img = e.target as HTMLImageElement;

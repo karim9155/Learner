@@ -34,10 +34,8 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatTableModule} from '@angular/material/table';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatProgressBar} from '@angular/material/progress-bar';
-<<<<<<< HEAD
 import {QRCodeComponent} from 'angularx-qrcode';
-=======
->>>>>>> 10709e9063b6cafe44a448d3d1c95d8a731c6da2
+
 
 @NgModule({
   declarations: [
@@ -99,12 +97,10 @@ import {QRCodeComponent} from 'angularx-qrcode';
     MatTableModule,
     MatToolbarModule,
     MatTooltipModule,
-<<<<<<< HEAD
     MatProgressBar,
     QRCodeComponent,
-=======
     MatProgressBar
->>>>>>> 10709e9063b6cafe44a448d3d1c95d8a731c6da2
+
 
 
   ],

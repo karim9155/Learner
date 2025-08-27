@@ -12,6 +12,8 @@ WORKDIR /app
 
 # Create a non-root user
 RUN addgroup --system spring && adduser --system --ingroup spring spring
+RUN mkdir -p /app/uploads && chown -R spring:spring /app/uploads
+
 USER spring
 
 COPY --from=build /app/target/LearnProjectBack-0.0.1-SNAPSHOT.jar ./app.jar

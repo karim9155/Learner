@@ -21,12 +21,9 @@ interface Course {
   createdAt?: string;
   videoCount?: number;
   videos?: Video[];
-<<<<<<< HEAD
   showVideos?: boolean;
   showQrCode?: boolean;
-=======
-  showVideos?: boolean; // Add this line
->>>>>>> 10709e9063b6cafe44a448d3d1c95d8a731c6da2
+
 }
 
 interface Video {
@@ -73,11 +70,7 @@ export class AdminDashboardComponent implements OnInit {
   private enrolledCoursesSearchSubject = new Subject<string>();
   lightLogo: string = 'assets/logo.png';
   darkLogo: string = 'assets/logoDark.png';
-<<<<<<< HEAD
-  qrCodeData: string = 'http://localhost:4200/learner/login';
-=======
->>>>>>> 10709e9063b6cafe44a448d3d1c95d8a731c6da2
-
+  qrCodeData: string = 'http://snaplabs.online/learner/login';
 
   // Admin user info will now be populated dynamically
   adminUser: any = {}; // <-- CHANGED: Initialize as an empty object
@@ -89,7 +82,8 @@ export class AdminDashboardComponent implements OnInit {
     private router: Router,
     private sanitizer: DomSanitizer,
     public dialog: MatDialog
-  ) {}
+  ) {
+  }
 
   ngOnInit(): void {
     // Check dark mode
@@ -230,7 +224,7 @@ export class AdminDashboardComponent implements OnInit {
   openEnrollDialog(course: Course): void {
     const dialogRef = this.dialog.open(EnrollModalComponent, {
       width: '1700px',
-      data: { courseId: course.id, courseName: course.title }
+      data: {courseId: course.id, courseName: course.title}
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -399,6 +393,7 @@ export class AdminDashboardComponent implements OnInit {
   getTotalUsers(): number {
     return this.users.length;
   }
+
   loadEmployees(): void {
     this.isLoading = true;
     this.userService.getEmployees(this.pageIndex, this.pageSize, this.searchTerm).subscribe({
@@ -439,9 +434,11 @@ export class AdminDashboardComponent implements OnInit {
   updateUser(user: User): void {
     console.log('Update user:', user);
   }
+
   getImageUrl(coverImage: string): string {
-    return `http://localhost:8080/uploads/${coverImage}`;
+    return `http://snaplabs.online/uploads/${coverImage}`;
   }
+
   onImageError(e: Event) {
     const img = e.target as HTMLImageElement;
     img.classList.add('error');
@@ -467,7 +464,6 @@ export class AdminDashboardComponent implements OnInit {
     return "";
   }
 
-<<<<<<< HEAD
   generateQrCode(course: Course): void {
     this.enrolledCourses.forEach(c => c.showQrCode = false);
     course.showQrCode = true;
@@ -482,6 +478,5 @@ export class AdminDashboardComponent implements OnInit {
       link.click();
     }
   }
-=======
->>>>>>> 10709e9063b6cafe44a448d3d1c95d8a731c6da2
+
 }
