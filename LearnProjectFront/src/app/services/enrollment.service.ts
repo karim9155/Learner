@@ -4,7 +4,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+<<<<<<< HEAD
 const API_URL = '/api/enrollments';
+=======
+const API_URL = 'http://localhost:8080/api/enrollments';
+>>>>>>> 10709e9063b6cafe44a448d3d1c95d8a731c6da2
 
 export interface BatchEnrollmentRequest {
   courseId: string;

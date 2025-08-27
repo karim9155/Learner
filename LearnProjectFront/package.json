@@ -20,7 +20,10 @@
     "@angular/platform-browser": "^19.2.0",
     "@angular/platform-browser-dynamic": "^19.2.0",
     "@angular/router": "^19.2.0",
+<<<<<<< HEAD
     "angularx-qrcode": "^19.0.0",
+=======
+>>>>>>> 10709e9063b6cafe44a448d3d1c95d8a731c6da2
     "bootstrap": "^5.3.7",
     "jwt-decode": "^4.0.0",
     "karma-firefox-launcher": "^2.1.3",

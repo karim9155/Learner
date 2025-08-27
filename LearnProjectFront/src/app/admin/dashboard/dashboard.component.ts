@@ -21,8 +21,12 @@ interface Course {
   createdAt?: string;
   videoCount?: number;
   videos?: Video[];
+<<<<<<< HEAD
   showVideos?: boolean;
   showQrCode?: boolean;
+=======
+  showVideos?: boolean; // Add this line
+>>>>>>> 10709e9063b6cafe44a448d3d1c95d8a731c6da2
 }
 
 interface Video {
@@ -69,7 +73,10 @@ export class AdminDashboardComponent implements OnInit {
   private enrolledCoursesSearchSubject = new Subject<string>();
   lightLogo: string = 'assets/logo.png';
   darkLogo: string = 'assets/logoDark.png';
+<<<<<<< HEAD
   qrCodeData: string = 'http://localhost:4200/learner/login';
+=======
+>>>>>>> 10709e9063b6cafe44a448d3d1c95d8a731c6da2
 
 
   // Admin user info will now be populated dynamically
@@ -460,6 +467,7 @@ export class AdminDashboardComponent implements OnInit {
     return "";
   }
 
+<<<<<<< HEAD
   generateQrCode(course: Course): void {
     this.enrolledCourses.forEach(c => c.showQrCode = false);
     course.showQrCode = true;
@@ -474,4 +482,6 @@ export class AdminDashboardComponent implements OnInit {
       link.click();
     }
   }
+=======
+>>>>>>> 10709e9063b6cafe44a448d3d1c95d8a731c6da2
 }

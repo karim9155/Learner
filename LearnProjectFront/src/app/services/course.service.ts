@@ -7,8 +7,13 @@ import { AuthService } from './auth.service';
   providedIn: 'root'
 })
 export class CourseService {
+<<<<<<< HEAD
   private apiUrl = '/api/courses';
   private enrollmentApiUrl = '/api/enrollments';
+=======
+  private apiUrl = 'http://localhost:8080/api/courses';
+  private enrollmentApiUrl = 'http://localhost:8080/api/enrollments';
+>>>>>>> 10709e9063b6cafe44a448d3d1c95d8a731c6da2
 
 
 
@@ -32,7 +37,11 @@ export class CourseService {
   }
 
   addVideo(videoData: any): Observable<any> {
+<<<<<<< HEAD
     const videoApiUrl = '/api/videos';
+=======
+    const videoApiUrl = 'http://localhost:8080/api/videos';
+>>>>>>> 10709e9063b6cafe44a448d3d1c95d8a731c6da2
     return this.http.post(videoApiUrl, videoData, { headers: this.getAuthHeaders() });
   }
 
@@ -45,7 +54,11 @@ export class CourseService {
   }
 
   getVideosByCourse(courseId: string): Observable<any> {
+<<<<<<< HEAD
     const videoApiUrl = '/api/videos';
+=======
+    const videoApiUrl = 'http://localhost:8080/api/videos';
+>>>>>>> 10709e9063b6cafe44a448d3d1c95d8a731c6da2
     return this.http.get(`${videoApiUrl}/by-course/${courseId}`, { headers: this.getAuthHeaders() });
   }
 
@@ -67,7 +80,11 @@ export class CourseService {
   }
 
   deleteVideo(videoId: string): Observable<any> {
+<<<<<<< HEAD
     const videoApiUrl = '/api/videos';
+=======
+    const videoApiUrl = 'http://localhost:8080/api/videos';
+>>>>>>> 10709e9063b6cafe44a448d3d1c95d8a731c6da2
     return this.http.delete(`${videoApiUrl}/${videoId}`, { headers: this.getAuthHeaders() });
   }
   getEnrolledCourses(userId: string): Observable<any> {
@@ -75,7 +92,11 @@ export class CourseService {
   }
 
   enrollInCourse(courseId: string, userId: string): Observable<any> {
+<<<<<<< HEAD
     const enrollmentUrl = '/api/enrollments';
+=======
+    const enrollmentUrl = 'http://localhost:8080/api/enrollments';
+>>>>>>> 10709e9063b6cafe44a448d3d1c95d8a731c6da2
     return this.http.post(enrollmentUrl, { courseId, learnerId: userId }, { headers: this.getAuthHeaders() });
   }
   // THIS IS THE NEW METHOD FOR THE ADMIN DASHBOARD
