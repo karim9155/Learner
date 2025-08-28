@@ -31,12 +31,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/auth/register", "/api/users/**").permitAll()
-                        .requestMatchers("/api/organizations/**", "/api/memberships/**","/uploads/**", "/api/users/learner/**" ).permitAll()
-                        .requestMatchers("/api/courses/all").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/enrollments").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/enrollments/admin/**").hasAuthority("ADMIN")
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll() // Allow all requests
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
@@ -47,7 +42,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         // Add the correct URL where your frontend is running
-        configuration.setAllowedOrigins(List.of("http://localhost:4200/"));
+        configuration.setAllowedOrigins(List.of("http://localhost:4200", "https://snaplabs.online"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);

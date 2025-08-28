@@ -70,7 +70,7 @@ export class AdminDashboardComponent implements OnInit {
   private enrolledCoursesSearchSubject = new Subject<string>();
   lightLogo: string = 'assets/logo.png';
   darkLogo: string = 'assets/logoDark.png';
-  qrCodeData: string = 'http://snaplabs.online/learner/login';
+  qrCodeData: string = 'https://snaplabs.online/learner/login';
 
   // Admin user info will now be populated dynamically
   adminUser: any = {}; // <-- CHANGED: Initialize as an empty object
@@ -436,7 +436,7 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   getImageUrl(coverImage: string): string {
-    return `http://snaplabs.online/uploads/${coverImage}`;
+    return `https://snaplabs.online/uploads/${coverImage}`;
   }
 
   onImageError(e: Event) {
