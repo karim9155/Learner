@@ -217,73 +217,126 @@
       </div>
 
       <!-- Create Course Section -->
-      <div *ngIf="activeSection === 'courses'" class="create-course-section">
-        <div class="management-card">
-          <div class="card-header">
-            <h3>Create New Course</h3>
-            <p>Fill in the details to create a new course for your students</p>
-          </div>
-          <div class="card-content">
-            <div *ngIf="courseCreationMessage" class="message"
-                 [ngClass]="{'success': courseCreationMessage.includes('successfully'), 'error': !courseCreationMessage.includes('successfully')}">
-              {{ courseCreationMessage }}
+      <div *ngIf="activeSection === 'courses'" class="create-course-container">
+        <!-- Left Column: Form -->
+        <div class="form-column">
+          <div class="management-card">
+            <div class="card-header">
+              <h3>Create New Course</h3>
+              <p>Fill in the details or upload a presentation to start.</p>
             </div>
+            <div class="card-content">
+              <div *ngIf="courseCreationMessage" class="message"
+                   [ngClass]="{'success': courseCreationMessage.includes('successfully'), 'error': !courseCreationMessage.includes('successfully')}">
+                {{ courseCreationMessage }}
+              </div>
 
-            <form [formGroup]="courseForm" (ngSubmit)="createCourse()" class="course-form">
-              <div class="form-group">
-                <label for="courseName" class="form-label">Course Name</label>
-                <input
-                  type="text"
-                  id="courseName"
-                  class="form-input"
-                  [class.error]="courseFormControls['title'].invalid && courseFormControls['title'].touched"
-                  placeholder="Enter course name"
-                  formControlName="title"
-                  [disabled]="isCreatingCourse">
-                <div
-                  *ngIf="courseFormControls['title'].invalid && courseFormControls['title'].touched"
-                  class="error-message">
-                  {{ getCourseFieldError('title') }}
+              <form [formGroup]="courseForm" (ngSubmit)="createCourse()" class="course-form">
+                <div class="form-group">
+                  <label for="courseName" class="form-label">Course Name</label>
+                  <input type="text" id="courseName" class="form-input" placeholder="e.g., Introduction to Quantum Physics" formControlName="title" [disabled]="isCreatingCourse || isGeneratingAI">
+                  <div *ngIf="courseFormControls['title'].invalid && courseFormControls['title'].touched" class="error-message">
+                    {{ getCourseFieldError('title') }}
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="courseDescription" class="form-label">Course Description</label>
+                  <textarea id="courseDescription" class="form-textarea" placeholder="A brief summary of the course content..." formControlName="description" [disabled]="isCreatingCourse || isGeneratingAI" rows="4"></textarea>
+                  <div *ngIf="courseFormControls['description'].invalid && courseFormControls['description'].touched" class="error-message">
+                    {{ getCourseFieldError('description') }}
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="coverImage" class="form-label">Cover Image (Optional)</label>
+                  <input type="file" id="coverImage" class="form-input" (change)="onFileChange($event)" [disabled]="isCreatingCourse || isGeneratingAI">
+                </div>
+
+                <div class="form-group">
+                  <label for="pptFile" class="form-label">Generate with AI (PPT/PPTX)</label>
+                  <input type="file" id="pptFile" class="form-input" (change)="onPptFileChange($event)" accept=".ppt,.pptx" [disabled]="isCreatingCourse || isGeneratingAI">
+                </div>
+
+                <button type="submit" class="btn btn-primary" [disabled]="!courseForm.valid || isCreatingCourse || isGeneratingAI">
+                  <svg *ngIf="isCreatingCourse || isGeneratingAI" class="btn-spinner" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v4m0 8v4m8-8h-4m-8 0H4"></path>
+                  </svg>
+                  {{ isCreatingCourse ? 'Creating...' : (isGeneratingAI ? 'Generating...' : 'Create Course') }}
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: AI Generation & Review -->
+        <div class="review-column" *ngIf="showReviewPanel">
+          <div class="review-header">
+            <h3>AI Generated Content</h3>
+            <button class="btn btn-primary" (click)="publishCourse()" [disabled]="isGeneratingAI || isPublishing">
+              <svg *ngIf="isPublishing" class="btn-spinner" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v4m0 8v4m8-8h-4m-8 0H4"></path>
+              </svg>
+              {{ isPublishing ? 'Publishing...' : 'Publish' }}
+            </button>
+          </div>
+
+          <!-- AI Generating State -->
+          <div *ngIf="isGeneratingAI" class="ai-generating-container">
+            <div class="spinner"></div>
+            <p class="generating-text">Analyzing presentation and generating course content...</p>
+            <div class="progress-bar-ai">
+              <div class="progress-bar-ai-fill"></div>
+            </div>
+          </div>
+
+          <!-- Review Content State -->
+          <div *ngIf="generatedContent && !isGeneratingAI" class="review-content">
+            <div *ngFor="let item of generatedContent.videos; let i = index" class="review-item-card">
+              <!-- Video Section -->
+              <div class="video-review-section">
+                <div class="video-container-review">
+                  <iframe [src]="getEmbedUrl(item.youtubeUrl)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                  <div *ngIf="item.isUpdating" class="video-updating-overlay">
+                    <div class="spinner"></div>
+                    <p>Updating video...</p>
+                  </div>
+                </div>
+                <div class="video-edit-prompt">
+                  <label for="prompt-{{i}}" class="form-label-small">Make changes with a prompt:</label>
+                  <textarea id="prompt-{{i}}" class="form-textarea-small" placeholder="e.g., 'Make the explanation simpler' or 'change to a different style'" [(ngModel)]="item.prompt" [ngModelOptions]="{standalone: true}"></textarea>
+                  <button class="btn btn-secondary btn-small" (click)="updateVideo(item)" [disabled]="item.isUpdating">
+                    <svg *ngIf="item.isUpdating" class="btn-spinner" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v4m0 8v4m8-8h-4m-8 0H4"></path>
+                    </svg>
+                    {{ item.isUpdating ? 'Updating...' : 'Regenerate Video' }}
+                  </button>
                 </div>
               </div>
 
-              <div class="form-group">
-                <label for="courseDescription" class="form-label">Course Description</label>
-                <textarea
-                  id="courseDescription"
-                  class="form-textarea"
-                  [class.error]="courseFormControls['description'].invalid && courseFormControls['description'].touched"
-                  placeholder="Enter course description"
-                  formControlName="description"
-                  [disabled]="isCreatingCourse"
-                  rows="4">
-                </textarea>
-                <div
-                  *ngIf="courseFormControls['description'].invalid && courseFormControls['description'].touched"
-                  class="error-message">
-                  {{ getCourseFieldError('description') }}
+              <!-- Quiz Section -->
+              <div class="quiz-review-section">
+                <div class="quiz-header">
+                  <h4>Quiz: {{ item.title }}</h4>
+                  <button class="btn-icon-edit" (click)="item.isEditingQuiz = !item.isEditingQuiz">
+                    <svg *ngIf="!item.isEditingQuiz" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.536L16.732 3.732z"></path></svg>
+                    <svg *ngIf="item.isEditingQuiz" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                  </button>
+                </div>
+                <div class="quiz-content">
+                  <div *ngIf="!item.isEditingQuiz">
+                    <p>{{ item.quiz.question }}</p>
+                    <ul>
+                      <li *ngFor="let opt of item.quiz.options">{{ opt }}</li>
+                    </ul>
+                  </div>
+                  <div *ngIf="item.isEditingQuiz" class="quiz-edit-form">
+                    <textarea class="form-textarea" [(ngModel)]="item.quiz.question" [ngModelOptions]="{standalone: true}"></textarea>
+                    <button class="btn btn-primary btn-small" (click)="item.isEditingQuiz = false">Save</button>
+                  </div>
                 </div>
               </div>
-
-              <div class="form-group">
-                <label for="coverImage" class="form-label">Cover Image</label>
-                <input
-                  type="file"
-                  id="coverImage"
-                  class="form-input"
-                  (change)="onFileChange($event)">
-              </div>
-
-              <button
-                type="submit"
-                class="btn btn-primary"
-                [disabled]="!isCourseFormValid || isCreatingCourse">
-                <svg *ngIf="isCreatingCourse" class="btn-spinner" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v4m0 8v4m8-8h-4m-8 0H4"></path>
-                </svg>
-                {{ isCreatingCourse ? 'Creating Course...' : 'Create Course' }}
-              </button>
-            </form>
+            </div>
           </div>
         </div>
       </div>

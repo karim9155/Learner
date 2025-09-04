@@ -8,7 +8,7 @@ import { jwtDecode } from 'jwt-decode';
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = '/api/auth'; // Make it a relative path
+  private apiUrl = 'http://localhost:8080/api/auth'; // Make it a relative path
 
   private tokenKey = 'auth_token';
   private roleKey = 'auth_role';

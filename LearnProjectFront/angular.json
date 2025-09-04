@@ -72,7 +72,7 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "LearnProjectFront:build:production"
+              "buildTarget": "LearnProjectFront:build:production"q
             },
             "development": {
               "buildTarget": "LearnProjectFront:build:development"

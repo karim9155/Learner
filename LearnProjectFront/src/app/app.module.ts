@@ -7,7 +7,6 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { JwtInterceptor } from './services/jwt.interceptor';
-import {TrainerDashboardComponent} from './trainer/dashboard/dashboard.component';
 import {CommonModule} from '@angular/common';
 import {AdminDashboardComponent} from './admin/dashboard/dashboard.component';
 import {MatPaginator} from '@angular/material/paginator';
@@ -35,6 +34,7 @@ import {MatTableModule} from '@angular/material/table';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatProgressBar} from '@angular/material/progress-bar';
 import {QRCodeComponent} from 'angularx-qrcode';
+import {TrainerDashboardComponent} from './trainer/dashboard/dashboard.component';
 
 
 @NgModule({

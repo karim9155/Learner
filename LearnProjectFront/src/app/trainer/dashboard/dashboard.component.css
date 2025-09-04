@@ -1472,3 +1472,281 @@
   }
 
 }
+
+.loading-bar-container {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.loading-bar {
+  width: 100%;
+  height: 4px;
+  background-color: #ccc;
+  position: relative;
+  overflow: hidden;
+}
+
+.loading-bar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 100%;
+  background-color: #3498db;
+  animation: loading 3s linear forwards;
+}
+
+@keyframes loading {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.generated-course-section {
+  margin-top: 20px;
+}
+
+.video-item {
+  margin-bottom: 20px;
+}
+
+.video-container {
+  position: relative;
+  padding-bottom: 56.25%;
+  height: 0;
+  overflow: hidden;
+}
+
+.video-container iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.quiz-section {
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px !important;
+}
+
+/* --- New Styles for Two-Column AI Course Generation --- */
+
+.create-course-container {
+  display: flex;
+  flex-direction: row;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.form-column {
+  flex: 1;
+  min-width: 400px;
+  max-width: 550px;
+}
+
+.review-column {
+  flex: 1;
+  min-width: 400px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  padding: 24px;
+  position: sticky;
+  top: 24px;
+}
+
+.dashboard-container.dark .review-column {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.review-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.ai-generating-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  text-align: center;
+  gap: 16px;
+}
+
+.generating-text {
+  font-size: 16px;
+  color: var(--text-secondary);
+}
+
+.progress-bar-ai {
+  width: 100%;
+  height: 8px;
+  background-color: var(--border-color);
+  overflow: hidden;
+}
+
+.progress-bar-ai-fill {
+  width: 100%;
+  height: 100%;
+  background-color: var(--primary-color);
+  animation: progress-animation 3s linear infinite;
+}
+
+@keyframes progress-animation {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.review-content {
+  max-height: 70vh;
+  overflow-y: auto;
+  padding-right: 16px;
+  margin-right: -16px;
+}
+
+.review-item-card {
+  background: var(--body-bg);
+  border: 1px solid var(--border-color);
+  padding: 16px;
+  margin-bottom: 16px;
+  display: flex;
+  gap: 16px;
+}
+
+.dashboard-container.dark .review-item-card {
+  background: #0f172a;
+  border-color: #334155;
+}
+
+.video-review-section {
+  flex: 2;
+}
+
+.quiz-review-section {
+  flex: 1;
+  border-left: 1px solid var(--border-color);
+  padding-left: 16px;
+}
+
+.video-container-review {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background-color: #000;
+  margin-bottom: 16px;
+}
+
+.video-container-review iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.video-updating-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  gap: 8px;
+}
+
+.video-edit-prompt .form-label-small {
+  font-size: 12px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.video-edit-prompt .form-textarea-small {
+  min-height: 60px;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.btn-small {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+.quiz-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.quiz-header h4 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.btn-icon-edit {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-secondary);
+  padding: 4px;
+}
+.btn-icon-edit:hover {
+  color: var(--primary-color);
+}
+.btn-icon-edit svg {
+  width: 20px;
+  height: 20px;
+}
+
+.quiz-content p {
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+.quiz-content ul {
+  padding-left: 20px;
+  margin: 0;
+}
+.quiz-content li {
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.quiz-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+@media (max-width: 992px) {
+  .create-course-container {
+    flex-direction: column;
+  }
+  .form-column, .review-column {
+    max-width: 100%;
+    position: static;
+  }
+}

@@ -35,4 +35,18 @@ public class Video {
     @JsonIgnore
     @OneToMany(mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<VideoProgress> videoProgresses;
+
+    @OneToOne(mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Quiz quiz;
+
+    public Quiz getQuiz() {
+        return quiz;
+    }
+
+    public void setQuiz(Quiz quiz) {
+        this.quiz = quiz;
+        if (quiz != null) {
+            quiz.setVideo(this);
+        }
+    }
 }

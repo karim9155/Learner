@@ -1,9 +1,7 @@
 package com.example.learnprojectback.service.impl;
 
 import com.example.learnprojectback.dto.CourseDTO;
-import com.example.learnprojectback.model.Course;
-import com.example.learnprojectback.model.Organization;
-import com.example.learnprojectback.model.User;
+import com.example.learnprojectback.model.*;
 import com.example.learnprojectback.repository.CourseRepository;
 import com.example.learnprojectback.repository.OrganizationRepository;
 import com.example.learnprojectback.repository.UserRepository;
@@ -13,8 +11,14 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import com.example.learnprojectback.dto.PublishCourseRequestDTO;
+import com.example.learnprojectback.repository.QuizRepository;
+import com.example.learnprojectback.security.JwtUser;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -26,9 +30,51 @@ public class CourseServiceImpl implements CourseService {
     private final CourseRepository courseRepository;
     private final OrganizationRepository organizationRepository;
     private final UserRepository userRepository;
+    private final QuizRepository quizRepository;
     private final ModelMapper modelMapper;
     private final FileStorageService fileStorageService;
 
+    @Override
+    @Transactional
+    public CourseDTO publishCourse(PublishCourseRequestDTO request) {
+        JwtUser jwtUser = (JwtUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User currentUser = userRepository.findById(jwtUser.getId())
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        // FIX: Get the organization through the user's membership
+        Organization userOrg = currentUser.getMemberships().stream()
+                .findFirst() // Assumes the user has at least one membership
+                .map(Membership::getOrganization)
+                .orElseThrow(() -> new EntityNotFoundException("User is not part of any organization"));
+
+        Course course = new Course();
+        course.setTitle(request.getTitle());
+        course.setDescription(request.getDescription());
+        course.setCreatedBy(currentUser);
+        course.setOrg(userOrg); // Use the organization found via membership
+
+        List<Video> videoEntities = new ArrayList<>();
+        for (PublishCourseRequestDTO.VideoData videoData : request.getVideos()) {
+            Video video = new Video();
+            video.setTitle(videoData.getTitle());
+            video.setYoutubeUrl(videoData.getYoutubeUrl());
+            video.setCourse(course);
+            video.setUser(currentUser);
+
+            if (videoData.getQuiz() != null) {
+                Quiz quiz = new Quiz();
+                quiz.setQuestion(videoData.getQuiz().getQuestion());
+                quiz.setOptions(videoData.getQuiz().getOptions());
+                quiz.setCorrectAnswer(videoData.getQuiz().getCorrectAnswer());
+                video.setQuiz(quiz);
+            }
+            videoEntities.add(video);
+        }
+        course.setVideos(videoEntities);
+
+        Course savedCourse = courseRepository.save(course);
+        return convertToDto(savedCourse);
+    }
     @Override
     public CourseDTO createCourse(UUID orgId, UUID trainerId, CourseDTO dto, MultipartFile coverImage) {
         User trainer = userRepository.findById(trainerId)

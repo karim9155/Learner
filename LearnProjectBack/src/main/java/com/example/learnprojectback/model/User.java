@@ -47,4 +47,6 @@ public class User {
     @JsonIgnore
     @OneToMany(mappedBy = "learner", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<VideoProgress> videoProgresses;
+
+
 }
