@@ -211,21 +211,31 @@ export class TrainerDashboardComponent implements OnInit {
   // --- New Methods for AI Feature ---
 
   publishCourse(): void {
+    if (!this.generatedContent) {
+      console.error('No generated content to publish.');
+      return;
+    }
+
     this.isPublishing = true;
-    console.log('Publishing course:', this.generatedContent);
-    // Simulate API call
-    setTimeout(() => {
-      this.isPublishing = false;
-      this.courseCreationMessage = 'AI-generated course published successfully!';
-      // Reset state
-      this.showReviewPanel = false;
-      this.generatedContent = null;
-      this.pptFile = null;
-      this.courseForm.reset();
-      // Optionally, reload the "My Courses" list
-      this.loadMyCourses();
-      setTimeout(() => this.courseCreationMessage = '', 4000);
-    }, 2000);
+    this.courseService.publishCourse(this.generatedContent).subscribe({
+      next: () => {
+        this.isPublishing = false;
+        this.courseCreationMessage = 'AI-generated course published successfully!';
+        // Reset state
+        this.showReviewPanel = false;
+        this.generatedContent = null;
+        this.pptFile = null;
+        this.courseForm.reset();
+        // Optionally, reload the "My Courses" list
+        this.loadMyCourses();
+        setTimeout(() => this.courseCreationMessage = '', 4000);
+      },
+      error: (error) => {
+        this.isPublishing = false;
+        console.error('Failed to publish course', error);
+        this.courseCreationMessage = 'Failed to publish course. Please try again.';
+      }
+    });
   }
 
   updateVideo(videoToUpdate: GeneratedVideo): void {

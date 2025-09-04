@@ -1,6 +1,7 @@
 package com.example.learnprojectback.controller;
 
 import com.example.learnprojectback.dto.CourseDTO;
+import com.example.learnprojectback.dto.PublishCourseRequestDTO;
 import com.example.learnprojectback.security.JwtUser;
 import com.example.learnprojectback.service.CourseService;
 import org.springframework.http.ResponseEntity;
@@ -48,6 +49,12 @@ public class CourseController {
     @GetMapping("/by-user/{userId}")
     public List<CourseDTO> getCoursesByUser(@PathVariable UUID userId) {
         return courseService.getCoursesByUserId(userId);
+    }
+
+    @PostMapping("/publish")
+    public ResponseEntity<CourseDTO> publishCourse(@RequestBody PublishCourseRequestDTO request) {
+        CourseDTO publishedCourse = courseService.publishCourse(request);
+        return ResponseEntity.ok(publishedCourse);
     }
 
     @DeleteMapping("/{courseId}")
