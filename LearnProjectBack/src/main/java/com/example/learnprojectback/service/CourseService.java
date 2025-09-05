@@ -11,7 +11,7 @@ import java.util.UUID;
 @Service
 public interface CourseService {
     CourseDTO createCourse(UUID orgId, UUID trainerId, CourseDTO dto, MultipartFile coverImage);
-    CourseDTO publishCourse(PublishCourseRequestDTO request);
+    CourseDTO publishCourse(PublishCourseRequestDTO request, MultipartFile coverImage);
     List<CourseDTO> listCourses(UUID orgId);
     List<CourseDTO> getAllCourses(String search);
     List<CourseDTO> getCoursesByTrainer(UUID trainerId, String search);

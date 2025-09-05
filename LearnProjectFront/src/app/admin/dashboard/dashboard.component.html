@@ -114,6 +114,7 @@
     <div class="content-area">
       <!-- Dashboard Section -->
       <div *ngIf="activeSection === 'dashboard'" class="dashboard-overview">
+        <!-- Stats Grid -->
         <div class="stats-grid">
           <div class="stat-card">
             <div class="stat-content">
@@ -176,7 +177,7 @@
           </div>
         </div>
 
-        <!--        Recent Activity -->
+        <!-- Recent Activity -->
         <div class="recent-activity">
           <h3>Recent Activity</h3>
           <div class="activity-list">
@@ -197,15 +198,284 @@
             </div>
           </div>
         </div>
-      </div>
 
+        <!-- Courses Analytics Section -->
+        <div class="analytics-container">
+          <h3>Courses Analytics</h3>
+
+          <!-- KPI Cards -->
+          <div class="analytics-kpi-grid">
+            <div class="kpi-card">
+              <div class="kpi-icon correct">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+              </div>
+              <div class="kpi-info">
+                <h4>Correct Answers</h4>
+                <span class="kpi-value">896</span>
+              </div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-icon incorrect">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+              </div>
+              <div class="kpi-info">
+                <h4>Incorrect Answers</h4>
+                <span class="kpi-value">351</span>
+              </div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-icon accuracy">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+              </div>
+              <div class="kpi-info">
+                <h4>Overall Accuracy</h4>
+                <span class="kpi-value">72%</span>
+              </div>
+            </div>
+
+            <div class="kpi-card">
+              <div class="kpi-icon total">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                </svg>
+              </div>
+              <div class="kpi-info">
+                <h4>Total Answers</h4>
+                <span class="kpi-value">1,247</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Charts Grid -->
+          <div class="analytics-charts-grid">
+            <!-- Donut Chart -->
+            <div class="chart-card">
+              <h4>Answer Distribution</h4>
+              <div class="donut-chart">
+                <svg viewBox="0 0 200 200" class="donut-svg">
+                  <circle cx="100" cy="100" r="70" fill="none" stroke="#e5e7eb" stroke-width="20" />
+                  <circle
+                    cx="100"
+                    cy="100"
+                    r="70"
+                    fill="none"
+                    stroke="#10b981"
+                    stroke-width="20"
+                    stroke-dasharray="316.7 439.8"
+                    stroke-dashoffset="0"
+                    transform="rotate(-90 100 100)"
+                    class="donut-segment">
+                  </circle>
+                  <text x="100" y="95" text-anchor="middle" class="donut-percentage">72%</text>
+                  <text x="100" y="115" text-anchor="middle" class="donut-label">Accuracy</text>
+                </svg>
+              </div>
+            </div>
+
+            <!-- Bar Chart -->
+            <div class="chart-card">
+              <h4>Course Performance</h4>
+              <div class="bar-chart">
+                <div class="bar-item">
+                  <div class="bar-label">JavaScript Fundamentals</div>
+                  <div class="bar-container">
+                    <div class="bar-fill" style="width: 85%"></div>
+                  </div>
+                  <div class="bar-value">85%</div>
+                </div>
+                <div class="bar-item">
+                  <div class="bar-label">React Advanced</div>
+                  <div class="bar-container">
+                    <div class="bar-fill" style="width: 78%"></div>
+                  </div>
+                  <div class="bar-value">78%</div>
+                </div>
+                <div class="bar-item">
+                  <div class="bar-label">Node.js Basics</div>
+                  <div class="bar-container">
+                    <div class="bar-fill" style="width: 69%"></div>
+                  </div>
+                  <div class="bar-value">69%</div>
+                </div>
+                <div class="bar-item">
+                  <div class="bar-label">Database Design</div>
+                  <div class="bar-container">
+                    <div class="bar-fill" style="width: 74%"></div>
+                  </div>
+                  <div class="bar-value">74%</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Line Chart -->
+            <div class="chart-card">
+              <h4>Weekly Accuracy Trend</h4>
+              <div class="line-chart">
+                <svg viewBox="0 0 300 150" class="line-svg">
+                  <defs>
+                    <linearGradient id="lineGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.3" />
+                      <stop offset="100%" stop-color="#3b82f6" stop-opacity="0" />
+                    </linearGradient>
+                  </defs>
+                  <polyline
+                    points="20,72 63,64 106,68 149,56 192,48 235,60 278,44"
+                    fill="none"
+                    stroke="#3b82f6"
+                    stroke-width="3">
+                  </polyline>
+                  <polygon
+                    points="20,150 20,72 63,64 106,68 149,56 192,48 235,60 278,44 278,150"
+                    fill="url(#lineGradient)">
+                  </polygon>
+                  <circle cx="20" cy="72" r="4" fill="#3b82f6" />
+                  <circle cx="63" cy="64" r="4" fill="#3b82f6" />
+                  <circle cx="106" cy="68" r="4" fill="#3b82f6" />
+                  <circle cx="149" cy="56" r="4" fill="#3b82f6" />
+                  <circle cx="192" cy="48" r="4" fill="#3b82f6" />
+                  <circle cx="235" cy="60" r="4" fill="#3b82f6" />
+                  <circle cx="278" cy="44" r="4" fill="#3b82f6" />
+                </svg>
+                <div class="line-labels">
+                  <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Heatmap -->
+            <div class="chart-card">
+              <h4>Performance Heatmap</h4>
+              <div class="heatmap-chart">
+                <div class="heatmap-grid">
+                  <div class="heatmap-row">
+                    <div class="heatmap-cell" style="background-color: rgba(37, 99, 235, 0.20); color: #374151;">20</div>
+                    <div class="heatmap-cell" style="background-color: rgba(37, 99, 235, 0.35); color: #374151;">35</div>
+                    <div class="heatmap-cell" style="background-color: rgba(37, 99, 235, 0.45); color: #374151;">45</div>
+                    <div class="heatmap-cell" style="background-color: rgba(37, 99, 235, 0.60); color: #ffffff;">60</div>
+                    <div class="heatmap-cell" style="background-color: rgba(37, 99, 235, 0.75); color: #ffffff;">75</div>
+                    <div class="heatmap-cell" style="background-color: rgba(37, 99, 235, 0.80); color: #ffffff;">80</div>
+                    <div class="heatmap-cell" style="background-color: rgba(37, 99, 235, 0.65); color: #ffffff;">65</div>
+                  </div>
+                  <div class="heatmap-row">
+                    <div class="heatmap-cell" style="background-color: rgba(37, 99, 235, 0.15); color: #374151;">15</div>
+                    <div class="heatmap-cell" style="background-color: rgba(37, 99, 235, 0.40); color: #374151;">40</div>
+                    <div class="heatmap-cell" style="background-color: rgba(37, 99, 235, 0.50); color: #374151;">50</div>
+                    <div class="heatmap-cell" style="background-color: rgba(37, 99, 235, 0.65); color: #ffffff;">65</div>
+                    <div class="heatmap-cell" style="background-color: rgba(37, 99, 235, 0.70); color: #ffffff;">70</div>
+                    <div class="heatmap-cell" style="background-color: rgba(37, 99, 235, 0.85); color: #ffffff;">85</div>
+                    <div class="heatmap-cell" style="background-color: rgba(37, 99, 235, 0.70); color: #ffffff;">70</div>
+                  </div>
+                  <div class="heatmap-row">
+                    <div class="heatmap-cell" style="background-color: rgba(37, 99, 235, 0.25); color: #374151;">25</div>
+                    <div class="heatmap-cell" style="background-color: rgba(37, 99, 235, 0.30); color: #374151;">30</div>
+                    <div class="heatmap-cell" style="background-color: rgba(37, 99, 235, 0.55); color: #ffffff;">55</div>
+                    <div class="heatmap-cell" style="background-color: rgba(37, 99, 235, 0.70); color: #ffffff;">70</div>
+                    <div class="heatmap-cell" style="background-color: rgba(37, 99, 235, 0.80); color: #ffffff;">80</div>
+                    <div class="heatmap-cell" style="background-color: rgba(37, 99, 235, 0.75); color: #ffffff;">75</div>
+                    <div class="heatmap-cell" style="background-color: rgba(37, 99, 235, 0.60); color: #ffffff;">60</div>
+                  </div>
+                  <div class="heatmap-row">
+                    <div class="heatmap-cell" style="background-color: rgba(37, 99, 235, 0.10); color: #374151;">10</div>
+                    <div class="heatmap-cell" style="background-color: rgba(37, 99, 235, 0.45); color: #374151;">45</div>
+                    <div class="heatmap-cell" style="background-color: rgba(37, 99, 235, 0.60); color: #ffffff;">60</div>
+                    <div class="heatmap-cell" style="background-color: rgba(37, 99, 235, 0.75); color: #ffffff;">75</div>
+                    <div class="heatmap-cell" style="background-color: rgba(37, 99, 235, 0.85); color: #ffffff;">85</div>
+                    <div class="heatmap-cell" style="background-color: rgba(37, 99, 235, 0.90); color: #ffffff;">90</div>
+                    <div class="heatmap-cell" style="background-color: rgba(37, 99, 235, 0.80); color: #ffffff;">80</div>
+                  </div>
+                </div>
+                <div class="heatmap-labels">
+                  <div class="heatmap-y-labels">
+                    <span>Week 1</span>
+                    <span>Week 2</span>
+                    <span>Week 3</span>
+                    <span>Week 4</span>
+                  </div>
+                  <div class="heatmap-x-labels">
+                    <span>JS</span><span>React</span><span>Node</span><span>DB</span><span>API</span><span>CSS</span><span>HTML</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Leaderboard -->
+          <div class="leaderboard-card">
+            <h4>Top Performers</h4>
+            <div class="leaderboard-list">
+              <div class="leaderboard-item">
+                <div class="leaderboard-rank">#1</div>
+                <div class="leaderboard-user">
+                  <div class="user-avatar-small">
+                    <span>S</span>
+                  </div>
+                  <div class="user-details">
+                    <span class="user-name">Sarah Johnson</span>
+                    <span class="user-course">JavaScript Fundamentals</span>
+                  </div>
+                </div>
+                <div class="leaderboard-score">98%</div>
+              </div>
+              <div class="leaderboard-item">
+                <div class="leaderboard-rank">#2</div>
+                <div class="leaderboard-user">
+                  <div class="user-avatar-small">
+                    <span>M</span>
+                  </div>
+                  <div class="user-details">
+                    <span class="user-name">Mike Chen</span>
+                    <span class="user-course">React Advanced</span>
+                  </div>
+                </div>
+                <div class="leaderboard-score">94%</div>
+              </div>
+              <div class="leaderboard-item">
+                <div class="leaderboard-rank">#3</div>
+                <div class="leaderboard-user">
+                  <div class="user-avatar-small">
+                    <span>E</span>
+                  </div>
+                  <div class="user-details">
+                    <span class="user-name">Emma Davis</span>
+                    <span class="user-course">Node.js Basics</span>
+                  </div>
+                </div>
+                <div class="leaderboard-score">91%</div>
+              </div>
+              <div class="leaderboard-item">
+                <div class="leaderboard-rank">#4</div>
+                <div class="leaderboard-user">
+                  <div class="user-avatar-small">
+                    <span>J</span>
+                  </div>
+                  <div class="user-details">
+                    <span class="user-name">John Smith</span>
+                    <span class="user-course">Database Design</span>
+                  </div>
+                </div>
+                <div class="leaderboard-score">88%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <!-- User Management Section -->
       <div *ngIf="activeSection === 'users'" class="user-management">
         <div class="management-card">
           <div class="card-header">
-            <h3>CSV File Upload</h3>
-            <p>Upload a CSV file to bulk create user accounts</p>
+            <div class="header-info">
+              <h3>CSV File Upload</h3>
+              <p>Upload a CSV file to bulk create user accounts</p>
+            </div>
           </div>
           <div class="card-content">
             <div class="file-upload-area">
@@ -361,7 +631,6 @@
             <div *ngIf="course.showQrCode" class="qr-code-container">
               <qrcode [qrdata]="qrCodeData" [width]="256" [errorCorrectionLevel]="'M'"></qrcode>
               <button class="btn btn-primary" (click)="downloadQrCode()">Download QR Code</button>
-
             </div>
 
             <!-- Videos Section -->
@@ -410,146 +679,124 @@
       </div>
 
       <!-- Shop Section -->
-      <!-- Course Shop Component Template -->
       <div *ngIf="activeSection === 'shop'" class="course-shop-container">
-
-        <!-- Loading State -->
-        <div *ngIf="isLoading" class="loading-container">
-          <div class="loading-content">
-            <div class="loading-spinner"></div>
-            <p class="loading-text">Loading courses shop...</p>
-          </div>
-        </div>
-
-        <!-- Main Content -->
-        <div *ngIf="!isLoading" class="main-content">
-
-          <!-- Header with Search -->
-          <div class="header-section">
-            <div class="search-container">
-              <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/>
-              </svg>
-              <input
-                type="text"
-                placeholder="Search in shop..."
-                [value]="searchTerm"
-                (keyup)="handleSearch($event)"
-                class="search-input"
-              />
+          <div class="main-content">
+            <div class="header-section">
+              <div class="search-container">
+                <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/>
+                </svg>
+                <input
+                  type="text"
+                  placeholder="Search in shop..."
+                  class="search-input"
+                  [(ngModel)]="searchTerm"
+                  (keyup)="handleSearch($event)"
+                />
+              </div>
             </div>
-          </div>
 
-          <!-- Courses Grid -->
-          <div *ngIf="filteredCourses.length > 0" class="courses-grid">
-            <div *ngFor="let course of filteredCourses" class="course-card">
-
-              <!-- Course Image -->
-              <div class="course-image-section">
-                <div class="image-container">
-                  <img
-                    [src]="course.coverImage"
-                    [alt]="course.title + ' cover image'"
-                    class="course-image"
-                    (error)="onImageError($event)"
-                  />
-                  <div *ngIf="course.duration" class="duration-badge">
-                    <svg class="clock-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <circle cx="12" cy="12" r="10"/>
-                      <polyline points="12,6 12,12 16,14"/>
-                    </svg>
-                    {{ course.duration }}
-                  </div>
-                </div>
-              </div>
-
-              <!-- Course Header -->
-              <div class="course-header">
-                <h3 class="course-title">{{ course.title }}</h3>
-                <div class="trainer-info">
-                  <svg class="user-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                  </svg>
-                  {{ course.trainerEmail }}
-                </div>
-              </div>
-
-              <!-- Course Content -->
-              <div class="course-content">
-                <p class="course-description">{{ course.description }}</p>
-
-                <!-- Action Buttons -->
-                <div class="action-buttons">
-                  <button
-                    class="btn-primary"
-                    (click)="openEnrollDialog(course)"
-                  >
-                    <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
-                    </svg>
-                    Mehr lesen
-                  </button>
-
-                  <button
-                    *ngIf="course.videos && course.videos.length > 0"
-                    class="btn-secondary"
-                    (click)="toggleVideos(course)"
-                  >
-                    <svg *ngIf="!course.showVideos" class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <polyline points="6,9 12,15 18,9"/>
-                    </svg>
-                    <svg *ngIf="course.showVideos" class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <polyline points="18,15 12,9 6,15"/>
-                    </svg>
-                    {{ course.showVideos ? 'Hide Preview' : 'Preview Course' }}
-                    <span class="video-count">({{ course.videos.length }})</span>
-                  </button>
-                </div>
-
-                <!-- Video Preview Section -->
-                <div *ngIf="course.showVideos && course.videos && course.videos.length > 0" class="video-preview-section">
-                  <h4 class="preview-title">Course Preview</h4>
-                  <div class="videos-container">
-                    <div *ngFor="let video of course.videos" class="video-item">
-                      <h5 class="video-title">{{ video.title }}</h5>
-                      <div class="video-wrapper">
-                        <iframe
-                          [src]="getEmbedUrl(video.youtubeUrl)"
-                          frameborder="0"
-                          allowfullscreen
-                          loading="lazy"
-                          [title]="video.title"
-                          class="video-iframe">
-                        </iframe>
-                      </div>
+            <div *ngIf="filteredCourses.length > 0" class="courses-grid">
+              <div *ngFor="let course of filteredCourses" class="course-card">
+                <div class="course-image-section">
+                  <div class="image-container">
+                    <img
+                      [src]="getImageUrl(course.coverImage)"
+                      [alt]="course.title + ' cover image'"
+                      class="course-image"
+                      (error)="onImageError($event)"
+                    />
+                    <div *ngIf="course.duration" class="duration-badge">
+                      <svg class="clock-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12,6 12,12 16,14"/>
+                      </svg>
+                      {{ course.duration }}
                     </div>
                   </div>
                 </div>
 
-                <!-- No Videos Message -->
-                <div *ngIf="course.showVideos && (!course.videos || course.videos.length === 0)" class="no-videos-message">
-                  <svg class="no-videos-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <polygon points="23,7 16,12 23,17 23,7"/>
-                    <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
-                  </svg>
-                  <p>No preview videos available.</p>
+                <div class="course-header">
+                  <h3 class="course-title">{{ course.title }}</h3>
+                  <div class="trainer-info">
+                    <svg class="user-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                    </svg>
+                    {{ course.trainerEmail }}
+                  </div>
+                </div>
+
+                <div class="course-content">
+                  <p class="course-description">{{ course.description }}</p>
+
+                  <div class="action-buttons">
+                    <button
+                      class="btn-primary"
+                      (click)="openEnrollDialog(course)"
+                    >
+                      <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                      </svg>
+                      Enroll
+                    </button>
+
+                    <button
+                      *ngIf="course.videos && course.videos.length > 0"
+                      class="btn-secondary"
+                      (click)="toggleVideos(course)"
+                    >
+                      <svg *ngIf="!course.showVideos" class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <polyline points="6,9 12,15 18,9"/>
+                      </svg>
+                      <svg *ngIf="course.showVideos" class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <polyline points="18,15 12,9 6,15"/>
+                      </svg>
+                      {{ course.showVideos ? 'Hide Preview' : 'Preview Course' }}
+                      <span class="video-count">({{ course.videos.length }})</span>
+                    </button>
+                  </div>
+
+                  <div *ngIf="course.showVideos && course.videos && course.videos.length > 0" class="video-preview-section">
+                    <h4 class="preview-title">Course Preview</h4>
+                    <div class="videos-container">
+                      <div *ngFor="let video of course.videos" class="video-item">
+                        <h5 class="video-title">{{ video.title }}</h5>
+                        <div class="video-wrapper">
+                          <iframe
+                            [src]="getEmbedUrl(video.youtubeUrl)"
+                            frameborder="0"
+                            allowfullscreen
+                            loading="lazy"
+                            [title]="video.title"
+                            class="video-iframe">
+                          </iframe>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div *ngIf="course.showVideos && (!course.videos || course.videos.length === 0)" class="no-videos-message">
+                    <svg class="no-videos-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <polygon points="23,7 16,12 23,17 23,7"/>
+                      <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+                    </svg>
+                    <p>No preview videos available.</p>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <!-- Empty State -->
-          <div *ngIf="filteredCourses.length === 0 && !isLoading" class="empty-state">
-            <svg class="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-            </svg>
-            <h3 class="empty-title">No courses found in the shop.</h3>
-            <p class="empty-description">
-              {{ searchTerm ? 'Try adjusting your search terms.' : 'There are no courses available at the moment.' }}
-            </p>
+            <div *ngIf="filteredCourses.length === 0 && !isLoading" class="empty-state">
+              <svg class="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+              </svg>
+              <h3 class="empty-title">No courses found in the shop.</h3>
+              <p class="empty-description">
+                {{ searchTerm ? 'Try adjusting your search terms.' : 'There are no courses available at the moment.' }}
+              </p>
+            </div>
           </div>
         </div>
-      </div>
     </div>
   </main>
 </div>

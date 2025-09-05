@@ -118,6 +118,7 @@ export class AdminDashboardComponent implements OnInit {
           ...course,
           showVideos: false
         }));
+        this.filteredCourses = this.shopCourses;
         this.isLoading = false;
       },
       error: (error) => {
@@ -139,6 +140,7 @@ export class AdminDashboardComponent implements OnInit {
           ...course,
           showVideos: false
         }));
+        this.filteredCourses = this.shopCourses;
         this.isLoading = false;
       },
       error: (error) => {
@@ -152,8 +154,8 @@ export class AdminDashboardComponent implements OnInit {
     this.searchTerm = term;
 
     this.filteredCourses = this.shopCourses.filter(course =>
-      course.title.toLowerCase().includes(term) ||
-      course.description.toLowerCase().includes(term)
+        course.title.toLowerCase().includes(term) ||
+        course.description.toLowerCase().includes(term)
       //(course.category && course.category.toLowerCase().includes(term))
     );
   }

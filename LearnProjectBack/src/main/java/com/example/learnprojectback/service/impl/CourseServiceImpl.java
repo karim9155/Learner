@@ -36,7 +36,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     @Transactional
-    public CourseDTO publishCourse(PublishCourseRequestDTO request) {
+    public CourseDTO publishCourse(PublishCourseRequestDTO request, MultipartFile coverImage) {
         JwtUser jwtUser = (JwtUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User currentUser = userRepository.findById(jwtUser.getId())
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
@@ -52,6 +52,11 @@ public class CourseServiceImpl implements CourseService {
         course.setDescription(request.getDescription());
         course.setCreatedBy(currentUser);
         course.setOrg(userOrg); // Use the organization found via membership
+
+        if (coverImage != null && !coverImage.isEmpty()) {
+            String coverImageName = fileStorageService.store(coverImage);
+            course.setCoverImage(coverImageName);
+        }
 
         List<Video> videoEntities = new ArrayList<>();
         for (PublishCourseRequestDTO.VideoData videoData : request.getVideos()) {
@@ -80,18 +85,25 @@ public class CourseServiceImpl implements CourseService {
         User trainer = userRepository.findById(trainerId)
                 .orElseThrow(() -> new EntityNotFoundException("Trainer (User) not found with id: " + trainerId));
 
-        Course newCourse = modelMapper.map(dto, Course.class);
+        // Manually map from DTO to the Course entity
+        Course newCourse = new Course();
+        newCourse.setTitle(dto.getTitle());
+        newCourse.setDescription(dto.getDescription());
         newCourse.setCreatedBy(trainer);
 
+        // Handle organization if orgId is provided
         if (orgId != null) {
             Organization org = organizationRepository.findById(orgId)
                     .orElseThrow(() -> new EntityNotFoundException("Organization not found with id: " + orgId));
             newCourse.setOrg(org);
         }
 
+        // Handle cover image if it exists
         if (coverImage != null && !coverImage.isEmpty()) {
             String coverImageName = fileStorageService.store(coverImage);
             newCourse.setCoverImage(coverImageName);
+        } else {
+            newCourse.setCoverImage(null); // Ensure it's null if not provided
         }
 
         Course savedCourse = courseRepository.save(newCourse);

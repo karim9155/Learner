@@ -84,8 +84,8 @@ export class CourseService {
     return this.http.post(enrollmentUrl, { courseId, learnerId: userId }, { headers: this.getAuthHeaders() });
   }
 
-  publishCourse(courseData: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/publish`, courseData, { headers: this.getAuthHeaders() });
+  publishCourse(courseData: FormData): Observable<any> {
+    return this.http.post(`${this.apiUrl}/publish`, courseData, { headers: this.getAuthHeaders(false) });
   }
   // THIS IS THE NEW METHOD FOR THE ADMIN DASHBOARD
   getAdminEnrolledCourses(adminId: string, search: string = ''): Observable<any> {

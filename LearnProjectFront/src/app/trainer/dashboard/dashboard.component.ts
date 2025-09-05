@@ -217,7 +217,16 @@ export class TrainerDashboardComponent implements OnInit {
     }
 
     this.isPublishing = true;
-    this.courseService.publishCourse(this.generatedContent).subscribe({
+
+    const formData = new FormData();
+    formData.append('courseData', new Blob([JSON.stringify(this.generatedContent)], { type: 'application/json' }));
+
+    const coverImageFile = this.courseForm.get('coverImage')?.value;
+    if (coverImageFile) {
+      formData.append('coverImage', coverImageFile);
+    }
+
+    this.courseService.publishCourse(formData).subscribe({
       next: () => {
         this.isPublishing = false;
         this.courseCreationMessage = 'AI-generated course published successfully!';

@@ -52,8 +52,9 @@ public class CourseController {
     }
 
     @PostMapping("/publish")
-    public ResponseEntity<CourseDTO> publishCourse(@RequestBody PublishCourseRequestDTO request) {
-        CourseDTO publishedCourse = courseService.publishCourse(request);
+    public ResponseEntity<CourseDTO> publishCourse(@RequestPart("courseData") PublishCourseRequestDTO request,
+                                                   @RequestPart(value = "coverImage", required = false) MultipartFile coverImage) {
+        CourseDTO publishedCourse = courseService.publishCourse(request, coverImage);
         return ResponseEntity.ok(publishedCourse);
     }
 
