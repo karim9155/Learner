@@ -23,6 +23,7 @@ interface Course {
   videos?: Video[];
   showVideos?: boolean;
   showQrCode?: boolean;
+  duration?: string;
 
 }
 
@@ -30,6 +31,8 @@ interface Video {
   id: string;
   title: string;
   youtubeUrl: string;
+  duration?: string;
+
 }
 
 interface User {
@@ -50,7 +53,7 @@ interface User {
   styleUrls: ['./dashboard.component.css']
 })
 export class AdminDashboardComponent implements OnInit {
-  // ... (most properties remain the same) ...
+  filteredCourses: Course[] = [];
   shopCourses: Course[] = [];
   enrolledCourses: Course[] = [];
   users: User[] = [];
@@ -143,6 +146,16 @@ export class AdminDashboardComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+  handleSearch(event: any): void {
+    const term = (event.target.value as string).toLowerCase();
+    this.searchTerm = term;
+
+    this.filteredCourses = this.shopCourses.filter(course =>
+      course.title.toLowerCase().includes(term) ||
+      course.description.toLowerCase().includes(term)
+      //(course.category && course.category.toLowerCase().includes(term))
+    );
   }
 
   // Utility method to get current user info
@@ -436,7 +449,7 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   getImageUrl(coverImage: string): string {
-    return `https://snaplabs.online/uploads/${coverImage}`;
+    return `http://localhost:8080/uploads/${coverImage}`;
   }
 
   onImageError(e: Event) {
