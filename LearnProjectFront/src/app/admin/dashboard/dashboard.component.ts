@@ -451,7 +451,7 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   getImageUrl(coverImage: string): string {
-    return `http://localhost:8080/uploads/${coverImage}`;
+    return `/uploads/${coverImage}`;
   }
 
   onImageError(e: Event) {

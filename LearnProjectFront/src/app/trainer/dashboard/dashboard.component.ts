@@ -51,7 +51,6 @@ interface GeneratedContent {
   videos: GeneratedVideo[];
 }
 
-
 @Component({
   selector: 'app-dashboard',
   standalone: false,
@@ -85,6 +84,8 @@ export class TrainerDashboardComponent implements OnInit {
   generatedContent: GeneratedContent | null = null;
   editableQuiz: GeneratedQuiz | null = null;
 
+  // --- New Properties for Modern UI ---
+  sidebarExpanded: boolean = false;
 
   private mockShorts: string[] = [
     'https://www.youtube.com/embed/SOTamWNgDKc',
@@ -153,11 +154,49 @@ export class TrainerDashboardComponent implements OnInit {
     });
   }
 
+  // --- New Methods for Modern UI ---
+
+  setSidebarExpanded(expanded: boolean): void {
+    this.sidebarExpanded = expanded;
+  }
+
+  getPageTitle(): string {
+    switch (this.activeSection) {
+      case 'dashboard': return 'Trainer Dashboard';
+      case 'courses': return 'Create Course';
+      case 'videos': return 'Add Videos';
+      case 'my-courses': return 'My Courses';
+      default: return 'Dashboard';
+    }
+  }
+
+  getPageSubtitle(): string {
+    switch (this.activeSection) {
+      case 'dashboard': return `Welcome back, ${this.trainerUser.name}`;
+      case 'courses': return 'Create new courses for your students';
+      case 'videos': return 'Add videos to your courses';
+      case 'my-courses': return 'Manage your created courses';
+      default: return '';
+    }
+  }
+
   // --- Core Methods (Existing and Modified) ---
 
   onPptFileChange(event: any) {
     if (event.target.files.length > 0) {
-      this.pptFile = event.target.files[0];
+      const file = event.target.files[0];
+      const validTypes = [
+        'application/vnd.ms-powerpoint',
+        'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+      ];
+
+      if (validTypes.includes(file.type)) {
+        this.pptFile = file;
+      } else {
+        this.pptFile = null;
+        this.courseCreationMessage = 'Please select a valid PowerPoint file (.ppt or .pptx)';
+        setTimeout(() => this.courseCreationMessage = '', 3000);
+      }
     } else {
       this.pptFile = null;
     }
@@ -175,6 +214,7 @@ export class TrainerDashboardComponent implements OnInit {
       this.isGeneratingAI = true;
       this.generatedContent = null;
 
+      // Simulate AI generation process
       setTimeout(() => {
         this.generatedContent = this.getMockGeneratedData();
         this.isGeneratingAI = false;
@@ -245,63 +285,99 @@ export class TrainerDashboardComponent implements OnInit {
         this.isPublishing = false;
         console.error('Failed to publish course', error);
         this.courseCreationMessage = 'Failed to publish course. Please try again.';
+        setTimeout(() => this.courseCreationMessage = '', 4000);
       }
     });
   }
 
   updateVideo(videoToUpdate: GeneratedVideo): void {
-    videoToUpdate.isUpdating = true;
+    if (!this.generatedContent) return;
+
+    // Update the specific video's updating state
+    const updatedVideos = this.generatedContent.videos.map(v =>
+      v.id === videoToUpdate.id ? { ...v, isUpdating: true } : v
+    );
+    this.generatedContent = { ...this.generatedContent, videos: updatedVideos };
+
     // Simulate API call for regeneration
     setTimeout(() => {
       const currentUrlIndex = this.mockShorts.indexOf(videoToUpdate.youtubeUrl);
       let newUrlIndex = Math.floor(Math.random() * this.mockShorts.length);
+
       // Ensure the new URL is different
-      while (newUrlIndex === currentUrlIndex) {
+      while (newUrlIndex === currentUrlIndex && this.mockShorts.length > 1) {
         newUrlIndex = Math.floor(Math.random() * this.mockShorts.length);
       }
-      videoToUpdate.youtubeUrl = this.mockShorts[newUrlIndex];
-      videoToUpdate.prompt = ''; // Clear prompt after update
-      videoToUpdate.isUpdating = false;
+
+      // Update the video with new content
+      const finalVideos = this.generatedContent!.videos.map(v =>
+        v.id === videoToUpdate.id
+          ? { ...v, youtubeUrl: this.mockShorts[newUrlIndex], prompt: '', isUpdating: false }
+          : v
+      );
+      this.generatedContent = { ...this.generatedContent!, videos: finalVideos };
     }, 2000);
   }
 
   toggleQuizEdit(item: GeneratedVideo): void {
-    item.isEditingQuiz = !item.isEditingQuiz;
-    if (item.isEditingQuiz) {
-      // Deep copy the quiz to avoid modifying the original object directly
+    if (!this.generatedContent) return;
+
+    const updatedVideos = this.generatedContent.videos.map(v =>
+      v.id === item.id ? { ...v, isEditingQuiz: !v.isEditingQuiz } : v
+    );
+    this.generatedContent = { ...this.generatedContent, videos: updatedVideos };
+
+    if (!item.isEditingQuiz) {
+      // Entering edit mode - deep copy the quiz to avoid modifying the original object directly
       this.editableQuiz = JSON.parse(JSON.stringify(item.quiz));
     } else {
+      // Exiting edit mode
       this.editableQuiz = null;
     }
   }
 
   saveQuiz(item: GeneratedVideo): void {
-    if (this.editableQuiz) {
-      // Copy the edited data back to the original object
-      item.quiz = JSON.parse(JSON.stringify(this.editableQuiz));
-      item.isEditingQuiz = false;
-      this.editableQuiz = null;
-    }
+    if (!this.editableQuiz || !this.generatedContent) return;
+
+    // Copy the edited data back to the original object
+    const updatedVideos = this.generatedContent.videos.map(v =>
+      v.id === item.id
+        ? { ...v, quiz: JSON.parse(JSON.stringify(this.editableQuiz)), isEditingQuiz: false }
+        : v
+    );
+    this.generatedContent = { ...this.generatedContent, videos: updatedVideos };
+    this.editableQuiz = null;
   }
 
   cancelQuizEdit(item: GeneratedVideo): void {
-    item.isEditingQuiz = false;
+    if (!this.generatedContent) return;
+
+    const updatedVideos = this.generatedContent.videos.map(v =>
+      v.id === item.id ? { ...v, isEditingQuiz: false } : v
+    );
+    this.generatedContent = { ...this.generatedContent, videos: updatedVideos };
     this.editableQuiz = null;
   }
 
   private getMockGeneratedData(): GeneratedContent {
+    const courseTitle = this.courseForm.value.title || 'Course';
     return {
-      title: this.courseForm.value.title,
-      description: this.courseForm.value.description,
+      title: courseTitle,
+      description: this.courseForm.value.description || 'Generated course description',
       videos: [
         {
           id: 'gen_vid_1',
-          title: 'Understanding Topic 1',
+          title: `Introduction to ${courseTitle}`,
           youtubeUrl: this.mockShorts[0],
           prompt: '',
           quiz: {
-            question: 'What is the core concept of Topic 1?',
-            options: ['Option A', 'Option B', 'Option C'],
+            question: `What is the core concept of ${courseTitle}?`,
+            options: [
+              'Fundamental principles',
+              'Advanced techniques',
+              'Basic overview',
+              'Practical applications'
+            ],
             correctAnswer: 0
           },
           isUpdating: false,
@@ -309,26 +385,36 @@ export class TrainerDashboardComponent implements OnInit {
         },
         {
           id: 'gen_vid_2',
-          title: 'A Deeper Dive into Topic 2',
+          title: `Key Concepts in ${courseTitle}`,
           youtubeUrl: this.mockShorts[1],
           prompt: '',
           quiz: {
-            question: 'How does Topic 2 relate to Topic 1?',
-            options: ['Answer X', 'Answer Y', 'Answer Z'],
-            correctAnswer: 1
+            question: `Which approach is most effective in ${courseTitle}?`,
+            options: [
+              'Theoretical study only',
+              'Practical application only',
+              'Combined theory and practice',
+              'Self-directed learning'
+            ],
+            correctAnswer: 2
           },
           isUpdating: false,
           isEditingQuiz: false
         },
         {
           id: 'gen_vid_3',
-          title: 'Advanced Applications of Topic 3',
+          title: `Advanced Applications of ${courseTitle}`,
           youtubeUrl: this.mockShorts[2],
           prompt: '',
           quiz: {
-            question: 'Which of these is a real-world application of Topic 3?',
-            options: ['Example 1', 'Example 2', 'Example 3'],
-            correctAnswer: 2
+            question: `What is a real-world application of ${courseTitle}?`,
+            options: [
+              'Academic research',
+              'Industry implementation',
+              'Educational development',
+              'All of the above'
+            ],
+            correctAnswer: 3
           },
           isUpdating: false,
           isEditingQuiz: false
@@ -336,7 +422,6 @@ export class TrainerDashboardComponent implements OnInit {
       ]
     };
   }
-
 
   // --- Unchanged Helper and Existing Methods ---
 
@@ -365,7 +450,7 @@ export class TrainerDashboardComponent implements OnInit {
       if (ampersandPosition !== -1) {
         videoId = videoId.substring(0, ampersandPosition);
       }
-      // Ensure the URL is for embedding shorts correctly
+      // Ensure the URL is for embedding correctly
       return this.sanitizer.bypassSecurityTrustResourceUrl('https://www.youtube.com/embed/' + videoId);
     }
     return this.sanitizer.bypassSecurityTrustResourceUrl('');
@@ -495,6 +580,8 @@ export class TrainerDashboardComponent implements OnInit {
     if (section !== 'courses') {
       this.showReviewPanel = false; // Hide review panel when leaving the create page
       this.generatedContent = null;
+      this.isGeneratingAI = false;
+      this.isPublishing = false;
     }
   }
 
@@ -509,12 +596,24 @@ export class TrainerDashboardComponent implements OnInit {
   getTotalVideos(): number { return this.myCourses.reduce((total, course) => total + (course.videoCount || 0), 0); }
   getRecentCourses(): Course[] { return this.myCourses.slice(0, 3); }
   getImageUrl(coverImage: string): string { return `https://snaplabs.online/uploads/${coverImage}`; }
-  onImageError(e: Event) { (e.target as HTMLImageElement).classList.add('error'); }
+  onImageError(e: Event) {
+    const imgElement = e.target as HTMLImageElement;
+    imgElement.style.display = 'none';
+    // Show placeholder icon instead
+    const container = imgElement.parentElement;
+    if (container) {
+      container.classList.add('show-placeholder');
+    }
+  }
 
   deleteCourse(courseId: string): void {
     if (confirm('Are you sure you want to delete this course? This action cannot be undone.')) {
       this.courseService.deleteCourse(courseId).subscribe({
-        next: () => this.myCourses = this.myCourses.filter(course => course.id !== courseId),
+        next: () => {
+          this.myCourses = this.myCourses.filter(course => course.id !== courseId);
+          this.courseCreationMessage = 'Course deleted successfully!';
+          setTimeout(() => this.courseCreationMessage = '', 3000);
+        },
         error: (error) => {
           console.error('Failed to delete course', error);
           alert('Failed to delete course. Please try again.');
@@ -532,6 +631,8 @@ export class TrainerDashboardComponent implements OnInit {
             course.videos = course.videos.filter(v => v.id !== videoId);
             course.videoCount = course.videos.length;
           }
+          this.videoAdditionMessage = 'Video deleted successfully!';
+          setTimeout(() => this.videoAdditionMessage = '', 3000);
         },
         error: (error) => {
           console.error('Failed to delete video', error);
