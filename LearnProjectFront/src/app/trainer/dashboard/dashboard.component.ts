@@ -83,6 +83,8 @@ export class TrainerDashboardComponent implements OnInit {
   isPublishing: boolean = false;
   pptFile: File | null = null;
   generatedContent: GeneratedContent | null = null;
+  editableQuiz: GeneratedQuiz | null = null;
+
 
   private mockShorts: string[] = [
     'https://www.youtube.com/embed/SOTamWNgDKc',
@@ -261,6 +263,30 @@ export class TrainerDashboardComponent implements OnInit {
       videoToUpdate.prompt = ''; // Clear prompt after update
       videoToUpdate.isUpdating = false;
     }, 2000);
+  }
+
+  toggleQuizEdit(item: GeneratedVideo): void {
+    item.isEditingQuiz = !item.isEditingQuiz;
+    if (item.isEditingQuiz) {
+      // Deep copy the quiz to avoid modifying the original object directly
+      this.editableQuiz = JSON.parse(JSON.stringify(item.quiz));
+    } else {
+      this.editableQuiz = null;
+    }
+  }
+
+  saveQuiz(item: GeneratedVideo): void {
+    if (this.editableQuiz) {
+      // Copy the edited data back to the original object
+      item.quiz = JSON.parse(JSON.stringify(this.editableQuiz));
+      item.isEditingQuiz = false;
+      this.editableQuiz = null;
+    }
+  }
+
+  cancelQuizEdit(item: GeneratedVideo): void {
+    item.isEditingQuiz = false;
+    this.editableQuiz = null;
   }
 
   private getMockGeneratedData(): GeneratedContent {

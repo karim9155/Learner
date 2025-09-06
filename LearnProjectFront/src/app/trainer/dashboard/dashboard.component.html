@@ -293,46 +293,67 @@
           <!-- Review Content State -->
           <div *ngIf="generatedContent && !isGeneratingAI" class="review-content">
             <div *ngFor="let item of generatedContent.videos; let i = index" class="review-item-card">
-              <!-- Video Section -->
-              <div class="video-review-section">
-                <div class="video-container-review">
-                  <iframe [src]="getEmbedUrl(item.youtubeUrl)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                  <div *ngIf="item.isUpdating" class="video-updating-overlay">
-                    <div class="spinner"></div>
-                    <p>Updating video...</p>
+              <div class="review-item-content">
+                <!-- Left Column: Video -->
+                <div class="video-review-section">
+                  <div class="video-container-review">
+                    <iframe [src]="getEmbedUrl(item.youtubeUrl)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <div *ngIf="item.isUpdating" class="video-updating-overlay">
+                      <div class="spinner"></div>
+                      <p>Updating video...</p>
+                    </div>
+                  </div>
+                  <div class="video-edit-prompt">
+                    <label for="prompt-{{i}}" class="form-label-small">Make changes with a prompt:</label>
+                    <textarea id="prompt-{{i}}" class="form-textarea-small" placeholder="e.g., 'Make the explanation simpler' or 'change to a different style'" [(ngModel)]="item.prompt" [ngModelOptions]="{standalone: true}"></textarea>
+                    <button class="btn btn-secondary btn-small" (click)="updateVideo(item)" [disabled]="item.isUpdating">
+                      <svg *ngIf="item.isUpdating" class="btn-spinner" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v4m0 8v4m8-8h-4m-8 0H4"></path>
+                      </svg>
+                      {{ item.isUpdating ? 'Updating...' : 'Regenerate Video' }}
+                    </button>
                   </div>
                 </div>
-                <div class="video-edit-prompt">
-                  <label for="prompt-{{i}}" class="form-label-small">Make changes with a prompt:</label>
-                  <textarea id="prompt-{{i}}" class="form-textarea-small" placeholder="e.g., 'Make the explanation simpler' or 'change to a different style'" [(ngModel)]="item.prompt" [ngModelOptions]="{standalone: true}"></textarea>
-                  <button class="btn btn-secondary btn-small" (click)="updateVideo(item)" [disabled]="item.isUpdating">
-                    <svg *ngIf="item.isUpdating" class="btn-spinner" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v4m0 8v4m8-8h-4m-8 0H4"></path>
-                    </svg>
-                    {{ item.isUpdating ? 'Updating...' : 'Regenerate Video' }}
-                  </button>
-                </div>
-              </div>
 
-              <!-- Quiz Section -->
-              <div class="quiz-review-section">
-                <div class="quiz-header">
-                  <h4>Quiz: {{ item.title }}</h4>
-                  <button class="btn-icon-edit" (click)="item.isEditingQuiz = !item.isEditingQuiz">
-                    <svg *ngIf="!item.isEditingQuiz" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.536L16.732 3.732z"></path></svg>
-                    <svg *ngIf="item.isEditingQuiz" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                  </button>
-                </div>
-                <div class="quiz-content">
-                  <div *ngIf="!item.isEditingQuiz">
-                    <p>{{ item.quiz.question }}</p>
-                    <ul>
-                      <li *ngFor="let opt of item.quiz.options">{{ opt }}</li>
-                    </ul>
+                <!-- Right Column: Quiz -->
+                <div class="quiz-review-section">
+                  <div class="quiz-header">
+                    <h4>Quiz: {{ item.title }}</h4>
+                    <button class="btn-icon-edit" (click)="toggleQuizEdit(item)">
+                      <svg *ngIf="!item.isEditingQuiz" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.536L16.732 3.732z"></path></svg>
+                      <svg *ngIf="item.isEditingQuiz" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
                   </div>
-                  <div *ngIf="item.isEditingQuiz" class="quiz-edit-form">
-                    <textarea class="form-textarea" [(ngModel)]="item.quiz.question" [ngModelOptions]="{standalone: true}"></textarea>
-                    <button class="btn btn-primary btn-small" (click)="item.isEditingQuiz = false">Save</button>
+                  <div class="quiz-content">
+                    <!-- View Mode -->
+                    <div *ngIf="!item.isEditingQuiz" class="quiz-view">
+                      <p class="quiz-question">{{ item.quiz.question }}</p>
+                      <ul class="quiz-options">
+                        <li *ngFor="let opt of item.quiz.options; let i = index" [class.correct-answer]="i === item.quiz.correctAnswer">
+                          {{ opt }}
+                          <span *ngIf="i === item.quiz.correctAnswer" class="correct-indicator">(Correct)</span>
+                        </li>
+                      </ul>
+                    </div>
+
+                    <!-- Edit Mode -->
+                    <div *ngIf="item.isEditingQuiz && editableQuiz" class="quiz-edit-form">
+                      <div class="form-group-small">
+                        <label>Question</label>
+                        <textarea class="form-textarea" [(ngModel)]="editableQuiz.question"></textarea>
+                      </div>
+                      <div class="form-group-small" *ngFor="let option of editableQuiz.options; let i = index">
+                        <label>Option {{ i + 1 }}</label>
+                        <div class="option-edit-container">
+                          <input type="text" class="form-input" [(ngModel)]="editableQuiz.options[i]">
+                          <input type="radio" name="correctAnswer-{{i}}" [value]="i" [checked]="editableQuiz.correctAnswer === i" (change)="editableQuiz.correctAnswer = i">
+                        </div>
+                      </div>
+                      <div class="quiz-edit-actions">
+                        <button class="btn btn-primary btn-small" (click)="saveQuiz(item)">Save</button>
+                        <button class="btn btn-secondary btn-small" (click)="cancelQuizEdit(item)">Cancel</button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
