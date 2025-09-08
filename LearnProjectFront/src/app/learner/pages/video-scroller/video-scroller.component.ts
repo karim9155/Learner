@@ -97,32 +97,43 @@ export class VideoScrollerComponent implements OnInit, OnDestroy {
 
   getSafeUrl(youtubeUrl: string): SafeResourceUrl {
     if (!youtubeUrl) {
-      // Return a safe, empty URL if youtubeUrl is not provided
       return this.sanitizer.bypassSecurityTrustResourceUrl('');
     }
+
     let videoId = '';
-
-    // Check for standard, short, and shorts URL formats
-    if (youtubeUrl.includes('watch?v=')) {
-      videoId = youtubeUrl.split('v=')[1];
-    } else if (youtubeUrl.includes('youtu.be/')) {
-      videoId = youtubeUrl.split('youtu.be/')[1];
-    } else if (youtubeUrl.includes('/shorts/')) {
-      videoId = youtubeUrl.split('/shorts/')[1];
-    }
-
-    // Clean up any extra parameters in the URL
-    if (videoId) {
-      const ampersandPosition = videoId.indexOf('&');
-      if (ampersandPosition !== -1) {
-        videoId = videoId.substring(0, ampersandPosition);
+    try {
+      const url = new URL(youtubeUrl);
+      if (url.hostname === 'youtu.be') {
+        videoId = url.pathname.slice(1);
+      } else if (url.hostname.includes('youtube.com')) {
+        if (url.pathname.startsWith('/embed/')) {
+          videoId = url.pathname.split('/embed/')[1];
+        } else if (url.pathname.startsWith('/shorts/')) {
+          videoId = url.pathname.split('/shorts/')[1];
+        } else if (url.searchParams.has('v')) {
+          videoId = url.searchParams.get('v')!;
+        }
+      }
+    } catch (error) {
+      console.error('Could not parse YouTube URL:', error);
+      const regex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+      const match = youtubeUrl.match(regex);
+      if (match && match[1]) {
+        videoId = match[1];
       }
     }
 
-    // Construct the embed URL with autoplay and mute settings
+
+    if (!videoId) {
+      console.error('Could not extract video ID from URL:', youtubeUrl);
+      return this.sanitizer.bypassSecurityTrustResourceUrl('');
+    }
+
+
     const autoplay = this.isPlaying ? 1 : 0;
     const mute = this.isMuted ? 1 : 0;
     const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=${autoplay}&mute=${mute}&controls=1&rel=0&modestbranding=1`;
+
     return this.sanitizer.bypassSecurityTrustResourceUrl(embedUrl);
   }
 
