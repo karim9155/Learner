@@ -10,6 +10,7 @@ interface Video {
   courseId: string;
   description?: string;
   duration?: string;
+  quiz?: Quiz;
 }
 
 interface Quiz {
@@ -55,45 +56,6 @@ export class VideoScrollerComponent implements OnInit, OnDestroy {
   completedVideos = new Set<string>();
   completedQuizzes = new Set<string>();
 
-  // Mock quiz data
-  private mockQuizzes: Quiz[] = [
-    {
-      id: 'quiz-1',
-      question: 'What is the main purpose of React components?',
-      options: [
-        'To style web pages',
-        'To create reusable UI elements',
-        'To manage databases',
-        'To handle server requests'
-      ],
-      correctAnswer: 1,
-      explanation: 'React components are reusable pieces of UI that encapsulate logic and presentation.'
-    },
-    {
-      id: 'quiz-2',
-      question: 'Which hook is used for managing state in React?',
-      options: [
-        'useEffect',
-        'useState',
-        'useContext',
-        'useCallback'
-      ],
-      correctAnswer: 1,
-      explanation: 'useState is the React hook specifically designed for managing component state.'
-    },
-    {
-      id: 'quiz-3',
-      question: 'What does JSX stand for?',
-      options: [
-        'JavaScript XML',
-        'Java Syntax Extension',
-        'JavaScript eXtension',
-        'JSON Syntax eXtension'
-      ],
-      correctAnswer: 0,
-      explanation: 'JSX stands for JavaScript XML and allows you to write HTML-like syntax in JavaScript.'
-    }
-  ];
 
   constructor(
     private route: ActivatedRoute,
@@ -125,19 +87,19 @@ export class VideoScrollerComponent implements OnInit, OnDestroy {
 
   private buildContentItems(): void {
     this.contentItems = [];
-    this.videos.forEach((video, index) => {
+    this.videos.forEach(video => {
       this.contentItems.push(video);
-      // Add quiz after every 3 videos
-      if ((index + 1) % 3 === 0 && index < this.videos.length - 1) {
-        const quizIndex = Math.floor(index / 3);
-        if (this.mockQuizzes[quizIndex]) {
-          this.contentItems.push(this.mockQuizzes[quizIndex]);
-        }
+      if (video.quiz) {
+        this.contentItems.push(video.quiz);
       }
     });
   }
 
   getSafeUrl(youtubeUrl: string): SafeResourceUrl {
+    if (!youtubeUrl) {
+      // Return a safe, empty URL if youtubeUrl is not provided
+      return this.sanitizer.bypassSecurityTrustResourceUrl('');
+    }
     let videoId = '';
 
     // Check for standard, short, and shorts URL formats
@@ -168,7 +130,7 @@ export class VideoScrollerComponent implements OnInit, OnDestroy {
   goToNext(): void {
     if (this.currentIndex < this.contentItems.length - 1) {
       if (this.isCurrentItemVideo()) {
-        this.completedVideos.add(this.getCurrentVideo().id);
+        this.completedVideos.add(this.getCurrentVideo()!.id);
       }
 
       this.currentIndex++;
@@ -286,8 +248,11 @@ export class VideoScrollerComponent implements OnInit, OnDestroy {
     return this.contentItems[this.currentIndex];
   }
 
-  getCurrentVideo(): Video {
-    return this.getCurrentItem() as Video;
+  getCurrentVideo(): Video | null {
+    if (this.isCurrentItemVideo()) {
+      return this.getCurrentItem() as Video;
+    }
+    return null;
   }
 
   getCurrentQuiz(): Quiz {
@@ -314,12 +279,12 @@ export class VideoScrollerComponent implements OnInit, OnDestroy {
 
   getVideoIndex(): number {
     if (!this.isCurrentItemVideo()) return 0;
-    return this.videos.findIndex(v => v.id === this.getCurrentVideo().id) + 1;
+    return this.videos.findIndex(v => v.id === this.getCurrentVideo()!.id) + 1;
   }
 
   isVideoCompleted(): boolean {
     if (!this.isCurrentItemVideo()) return false;
-    return this.completedVideos.has(this.getCurrentVideo().id);
+    return this.completedVideos.has(this.getCurrentVideo()!.id);
   }
 
   canGoNext(): boolean {

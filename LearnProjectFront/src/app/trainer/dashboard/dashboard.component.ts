@@ -88,11 +88,11 @@ export class TrainerDashboardComponent implements OnInit {
   sidebarExpanded: boolean = false;
 
   private mockShorts: string[] = [
-    'https://www.youtube.com/embed/SOTamWNgDKc',
-    'https://www.youtube.com/embed/a3ICNMQW7Ok',
-    'https://www.youtube.com/embed/9Tup_g_eQkI',
-    'https://www.youtube.com/embed/hBzw_o3_SZA',
-    'https://www.youtube.com/embed/7k_mO4V1-mI'
+    'https://www.youtube.com/embed/l5_2QGEK1oE',
+    'https://www.youtube.com/embed/NOEB46yBf2o',
+    'https://www.youtube.com/embed/0iaIUyjHGuQ',
+    'https://www.youtube.com/embed/hAYdrwtd-xE',
+    'https://www.youtube.com/embed/M837WQ4NORA'
   ];
 
   get courseFormControls() { return this.courseForm.controls; }

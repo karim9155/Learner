@@ -50,7 +50,7 @@
 
 /* Sidebar Header */
 .sidebar-header {
-  padding: 24px 16px; /* Change this line */
+  padding: 16px;
   border-bottom: 1px solid #e2e8f0;
   flex-shrink: 0;
 }
@@ -58,13 +58,6 @@
   border-bottom: 1px solid #334155;
 }
 
-.logo-container {
-  display: flex;
-  align-items: center;
-  gap: 0;
-  justify-content: center;
-  transition: all 0.3s ease;
-}
 
 .sidebar:hover .nav-link,
 .sidebar.expanded .nav-link {
@@ -73,16 +66,17 @@
 }
 
 .logo-icon {
-  width: 48px;
-  height: 48px;
-  /* background: linear-gradient(135deg, #2563eb, #1d4ed8); <-- We remove the background */
+  width: 58px;
+  height: 58px;
   border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  /* Add this to handle image overflow */
   overflow: hidden;
+  margin-bottom: 20px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* New rule to style the <img> tag */

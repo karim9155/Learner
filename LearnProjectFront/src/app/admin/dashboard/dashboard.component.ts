@@ -187,6 +187,7 @@ export class AdminDashboardComponent implements OnInit {
           ...course,
           showVideos: false
         }));
+        this.filteredCourses = this.shopCourses; // <-- Fix: Initialize filtered courses
         this.isLoading = false;
       },
       error: (error) => {

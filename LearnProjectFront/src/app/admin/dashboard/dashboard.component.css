@@ -1965,6 +1965,9 @@ html {
   position: relative;
   aspect-ratio: 16/9;
   overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .course-image {

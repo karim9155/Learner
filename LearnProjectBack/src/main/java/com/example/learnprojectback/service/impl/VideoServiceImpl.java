@@ -1,5 +1,6 @@
 package com.example.learnprojectback.service.impl;
 
+import com.example.learnprojectback.dto.QuizDTO;
 import com.example.learnprojectback.dto.VideoDTO;
 import com.example.learnprojectback.model.*;
 import com.example.learnprojectback.repository.*;
@@ -19,14 +20,16 @@ public class VideoServiceImpl implements VideoService {
     private final EnrollmentRepository enrollmentRepository;
     private final UserRepository userRepository;
     private final MembershipRepository membershipRepository;
+    private final QuizRepository quizRepository;
     private final ModelMapper modelMapper;
 
-    public VideoServiceImpl(VideoRepository videoRepository, CourseRepository courseRepository, EnrollmentRepository enrollmentRepository, UserRepository userRepository, MembershipRepository membershipRepository, ModelMapper modelMapper) {
+    public VideoServiceImpl(VideoRepository videoRepository, CourseRepository courseRepository, EnrollmentRepository enrollmentRepository, UserRepository userRepository, MembershipRepository membershipRepository, QuizRepository quizRepository, ModelMapper modelMapper) {
         this.videoRepository = videoRepository;
         this.courseRepository = courseRepository;
         this.enrollmentRepository = enrollmentRepository;
         this.userRepository = userRepository;
         this.membershipRepository = membershipRepository;
+        this.quizRepository = quizRepository;
         this.modelMapper = modelMapper;
     }
 
@@ -45,9 +48,16 @@ public class VideoServiceImpl implements VideoService {
 
     @Override
     public List<VideoDTO> listVideosByCourse(UUID courseId) {
-        return videoRepository.findAll().stream()
-                .filter(video -> video.getCourse().getId().equals(courseId))
-                .map(video -> modelMapper.map(video, VideoDTO.class))
+        List<Video> videos = videoRepository.findAllByCourseId(courseId);
+        return videos.stream()
+                .map(video -> {
+                    VideoDTO videoDTO = modelMapper.map(video, VideoDTO.class);
+                    quizRepository.findByVideoId(video.getId()).ifPresent(quiz -> {
+                        QuizDTO quizDTO = modelMapper.map(quiz, QuizDTO.class);
+                        videoDTO.setQuiz(quizDTO);
+                    });
+                    return videoDTO;
+                })
                 .collect(Collectors.toList());
     }
 

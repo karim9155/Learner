@@ -34,9 +34,9 @@
   <!-- Main Content -->
   <div class="scroller-content">
     <!-- Video Content -->
-    <div *ngIf="isCurrentItemVideo()" class="video-container">
+    <div *ngIf="isCurrentItemVideo() && getCurrentVideo() && getCurrentVideo()!.youtubeUrl" class="video-container">
       <iframe
-        [src]="getSafeUrl(getCurrentVideo().youtubeUrl)"
+        [src]="getSafeUrl(getCurrentVideo()!.youtubeUrl)"
         class="video-iframe"
         frameborder="0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -46,18 +46,18 @@
       <!-- Video Info Overlay -->
       <div class="video-info-overlay">
         <div class="video-info">
-          <h2>{{ getCurrentVideo().title }}</h2>
-          <p *ngIf="getCurrentVideo().description" class="video-description">
-            {{ getCurrentVideo().description }}
+          <h2>{{ getCurrentVideo()?.title }}</h2>
+          <p *ngIf="getCurrentVideo()?.description" class="video-description">
+            {{ getCurrentVideo()?.description }}
           </p>
           <div class="video-meta">
             <div class="meta-item">
               <mat-icon class="meta-icon">play_circle</mat-icon>
               <span>Video {{ getVideoIndex() }}</span>
             </div>
-            <div *ngIf="getCurrentVideo().duration" class="meta-item">
+            <div *ngIf="getCurrentVideo()?.duration" class="meta-item">
               <mat-icon class="meta-icon">schedule</mat-icon>
-              <span>{{ getCurrentVideo().duration }}</span>
+              <span>{{ getCurrentVideo()?.duration }}</span>
             </div>
             <div *ngIf="isVideoCompleted()" class="meta-item completed">
               <mat-icon class="meta-icon">check_circle</mat-icon>
@@ -170,14 +170,14 @@
   </div>
 
   <!-- Instructions -->
-  <div class="instructions">
+<!--  <div class="instructions">
     <div class="instructions-content">
       <p>• Swipe up/down or use arrow keys to navigate</p>
       <p>• Press Space to play/pause videos</p>
       <p>• Press M to mute/unmute</p>
       <p>• Press Escape to go back</p>
     </div>
-  </div>
+  </div>-->
 </div>
 
 <!-- Loading State -->

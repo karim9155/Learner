@@ -7,8 +7,8 @@ import { AuthService } from './auth.service';
   providedIn: 'root'
 })
 export class CourseService {
-  private apiUrl = '/api/courses';
-  private enrollmentApiUrl = '/api/enrollments';
+  private apiUrl = 'http://localhost:8080/api/courses';
+  private enrollmentApiUrl = 'http://localhost:8080/api/enrollments';
 
 
 
@@ -17,9 +17,11 @@ export class CourseService {
 
   private getAuthHeaders(includeContentType: boolean = true): HttpHeaders {
     const token = this.authService.getToken();
-    let headersConfig: { [key: string]: string } = {
-      'Authorization': `Bearer ${token}`
-    };
+    let headersConfig: { [key: string]: string } = {};
+
+    if (token) {
+      headersConfig['Authorization'] = `Bearer ${token}`;
+    }
 
     if (includeContentType) {
       headersConfig['Content-Type'] = 'application/json';
@@ -33,7 +35,7 @@ export class CourseService {
   }
 
   addVideo(videoData: any): Observable<any> {
-    const videoApiUrl = '/api/videos';
+    const videoApiUrl = 'http://localhost:8080/api/videos';
 
     return this.http.post(videoApiUrl, videoData, { headers: this.getAuthHeaders() });
   }
@@ -47,7 +49,7 @@ export class CourseService {
   }
 
   getVideosByCourse(courseId: string): Observable<any> {
-    const videoApiUrl = '/api/videos';
+    const videoApiUrl = 'http://localhost:8080/api/videos';
 
     return this.http.get(`${videoApiUrl}/by-course/${courseId}`, { headers: this.getAuthHeaders() });
   }

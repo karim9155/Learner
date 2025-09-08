@@ -1,6 +1,8 @@
 package com.example.learnprojectback.dto;
 
 import lombok.Data;
+import com.example.learnprojectback.dto.QuizDTO;
+
 
 import java.util.UUID;
 
@@ -13,4 +15,5 @@ public class VideoDTO {
     private String youtubeUrl;
     private Integer durationSeconds;
     private Integer orderIndex;
+    private QuizDTO quiz;
 }
