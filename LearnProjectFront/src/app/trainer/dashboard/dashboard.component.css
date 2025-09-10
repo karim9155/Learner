@@ -1813,3 +1813,16 @@
     padding: 16px;
   }
 }
+
+.review-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.preview-icon {
+  width: 16px;
+  height: 16px;
+  margin-right: 6px;
+  stroke-width: 2.5;
+}

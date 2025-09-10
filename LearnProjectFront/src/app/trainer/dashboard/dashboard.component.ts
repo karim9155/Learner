@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { CourseService } from '../../services/course.service';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
+import { CoursePreviewComponent } from '../course-preview/course-preview.component';
 
 // --- Existing Interfaces (kept for original functionality) ---
 interface Course {
@@ -107,7 +109,8 @@ export class TrainerDashboardComponent implements OnInit {
     private courseService: CourseService,
     private authService: AuthService,
     private router: Router,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    public dialog: MatDialog
   ) {
     this.courseForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(3)]],
@@ -283,6 +286,20 @@ export class TrainerDashboardComponent implements OnInit {
   }
 
   // --- New Methods for AI Feature ---
+
+  previewCourse(): void {
+    if (!this.generatedContent) return;
+
+    // Pass a deep copy of the data to prevent any potential side-effects
+    // where the dialog data could be mutated by the parent component.
+    const previewData = JSON.parse(JSON.stringify(this.generatedContent));
+
+    this.dialog.open(CoursePreviewComponent, {
+      width: '420px',
+      height: '880px',
+      data: previewData
+    });
+  }
 
   publishCourse(): void {
     if (!this.generatedContent) {

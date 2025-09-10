@@ -1,0 +1,229 @@
+/* Using ::ng-deep to override dialog panel styles for a cleaner look */
+::ng-deep .mat-dialog-container {
+  padding: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+.mobile-preview-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.mobile-frame {
+  width: 390px; /* iPhone 12 Pro width */
+  height: 844px; /* iPhone 12 Pro height */
+  background: #1c1c1e;
+  border-radius: 50px;
+  padding: 12px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 0 2px #333;
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-screen {
+  background: #000000;
+  flex-grow: 1;
+  border-radius: 40px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+.screen-header {
+  background: #2a2a2d;
+  padding: 12px 20px;
+  color: #fff;
+  text-align: center;
+  position: relative;
+  border-bottom: 1px solid #444;
+}
+
+.header-title {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.close-btn {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+}
+
+.close-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.screen-content {
+  flex-grow: 1;
+  overflow-y: auto;
+  color: #fff;
+  padding: 20px;
+}
+
+/* Custom scrollbar for webkit browsers */
+.screen-content::-webkit-scrollbar {
+  width: 6px;
+}
+.screen-content::-webkit-scrollbar-track {
+  background: #2a2a2d;
+}
+.screen-content::-webkit-scrollbar-thumb {
+  background-color: #555;
+  border-radius: 3px;
+}
+
+.course-header {
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #444;
+}
+
+.course-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+
+.course-description {
+  font-size: 0.9rem;
+  color: #a0a0a0;
+}
+
+.content-item {
+  margin-bottom: 30px;
+}
+
+.video-section .video-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.video-wrapper {
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  height: 0;
+  overflow: hidden;
+  border-radius: 12px;
+  background: #000;
+}
+
+.video-wrapper iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.quiz-section {
+  margin-top: 20px;
+  background: #2a2a2d;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.quiz-title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #444;
+  padding-bottom: 8px;
+}
+
+.quiz-question {
+  font-size: 0.95rem;
+  margin-bottom: 16px;
+}
+
+.quiz-options .option {
+  padding: 12px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  background: #3a3a3c;
+  border: 1px solid #555;
+  cursor: default;
+  transition: all 0.2s ease-in-out;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.quiz-options .option.correct {
+  background: #34c759; /* Green for correct answer */
+  color: #fff;
+  border-color: #34c759;
+}
+
+.correct-indicator {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.screen-footer {
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.home-indicator {
+  width: 134px;
+  height: 5px;
+  background: #fff;
+  border-radius: 100px;
+  opacity: 0.8;
+}
+
+/* Styles for the empty/debug state */
+.empty-state-preview {
+  padding: 20px;
+  text-align: center;
+  color: #a0a0a0;
+}
+
+.empty-state-preview h4 {
+  color: #fff;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.empty-state-preview p {
+  font-size: 0.9rem;
+  margin-bottom: 15px;
+}
+
+.empty-state-preview pre {
+  background-color: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 10px;
+  text-align: left;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  color: #f8f8f8;
+  font-size: 0.8rem;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.no-quiz-info {
+  padding: 10px;
+  font-style: italic;
+  color: #888;
+  font-size: 0.9em;
+  text-align: center;
+}

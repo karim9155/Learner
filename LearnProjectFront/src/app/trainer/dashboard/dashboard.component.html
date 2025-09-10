@@ -362,18 +362,28 @@
                   <h3>AI Generated Content</h3>
                   <p>Review and edit your generated course content</p>
                 </div>
-                <button *ngIf="generatedContent && !isGeneratingAI"
-                        class="btn btn-primary"
-                        (click)="publishCourse()"
-                        [disabled]="isPublishing">
-                  <svg *ngIf="isPublishing" class="btn-spinner" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                  </svg>
-                  <svg *ngIf="!isPublishing" class="check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                  </svg>
-                  {{ isPublishing ? 'Publishing...' : 'Publish Course' }}
-                </button>
+                <div class="review-actions">
+                  <button *ngIf="generatedContent && !isGeneratingAI"
+                          class="btn btn-secondary"
+                          (click)="previewCourse()">
+                    <svg class="preview-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                    </svg>
+                    Preview
+                  </button>
+                  <button *ngIf="generatedContent && !isGeneratingAI"
+                          class="btn btn-primary"
+                          (click)="publishCourse()"
+                          [disabled]="isPublishing">
+                    <svg *ngIf="isPublishing" class="btn-spinner" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                    <svg *ngIf="!isPublishing" class="check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    {{ isPublishing ? 'Publishing...' : 'Publish Course' }}
+                  </button>
+                </div>
               </div>
             </div>
 
