@@ -703,6 +703,12 @@
                 (keyup)="handleSearch($event)"
               />
             </div>
+            <button class="btn btn-secondary">
+              <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L16 12.414V17a1 1 0 01-.293.707l-4 4A1 1 0 0110 21v-8.586L3.293 6.707A1 1 0 013 6V4z"/>
+              </svg>
+              <span>Filter</span>
+            </button>
           </div>
 
           <div *ngIf="filteredCourses.length > 0" class="courses-grid">

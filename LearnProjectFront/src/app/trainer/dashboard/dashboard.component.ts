@@ -86,6 +86,8 @@ export class TrainerDashboardComponent implements OnInit {
 
   // --- New Properties for Modern UI ---
   sidebarExpanded: boolean = false;
+  creationStep: number = 1;
+  mockQuestionsForm: FormGroup;
 
   private mockShorts: string[] = [
     'https://www.youtube.com/embed/l5_2QGEK1oE',
@@ -117,6 +119,12 @@ export class TrainerDashboardComponent implements OnInit {
       courseId: ['', Validators.required],
       title: ['', [Validators.required, Validators.minLength(3)]],
       url: ['', [Validators.required, this.youtubeUrlValidator]]
+    });
+
+    this.mockQuestionsForm = this.fb.group({
+      objective: ['', Validators.required],
+      message: ['', Validators.required],
+      targetAudience: ['', Validators.required]
     });
   }
 
@@ -162,6 +170,26 @@ export class TrainerDashboardComponent implements OnInit {
 
   setSidebarExpanded(expanded: boolean): void {
     this.sidebarExpanded = expanded;
+  }
+
+  nextStep(): void {
+    if (this.creationStep === 1 && this.courseForm.invalid) {
+      this.courseForm.markAllAsTouched();
+      return;
+    }
+    if (this.creationStep === 2 && this.mockQuestionsForm.invalid) {
+      this.mockQuestionsForm.markAllAsTouched();
+      return;
+    }
+    if (this.creationStep < 3) {
+      this.creationStep++;
+    }
+  }
+
+  previousStep(): void {
+    if (this.creationStep > 1) {
+      this.creationStep--;
+    }
   }
 
   getPageTitle(): string {

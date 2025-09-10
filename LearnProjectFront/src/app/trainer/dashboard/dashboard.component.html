@@ -238,65 +238,117 @@
                 {{ courseCreationMessage }}
               </div>
 
-              <form [formGroup]="courseForm" (ngSubmit)="createCourse()" class="form">
-                <div class="form-group">
-                  <label class="form-label">Course Name</label>
-                  <input type="text"
-                         class="form-input"
-                         placeholder="e.g., Introduction to Quantum Physics"
-                         formControlName="title"
-                         [disabled]="isCreatingCourse || isGeneratingAI">
-                  <div *ngIf="courseFormControls['title'].invalid && courseFormControls['title'].touched" class="error-message">
-                    {{ getCourseFieldError('title') }}
+              <div *ngIf="creationStep === 1">
+                <form [formGroup]="courseForm" (ngSubmit)="nextStep()" class="form">
+                  <div class="form-group">
+                    <label class="form-label">Course Name</label>
+                    <input type="text"
+                           class="form-input"
+                           placeholder="e.g., Introduction to Quantum Physics"
+                           formControlName="title"
+                           [disabled]="isCreatingCourse || isGeneratingAI">
+                    <div *ngIf="courseFormControls['title'].invalid && courseFormControls['title'].touched" class="error-message">
+                      {{ getCourseFieldError('title') }}
+                    </div>
                   </div>
-                </div>
 
-                <div class="form-group">
-                  <label class="form-label">Course Description</label>
-                  <textarea class="form-textarea"
-                            placeholder="A brief summary of the course content..."
-                            formControlName="description"
-                            [disabled]="isCreatingCourse || isGeneratingAI"
-                            rows="4"></textarea>
-                  <div *ngIf="courseFormControls['description'].invalid && courseFormControls['description'].touched" class="error-message">
-                    {{ getCourseFieldError('description') }}
+                  <div class="form-group">
+                    <label class="form-label">Course Description</label>
+                    <textarea class="form-textarea"
+                              placeholder="A brief summary of the course content..."
+                              formControlName="description"
+                              [disabled]="isCreatingCourse || isGeneratingAI"
+                              rows="4"></textarea>
+                    <div *ngIf="courseFormControls['description'].invalid && courseFormControls['description'].touched" class="error-message">
+                      {{ getCourseFieldError('description') }}
+                    </div>
                   </div>
-                </div>
 
-                <div class="form-group">
-                  <label class="form-label">Cover Image (Optional)</label>
-                  <input type="file"
-                         class="form-input"
-                         (change)="onFileChange($event)"
-                         [disabled]="isCreatingCourse || isGeneratingAI"
-                         accept="image/*">
-                </div>
-
-                <div class="form-group">
-                  <label class="form-label">Generate with AI (PPT/PPTX)</label>
-                  <div class="file-input-wrapper">
+                  <div class="form-group">
+                    <label class="form-label">Cover Image (Optional)</label>
                     <input type="file"
                            class="form-input"
-                           (change)="onPptFileChange($event)"
-                           accept=".ppt,.pptx"
-                           [disabled]="isCreatingCourse || isGeneratingAI">
-                    <svg class="file-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-                    </svg>
+                           (change)="onFileChange($event)"
+                           [disabled]="isCreatingCourse || isGeneratingAI"
+                           accept="image/*">
                   </div>
-                  <p class="form-hint">Upload a PowerPoint presentation to generate course content with AI</p>
+
+                  <div class="form-group">
+                    <label class="form-label">Generate with AI (PPT/PPTX)</label>
+                    <div class="file-input-wrapper">
+                      <input type="file"
+                             class="form-input"
+                             (change)="onPptFileChange($event)"
+                             accept=".ppt,.pptx"
+                             [disabled]="isCreatingCourse || isGeneratingAI">
+                      <svg class="file-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                      </svg>
+                    </div>
+                    <p class="form-hint">Upload a PowerPoint presentation to generate course content with AI</p>
+                  </div>
+
+                  <button type="submit"
+                          class="btn btn-primary btn-full"
+                          [disabled]="!courseForm.valid || isCreatingCourse || isGeneratingAI">
+                    Next
+                  </button>
+                </form>
+              </div>
+
+              <div *ngIf="creationStep === 2">
+                <form [formGroup]="mockQuestionsForm" (ngSubmit)="nextStep()" class="form">
+                  <div class="form-group">
+                    <label class="form-label">Quel est l’objectif principal (hygiène, sécurité….) ?</label>
+                    <input type="text"
+                           class="form-input"
+                           formControlName="objective">
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label">quel message voulez vous transmettre (exemple: porter correctement une coiffe)</label>
+                    <textarea class="form-textarea"
+                              formControlName="message"
+                              rows="4"></textarea>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label">Quel est le public cible (opérateur production, maintenance, cadre) ?</label>
+                    <input type="text"
+                           class="form-input"
+                           formControlName="targetAudience">
+                  </div>
+
+                  <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" (click)="previousStep()">Back</button>
+                    <button type="submit" class="btn btn-primary" [disabled]="!mockQuestionsForm.valid">Next</button>
+                  </div>
+                </form>
+              </div>
+
+              <div *ngIf="creationStep === 3">
+                <div class="summary">
+                  <h4>Course Details</h4>
+                  <p><strong>Name:</strong> {{ courseForm.value.title }}</p>
+                  <p><strong>Description:</strong> {{ courseForm.value.description }}</p>
+
+                  <h4>Questions</h4>
+                  <p><strong>Objective:</strong> {{ mockQuestionsForm.value.objective }}</p>
+                  <p><strong>Message:</strong> {{ mockQuestionsForm.value.message }}</p>
+                  <p><strong>Target Audience:</strong> {{ mockQuestionsForm.value.targetAudience }}</p>
                 </div>
 
-                <button type="submit"
-                        class="btn btn-primary btn-full"
-                        [disabled]="!courseForm.valid || isCreatingCourse || isGeneratingAI">
-                  <svg *ngIf="isCreatingCourse || isGeneratingAI" class="btn-spinner" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                  </svg>
-                  {{ isCreatingCourse ? 'Creating...' : (isGeneratingAI ? 'Generating...' : 'Create Course') }}
-                </button>
-              </form>
+                <div class="form-actions">
+                  <button type="button" class="btn btn-secondary" (click)="previousStep()">Back</button>
+                  <button type="button" class="btn btn-primary" (click)="createCourse()">
+                    <svg *ngIf="isCreatingCourse || isGeneratingAI" class="btn-spinner" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                    {{ isCreatingCourse ? 'Creating...' : (isGeneratingAI ? 'Generating...' : 'Create Course') }}
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
