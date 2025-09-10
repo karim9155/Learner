@@ -74,7 +74,7 @@ export class AdminDashboardComponent implements OnInit {
   lightLogo: string = 'assets/logo.png';
   darkLogo: string = 'assets/logoDark.png';
   qrCodeData: string = 'https://snaplabs.online/learner/login';
-
+  credits = 1000;
   // Admin user info will now be populated dynamically
   adminUser: any = {}; // <-- CHANGED: Initialize as an empty object
 
@@ -96,6 +96,14 @@ export class AdminDashboardComponent implements OnInit {
       document.documentElement.classList.add('dark');
     }
 
+    // Credits logic
+    const storedCredits = sessionStorage.getItem('credits');
+    if (storedCredits) {
+      this.credits = JSON.parse(storedCredits);
+    } else {
+      this.credits = 1000;
+      sessionStorage.setItem('credits', JSON.stringify(this.credits));
+    }
 
     // Get the current user's info from the AuthService
     this.loadAdminInfo(); // <-- CHANGED: Call the method to load user info
@@ -240,11 +248,17 @@ export class AdminDashboardComponent implements OnInit {
   openEnrollDialog(course: Course): void {
     const dialogRef = this.dialog.open(EnrollModalComponent, {
       width: '1700px',
-      data: {courseId: course.id, courseName: course.title}
+      data: {
+        courseId: course.id,
+        courseName: course.title,
+        credits: this.credits
+      }
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result) {
+      if (result && result.enrolled) {
+        this.credits -= result.cost;
+        sessionStorage.setItem('credits', JSON.stringify(this.credits));
         this.loadEnrolledCourses();
       }
     });

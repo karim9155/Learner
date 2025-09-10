@@ -59,5 +59,6 @@ export class AuthService {
     localStorage.removeItem(this.tokenKey);
     localStorage.removeItem(this.roleKey);
     localStorage.removeItem(this.userKey); // Clear the user object on logout
+    sessionStorage.removeItem('credits');
   }
 }

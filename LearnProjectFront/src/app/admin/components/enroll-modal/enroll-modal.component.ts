@@ -1,5 +1,3 @@
-// karim9155/learner/Learner-fc5557b9b5123c3ec285bf8abc7969b10e56450d/LearnProjectFront/src/app/admin/components/enroll-modal/enroll-modal.component.ts
-
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UserService, User } from '../../../services/user.service';
@@ -22,14 +20,18 @@ export class EnrollModalComponent implements OnInit {
   selection = new SelectionModel<User>(true, []);
   departments: string[] = [];
   filteredUsers: User[] = [];
+  cost = 0;
+  credits = 0;
 
   constructor(
     public dialogRef: MatDialogRef<EnrollModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { courseId: string, courseName: string },
+    @Inject(MAT_DIALOG_DATA) public data: { courseId: string, courseName: string, credits: number },
     private userService: UserService,
     private enrollmentService: EnrollmentService,
     private snackBar: MatSnackBar
-  ) { }
+  ) {
+    this.credits = data.credits;
+  }
 
   ngOnInit(): void {
     this.loadEmployees();
@@ -70,9 +72,16 @@ export class EnrollModalComponent implements OnInit {
   }
 
   masterToggle() {
-    this.isAllSelected() ?
-      this.selection.clear() :
+    if (this.isAllSelected()) {
+      this.selection.clear();
+    } else {
       this.dataSource.filteredData.forEach(row => this.selection.select(row));
+    }
+    this.calculateCost();
+  }
+
+  calculateCost(): void {
+    this.cost = this.selection.selected.length * 25;
   }
 
   onEnroll(): void {
@@ -85,11 +94,17 @@ export class EnrollModalComponent implements OnInit {
       return;
     }
 
+    if (this.cost > this.credits) {
+      this.snackBar.open('You do not have enough credits to enroll.', 'Close', { duration: 3000 });
+      this.isSubmitting = false;
+      return;
+    }
+
     this.enrollmentService.enrollUsersInCourse({ courseId: this.data.courseId, learnerIds: selectedLearnerIds })
       .subscribe({
         next: () => {
           this.snackBar.open('Enrollment successful!', 'Close', { duration: 3000 });
-          this.dialogRef.close(true);
+          this.dialogRef.close({ enrolled: true, cost: this.cost });
         },
         error: (err) => {
           this.snackBar.open('Enrollment failed. Please try again.', 'Close', { duration: 3000 });

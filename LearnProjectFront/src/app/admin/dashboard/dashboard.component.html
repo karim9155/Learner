@@ -87,6 +87,15 @@
           <p class="header-subtitle">{{ getPageSubtitle() }}</p>
         </div>
         <div class="header-right">
+          <div class="credits-display">
+            <svg class="credits-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3z"></path>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 2a10 10 0 100 20 10 10 0 000-20z"></path>
+            </svg>
+            <span>{{ credits }} Credits</span>
+          </div>
           <button
             class="theme-toggle"
             (click)="toggleDarkMode()"
@@ -680,123 +689,133 @@
 
       <!-- Shop Section -->
       <div *ngIf="activeSection === 'shop'" class="course-shop-container">
-          <div class="main-content">
-            <div class="header-section">
-              <div class="search-container">
-                <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/>
-                </svg>
-                <input
-                  type="text"
-                  placeholder="Search in shop..."
-                  class="search-input"
-                  [(ngModel)]="searchTerm"
-                  (keyup)="handleSearch($event)"
-                />
-              </div>
+        <div class="main-content">
+          <div class="header-section">
+            <div class="search-container">
+              <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m21 21-6-6m2-5a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/>
+              </svg>
+              <input
+                type="text"
+                placeholder="Search in shop..."
+                class="search-input"
+                [(ngModel)]="searchTerm"
+                (keyup)="handleSearch($event)"
+              />
             </div>
+          </div>
 
-            <div *ngIf="filteredCourses.length > 0" class="courses-grid">
-              <div *ngFor="let course of filteredCourses" class="course-card">
-                <div class="course-image-section">
-                  <div class="image-container">
-                    <img
-                      [src]="getImageUrl(course.coverImage)"
-                      [alt]="course.title + ' cover image'"
-                      class="course-image"
-                      (error)="onImageError($event)"
-                    />
-                    <div *ngIf="course.duration" class="duration-badge">
-                      <svg class="clock-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <circle cx="12" cy="12" r="10"/>
-                        <polyline points="12,6 12,12 16,14"/>
-                      </svg>
-                      {{ course.duration }}
-                    </div>
-                  </div>
-                </div>
-
-                <div class="course-header">
-                  <h3 class="course-title">{{ course.title }}</h3>
-                  <div class="trainer-info">
-                    <svg class="user-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+          <div *ngIf="filteredCourses.length > 0" class="courses-grid">
+            <div *ngFor="let course of filteredCourses" class="course-card">
+              <div class="course-image-section">
+                <div class="image-container">
+                  <img
+                    [src]="getImageUrl(course.coverImage)"
+                    [alt]="course.title + ' cover image'"
+                    class="course-image"
+                    (error)="onImageError($event)"
+                  />
+                  <div *ngIf="course.duration" class="duration-badge">
+                    <svg class="clock-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <circle cx="12" cy="12" r="10"/>
+                      <polyline points="12,6 12,12 16,14"/>
                     </svg>
-                    {{ course.trainerEmail }}
+                    {{ course.duration }}
                   </div>
                 </div>
+              </div>
 
-                <div class="course-content">
-                  <p class="course-description">{{ course.description }}</p>
+              <div class="course-header">
+                <h3 class="course-title">{{ course.title }}</h3>
+                <div class="trainer-info">
+                  <svg class="user-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                  </svg>
+                  {{ course.trainerEmail }}
+                </div>
+              </div>
 
-                  <div class="action-buttons">
-                    <button
-                      class="btn-primary"
-                      (click)="openEnrollDialog(course)"
-                    >
-                      <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
-                      </svg>
-                      Enroll
-                    </button>
+              <div class="course-content">
+                <p class="course-description">{{ course.description }}</p>
 
-                    <button
-                      *ngIf="course.videos && course.videos.length > 0"
-                      class="btn-secondary"
-                      (click)="toggleVideos(course)"
-                    >
-                      <svg *ngIf="!course.showVideos" class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <polyline points="6,9 12,15 18,9"/>
-                      </svg>
-                      <svg *ngIf="course.showVideos" class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <polyline points="18,15 12,9 6,15"/>
-                      </svg>
-                      {{ course.showVideos ? 'Hide Preview' : 'Preview Course' }}
-                      <span class="video-count">({{ course.videos.length }})</span>
-                    </button>
-                  </div>
+                <div class="course-price">
+                  <svg class="price-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M12 8c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M12 2a10 10 0 100 20 10 10 0 000-20z"></path>
+                  </svg>
+                  <span>25 Credits</span>
+                </div>
 
-                  <div *ngIf="course.showVideos && course.videos && course.videos.length > 0" class="video-preview-section">
-                    <h4 class="preview-title">Course Preview</h4>
-                    <div class="videos-container">
-                      <div *ngFor="let video of course.videos" class="video-item">
-                        <h5 class="video-title">{{ video.title }}</h5>
-                        <div class="video-wrapper">
-                          <iframe
-                            [src]="getEmbedUrl(video.youtubeUrl)"
-                            frameborder="0"
-                            allowfullscreen
-                            loading="lazy"
-                            [title]="video.title"
-                            class="video-iframe">
-                          </iframe>
-                        </div>
+                <div class="action-buttons">
+                  <button
+                    class="btn-primary"
+                    (click)="openEnrollDialog(course)"
+                  >
+                    <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                    </svg>
+                    Enroll
+                  </button>
+
+                  <button
+                    *ngIf="course.videos && course.videos.length > 0"
+                    class="btn-secondary"
+                    (click)="toggleVideos(course)"
+                  >
+                    <svg *ngIf="!course.showVideos" class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <polyline points="6,9 12,15 18,9"/>
+                    </svg>
+                    <svg *ngIf="course.showVideos" class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <polyline points="18,15 12,9 6,15"/>
+                    </svg>
+                    {{ course.showVideos ? 'Hide Preview' : 'Preview Course' }}
+                    <span class="video-count">({{ course.videos.length }})</span>
+                  </button>
+                </div>
+
+                <div *ngIf="course.showVideos && course.videos && course.videos.length > 0" class="video-preview-section">
+                  <h4 class="preview-title">Course Preview</h4>
+                  <div class="videos-container">
+                    <div *ngFor="let video of course.videos" class="video-item">
+                      <h5 class="video-title">{{ video.title }}</h5>
+                      <div class="video-wrapper">
+                        <iframe
+                          [src]="getEmbedUrl(video.youtubeUrl)"
+                          frameborder="0"
+                          allowfullscreen
+                          loading="lazy"
+                          [title]="video.title"
+                          class="video-iframe">
+                        </iframe>
                       </div>
                     </div>
                   </div>
+                </div>
 
-                  <div *ngIf="course.showVideos && (!course.videos || course.videos.length === 0)" class="no-videos-message">
-                    <svg class="no-videos-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <polygon points="23,7 16,12 23,17 23,7"/>
-                      <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
-                    </svg>
-                    <p>No preview videos available.</p>
-                  </div>
+                <div *ngIf="course.showVideos && (!course.videos || course.videos.length === 0)" class="no-videos-message">
+                  <svg class="no-videos-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <polygon points="23,7 16,12 23,17 23,7"/>
+                    <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+                  </svg>
+                  <p>No preview videos available.</p>
                 </div>
               </div>
             </div>
+          </div>
 
-            <div *ngIf="filteredCourses.length === 0 && !isLoading" class="empty-state">
-              <svg class="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-              </svg>
-              <h3 class="empty-title">No courses found in the shop.</h3>
-              <p class="empty-description">
-                {{ searchTerm ? 'Try adjusting your search terms.' : 'There are no courses available at the moment.' }}
-              </p>
-            </div>
+          <div *ngIf="filteredCourses.length === 0 && !isLoading" class="empty-state">
+            <svg class="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+            </svg>
+            <h3 class="empty-title">No courses found in the shop.</h3>
+            <p class="empty-description">
+              {{ searchTerm ? 'Try adjusting your search terms.' : 'There are no courses available at the moment.' }}
+            </p>
           </div>
         </div>
+      </div>
     </div>
   </main>
 </div>
