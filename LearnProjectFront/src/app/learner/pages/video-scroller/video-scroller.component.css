@@ -607,16 +607,6 @@
   display: none;
 }
 
-/* Ensure full viewport coverage */
-html, body {
-  overflow: hidden;
-}
-
-.tiktok-scroller {
-  touch-action: pan-y;
-  -webkit-overflow-scrolling: touch;
-}
-
 /* Animation for smooth transitions */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(20px); }

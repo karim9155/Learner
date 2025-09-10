@@ -154,6 +154,10 @@ export class TrainerDashboardComponent implements OnInit {
     });
   }
 
+  trackByFn(index: any, item: any) {
+    return index;
+  }
+
   // --- New Methods for Modern UI ---
 
   setSidebarExpanded(expanded: boolean): void {
