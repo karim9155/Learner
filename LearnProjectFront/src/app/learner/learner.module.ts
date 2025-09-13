@@ -24,10 +24,13 @@ import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatTableModule} from '@angular/material/table';
 import {MatTooltipModule} from '@angular/material/tooltip';
+import { ResultsComponent } from './pages/results/results.component';
 
 @NgModule({
   declarations: [
 
+  
+    ResultsComponent
   ],
   imports: [
     CommonModule,

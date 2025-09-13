@@ -139,6 +139,14 @@
         class="control-button">
         <mat-icon>keyboard_arrow_down</mat-icon>
       </button>
+      <button
+        *ngIf="isLastItem()"
+        mat-raised-button
+        color="primary"
+        (click)="finishCourse()"
+        class="finish-button">
+        Finish Course
+      </button>
     </div>
 
     <!-- Video Controls (only show for videos) -->
@@ -170,14 +178,14 @@
   </div>
 
   <!-- Instructions -->
-<!--  <div class="instructions">
-    <div class="instructions-content">
-      <p>• Swipe up/down or use arrow keys to navigate</p>
-      <p>• Press Space to play/pause videos</p>
-      <p>• Press M to mute/unmute</p>
-      <p>• Press Escape to go back</p>
-    </div>
-  </div>-->
+  <!--  <div class="instructions">
+      <div class="instructions-content">
+        <p>• Swipe up/down or use arrow keys to navigate</p>
+        <p>• Press Space to play/pause videos</p>
+        <p>• Press M to mute/unmute</p>
+        <p>• Press Escape to go back</p>
+      </div>
+    </div>-->
 </div>
 
 <!-- Loading State -->

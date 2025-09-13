@@ -306,6 +306,16 @@ export class VideoScrollerComponent implements OnInit, OnDestroy {
     return this.currentIndex > 0;
   }
 
+  isLastItem(): boolean {
+    return this.currentIndex === this.contentItems.length - 1;
+  }
+
+  finishCourse(): void {
+    if (this.courseId) {
+      this.router.navigate(['/learner/results', this.courseId]);
+    }
+  }
+
   goBack(): void {
     this.router.navigate(['/learner/courses']);
   }

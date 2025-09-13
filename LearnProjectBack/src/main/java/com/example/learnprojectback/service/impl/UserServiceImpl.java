@@ -232,7 +232,9 @@ public class UserServiceImpl implements UserService {
         }
 
         User user = userRepository.findByPhone(formattedPhone)
-                .orElseThrow(() -> new RuntimeException("User not found with phone number: " + formattedPhone));
+                .orElseGet(() -> userRepository.findByPhone(phone)
+                        .orElseThrow(() -> new RuntimeException("User not found with phone number: " + phone)));
+
 
         boolean isEmployee = membershipRepository.findByUser(user).stream()
                 .anyMatch(membership -> membership.getRole() == Role.EMPLOYEE);
@@ -271,7 +273,8 @@ public class UserServiceImpl implements UserService {
 
         // Check if user exists
         userRepository.findByPhone(formattedPhone)
-                .orElseThrow(() -> new RuntimeException("User not found with phone number: " + formattedPhone));
+                .orElseGet(() -> userRepository.findByPhone(phone)
+                        .orElseThrow(() -> new RuntimeException("User not found with phone number: " + phone)));
 
         String otp = "915591";
 
@@ -294,10 +297,12 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("Could not parse phone number: " + phone, e);
         }
 
-        String cachedOtp = otpCache.getIfPresent(formattedPhone);
+        String cachedOtp = otpCache.getIfPresent(formattedPhone) != null ? otpCache.getIfPresent(formattedPhone) : otpCache.getIfPresent(phone);
+
 
         if (cachedOtp != null && cachedOtp.equals(code)) {
             otpCache.invalidate(formattedPhone);
+            otpCache.invalidate(phone);
             return findLearnerByPhone(phone);
         } else {
             throw new RuntimeException("Invalid or expired verification code.");

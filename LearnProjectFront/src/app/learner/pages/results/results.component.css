@@ -1,0 +1,57 @@
+.results-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  font-family: Arial, sans-serif;
+  color: #333;
+}
+
+h1 {
+  text-align: center;
+  color: #2c3e50;
+  font-size: 2.5em;
+  margin-bottom: 20px;
+}
+
+.results-summary, .ai-advice {
+  background-color: #ffffff;
+  padding: 20px;
+  margin-bottom: 25px;
+  border-radius: 8px;
+  border-left: 5px solid #3498db;
+}
+
+h2 {
+  color: #3498db;
+  font-size: 1.8em;
+  margin-bottom: 15px;
+}
+
+p {
+  font-size: 1.1em;
+  line-height: 1.6;
+}
+
+strong {
+  color: #2980b9;
+}
+
+.redo-button {
+  display: block;
+  width: 100%;
+  padding: 15px;
+  font-size: 1.2em;
+  color: #ffffff;
+  background-color: #3498db;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.redo-button:hover {
+  background-color: #2980b9;
+}

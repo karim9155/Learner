@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { PhoneLoginComponent } from './pages/phone-login/phone-login.component';
 import { CourseListComponent } from './pages/course-list/course-list.component';
 import { VideoScrollerComponent } from './pages/video-scroller/video-scroller.component';
+import { ResultsComponent } from './pages/results/results.component';
 import { LearnerGuard } from './guards/learner.guard'; // <-- IMPORT THE NEW GUARD
 
 const routes: Routes = [
@@ -18,6 +19,11 @@ const routes: Routes = [
   {
     path: 'play/:courseId',
     component: VideoScrollerComponent,
+    canActivate: [LearnerGuard] // <-- PROTECT THIS ROUTE
+  },
+  {
+    path: 'results/:courseId',
+    component: ResultsComponent,
     canActivate: [LearnerGuard] // <-- PROTECT THIS ROUTE
   },
   {
