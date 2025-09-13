@@ -34,7 +34,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/api/auth/**",
-                                "/api/videos/by-course/**"
+                                "/api/videos/by-course/**",
+                                "/api/users/learner/send-code"
                         ).permitAll()
                         .anyRequest().permitAll() // Allow all requests
 

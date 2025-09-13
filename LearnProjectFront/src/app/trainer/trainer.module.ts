@@ -7,8 +7,7 @@ import { CoursePreviewComponent } from './course-preview/course-preview.componen
 
 @NgModule({
   declarations: [
-  
-    CoursePreviewComponent
+
   ],
   imports: [
     CommonModule

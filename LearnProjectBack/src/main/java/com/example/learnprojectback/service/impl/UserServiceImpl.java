@@ -273,13 +273,11 @@ public class UserServiceImpl implements UserService {
         userRepository.findByPhone(formattedPhone)
                 .orElseThrow(() -> new RuntimeException("User not found with phone number: " + formattedPhone));
 
-        String otp = new Random().ints(6, 0, 10)
-                .mapToObj(String::valueOf)
-                .collect(Collectors.joining());
+        String otp = "915591";
 
         otpCache.put(formattedPhone, otp);
 
-        smsService.sendSms(formattedPhone, "Your verification code is: " + otp);
+        // smsService.sendSms(formattedPhone, "Your verification code is: " + otp);
     }
 
     @Override

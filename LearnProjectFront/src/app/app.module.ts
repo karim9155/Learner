@@ -35,6 +35,7 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatProgressBar} from '@angular/material/progress-bar';
 import {QRCodeComponent} from 'angularx-qrcode';
 import {TrainerDashboardComponent} from './trainer/dashboard/dashboard.component';
+import {CoursePreviewComponent} from './trainer/course-preview/course-preview.component';
 
 
 @NgModule({
@@ -46,7 +47,9 @@ import {TrainerDashboardComponent} from './trainer/dashboard/dashboard.component
     EnrollModalComponent,
     PhoneLoginComponent,
     CourseListComponent,
-    VideoScrollerComponent
+    VideoScrollerComponent,
+    CoursePreviewComponent
+
 
   ],
   imports: [

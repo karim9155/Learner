@@ -7,8 +7,8 @@ import { AuthService } from './auth.service';
   providedIn: 'root'
 })
 export class CourseService {
-  private apiUrl = 'http://localhost:8080/api/courses';
-  private enrollmentApiUrl = 'http://localhost:8080/api/enrollments';
+  private apiUrl = '/api/courses';
+  private enrollmentApiUrl = '/api/enrollments';
 
 
 
@@ -35,7 +35,7 @@ export class CourseService {
   }
 
   addVideo(videoData: any): Observable<any> {
-    const videoApiUrl = 'http://localhost:8080/api/videos';
+    const videoApiUrl = '/api/videos';
 
     return this.http.post(videoApiUrl, videoData, { headers: this.getAuthHeaders() });
   }
