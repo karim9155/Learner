@@ -421,14 +421,14 @@ export class TrainerDashboardComponent implements OnInit {
           youtubeUrl: this.mockShorts[0],
           prompt: '',
           quiz: {
-            question: `What is the core concept of ${courseTitle}?`,
+            question: "Pourquoi est-il important que tous les produits chimiques soient étiquetés ?",
             options: [
-              'Fundamental principles',
-              'Advanced techniques',
-              'Basic overview',
-              'Practical applications'
+              "Pour faciliter le rangement",
+              "Pour éviter les risques de contamination et garantir une utilisation correcte",
+              "Pour gagner du temps lors du nettoyage",
+              "Pour rendre les contenants plus jolis"
             ],
-            correctAnswer: 0
+            correctAnswer: 1
           },
           isUpdating: false,
           isEditingQuiz: false
@@ -439,14 +439,14 @@ export class TrainerDashboardComponent implements OnInit {
           youtubeUrl: this.mockShorts[1],
           prompt: '',
           quiz: {
-            question: `Which approach is most effective in ${courseTitle}?`,
+            question: "Où doivent être stockés les produits chimiques dans l’usine ?",
             options: [
-              'Theoretical study only',
-              'Practical application only',
-              'Combined theory and practice',
-              'Self-directed learning'
+              "Avec les matières premières",
+              "Dans un local ou une zone dédiée, séparée des produits alimentaires",
+              "À proximité des lignes de production",
+              "Dans le bureau du responsable"
             ],
-            correctAnswer: 2
+            correctAnswer: 1
           },
           isUpdating: false,
           isEditingQuiz: false
@@ -457,14 +457,14 @@ export class TrainerDashboardComponent implements OnInit {
           youtubeUrl: this.mockShorts[2],
           prompt: '',
           quiz: {
-            question: `What is a real-world application of ${courseTitle}?`,
+            question: "Quelle est la bonne pratique lors de la manipulation d’un produit chimique ?",
             options: [
-              'Academic research',
-              'Industry implementation',
-              'Educational development',
-              'All of the above'
+              "Utiliser les équipements de protection et respecter les consignes d’utilisation",
+              "Le diluer ou l’utiliser différemment si cela paraît plus efficace",
+              "Ne pas lire l’étiquette si on connaît déjà le produit",
+              "Goûter pour vérifier le produit"
             ],
-            correctAnswer: 3
+            correctAnswer: 0
           },
           isUpdating: false,
           isEditingQuiz: false
