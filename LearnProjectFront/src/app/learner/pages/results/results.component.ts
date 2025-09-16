@@ -1,24 +1,37 @@
-import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-results',
   standalone: false,
   templateUrl: './results.component.html',
-  styleUrl: './results.component.css'
+  styleUrls: ['./results.component.css']
 })
 export class ResultsComponent implements OnInit {
 
   courseId: string | null = null;
 
-  constructor(private route: ActivatedRoute, private router: Router) { }
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private location: Location
+  ) { }
 
   ngOnInit(): void {
     this.courseId = this.route.snapshot.paramMap.get('courseId');
   }
 
-  redoTest() {
-    this.router.navigate(['/learner/play', this.courseId]);
+  goBack(): void {
+    this.location.back();
+  }
+
+  goHome(): void {
+    this.router.navigate(['/learner/courses']);
+  }
+
+  finishCourse(): void {
+    this.router.navigate(['/learner/courses']);
   }
 
 }

@@ -92,11 +92,12 @@ export class TrainerDashboardComponent implements OnInit {
   mockQuestionsForm: FormGroup;
 
   private mockShorts: string[] = [
-    'https://www.youtube.com/embed/l5_2QGEK1oE',
-    'https://www.youtube.com/embed/NOEB46yBf2o',
-    'https://www.youtube.com/embed/0iaIUyjHGuQ',
-    'https://www.youtube.com/embed/hAYdrwtd-xE',
-    'https://www.youtube.com/embed/M837WQ4NORA'
+    'https://www.youtube.com/embed/ajIgyEfgx8c',
+    'https://www.youtube.com/embed/bgf4af5y65I',
+    'https://www.youtube.com/embed/yhlCPcqE8ws',
+    'https://www.youtube.com/embed/EjHqty3Qpo8',
+    'https://www.youtube.com/embed/t-MjHTXG0Yg',
+    'https://www.youtube.com/embed/5ebK-eapyuw'
   ];
 
   get courseFormControls() { return this.courseForm.controls; }

@@ -1,17 +1,53 @@
-<div class="results-container">
-  <h1>Course Results</h1>
+<div class="results-page">
+  <!-- Header -->
+  <header class="results-header">
+    <button mat-icon-button (click)="goBack()" class="header-button">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h1 class="header-title">Course Results</h1>
+    <button mat-icon-button (click)="goHome()" class="header-button">
+      <mat-icon>home</mat-icon>
+    </button>
+  </header>
 
-  <div class="results-summary">
-    <h2>Your Performance</h2>
-    <p>Quizzes Completed: <strong>5/5</strong></p>
-    <p>Videos Watched: <strong>10/10</strong></p>
-    <p>Overall Score: <strong>92%</strong></p>
-  </div>
+  <!-- Main Content -->
+  <main class="results-content">
+    <div class="results-card">
+      <div class="card-icon-container">
+        <mat-icon class="card-icon">assessment</mat-icon>
+      </div>
+      <h2 class="card-title">Your Performance</h2>
+      <div class="performance-grid">
+        <div class="performance-item">
+          <p class="performance-label">Quizzes</p>
+          <p class="performance-value">5/5</p>
+        </div>
+        <div class="performance-item">
+          <p class="performance-label">Videos</p>
+          <p class="performance-value">10/10</p>
+        </div>
+        <div class="performance-item">
+          <p class="performance-label">Overall</p>
+          <p class="performance-value">92%</p>
+        </div>
+      </div>
+    </div>
 
-  <div class="ai-advice">
-    <h2>AI-Powered Feedback</h2>
-    <p>Great job on completing the course! Your performance indicates a strong understanding of the core concepts. To further enhance your skills, we recommend reviewing the section on "Advanced Data Structures" and practicing the related coding exercises. Keep up the excellent work!</p>
-  </div>
+    <div class="results-card">
+      <div class="card-icon-container">
+        <mat-icon class="card-icon">auto_awesome</mat-icon>
+      </div>
+      <h2 class="card-title">AI-Powered Feedback</h2>
+      <p class="feedback-text">
+        Great job on completing the course! Your performance indicates a strong understanding of the core concepts. To further enhance your skills, we recommend reviewing the section on "Advanced Data Structures" and practicing the related coding exercises. Keep up the excellent work!
+      </p>
+    </div>
+  </main>
 
-  <button (click)="redoTest()" class="redo-button">Redo the Test</button>
+  <!-- Footer -->
+  <footer class="results-footer">
+    <button (click)="finishCourse()" class="finish-button">
+      Finish Course
+    </button>
+  </footer>
 </div>

@@ -248,10 +248,16 @@ export class VideoScrollerComponent implements OnInit, OnDestroy {
 
     this.completedQuizzes.add(this.currentQuiz.id);
 
-    // Auto-advance after showing result
-    setTimeout(() => {
-      this.goToNext();
-    }, 3000);
+    // If it's the last item, navigate to results page, otherwise advance to next item.
+    if (this.isLastItem()) {
+      setTimeout(() => {
+        this.finishCourse();
+      }, 2000); // Shorter delay for finishing
+    } else {
+      setTimeout(() => {
+        this.goToNext();
+      }, 3000);
+    }
   }
 
   // Utility methods
